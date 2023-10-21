@@ -25,6 +25,7 @@ public class Ticket implements Serializable {
     private long ticketId;
 
     @Size(max = 50, message = "title too long")
+    @Column(nullable = false)
     private String title;
 
     @Size(max = 500)
@@ -38,7 +39,6 @@ public class Ticket implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "raised_by")
-    @Column(nullable = false, updatable = false)
     private User raisedBy;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

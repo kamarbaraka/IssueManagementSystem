@@ -10,4 +10,5 @@ public interface UserManagementService extends UserDetailsManager {
     void deleteUserByUsername(String username);
     void elevate(String username, Authority authority);
     void downgrade(String username, Authority authority);
+    User getUserByUsername(String username);
 }

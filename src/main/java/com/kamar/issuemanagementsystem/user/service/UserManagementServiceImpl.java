@@ -2,8 +2,6 @@ package com.kamar.issuemanagementsystem.user.service;
 
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.exceptions.UserException;
-import com.kamar.issuemanagementsystem.user.exceptions.UserExceptionService;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,7 +37,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         userRepository.findUserByUsername(username).ifPresent(user -> {
             
             /*add the authority*/
-            user.getAuthorities().add(authority);
+            user.setAuthority(authority);
         });
         
     }
@@ -48,8 +46,15 @@ public class UserManagementServiceImpl implements UserManagementService {
     public void downgrade(String username, Authority authority) {
         
         userRepository.findUserByUsername(username).ifPresent(user -> 
-                /*downgrade*/user.getAuthorities().removeIf(filter -> user.getAuthorities().contains(authority)));
+                /*downgrade*/user.setAuthority(authority));
 
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+
+        /*get user by username*/
+        return userRepository.findUserByUsername(username).orElseThrow();
     }
 
     @Override

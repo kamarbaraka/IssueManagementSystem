@@ -5,6 +5,7 @@ import com.kamar.issuemanagementsystem.user.data.Authority;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +40,7 @@ public class User implements Serializable, UserDetails {
     private String activationToken;
 
     @Enumerated(EnumType.STRING)
-    private Collection<Authority> authorities = List.of(Authority.USER);
+    private Authority authority = Authority.USER;
 
     private long totalStars = 0;
 
@@ -54,4 +55,9 @@ public class User implements Serializable, UserDetails {
     @Column(nullable = false, updatable = false)
     private final LocalDate createdOn = LocalDate.now();
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return List.of(this.authority);
+    }
 }

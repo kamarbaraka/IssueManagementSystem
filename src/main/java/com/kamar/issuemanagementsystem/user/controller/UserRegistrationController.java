@@ -40,7 +40,7 @@ public class UserRegistrationController {
      * register a user*/
     @PostMapping(value = {"register"})
     @Operation(tags = {"USER REGISTRATION API"}, summary = "register a user", description = "an api to register users")
-//    @PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> registerUser(@Validated @RequestBody UserRegistrationDTO registrationDTO){
 
         /*register the user*/
@@ -61,7 +61,7 @@ public class UserRegistrationController {
      * activate a user*/
     @PostMapping(value = {"activate/{username}"})
     @Operation(tags = {"USER REGISTRATION API"}, summary = "activate a user", description = "api to activate a")
-    /*@PreAuthorize("permitAll()")*/
+    @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> activateUser(@PathVariable(name = "username") String username,
                                                              @RequestBody ActivationSuccessDTO activationDTO){
         UserActivationDTO activationReq = new UserActivationDTO(username, activationDTO.message());

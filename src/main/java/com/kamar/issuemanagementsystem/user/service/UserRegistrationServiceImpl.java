@@ -11,6 +11,7 @@ import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -45,6 +46,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     }
 
+    @Transactional
     @Override
     public void registerUser(UserRegistrationDTO registrationDTO) {
 
@@ -63,6 +65,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     }
 
+    @Transactional
     @Override
     public void activateUser(UserActivationDTO activationDTO) throws UserException {
 
