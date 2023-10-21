@@ -33,7 +33,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         /*the subject*/
         String subject = "Ticket Raised";
         /*construct the message*/
-        String message = ticket.getRaisedBy() + " raised a ticket \"" + ticket.getTitle() + "\". #" + ticket.getTicketId()+
+        String message = ticket.getRaisedBy().getUsername() + " raised a ticket \"" + ticket.getTitle() + "\". #" + ticket.getTicketId()+
                 "\n "+ linkToTicket;
         /*get all admins*/
         userRepository.findUsersByAuthorityOrderByCreatedOn(Authority.ADMIN).ifPresentOrElse(

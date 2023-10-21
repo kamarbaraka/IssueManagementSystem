@@ -14,7 +14,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,11 +35,13 @@ public class TicketCreationController {
     private final TicketManagementService ticketManagementService;
 
 
+
+
     /**
      * create a {@link }*/
     @PostMapping
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
                                                             @RequestBody TicketCreationDTO ticketCreationDTO){
 
@@ -65,7 +66,7 @@ public class TicketCreationController {
 
     }
 
-    @GetMapping(value = {"{id}"}, produces = {MediaType.APPLICATION_GRAPHQL_RESPONSE_VALUE})
+    @GetMapping(value = {"{id}"})
     @Operation(tags = {"Ticket Creation", "Ticket Assignment", "Ticket Submission"},
             summary = "get a ticket", description = "get a ticket by ID")
     @PreAuthorize("permitAll()")
@@ -78,6 +79,10 @@ public class TicketCreationController {
         /*construct the response*/
         EntityModel<DtoType> response = EntityModel.of(adminDto);
         /*add links*/
+        Link referLink = WebMvcLinkBuilder.linkTo(TicketAssignmentController.class).slash("refer")
+                .slash(ticket.getTicketId()).withRel("refer");
+
+        response.add(referLink);
 
         /*return response*/
         return ResponseEntity.ok(response);

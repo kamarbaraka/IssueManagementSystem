@@ -43,7 +43,7 @@ public class Ticket implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "assigned_to")
-    private User assignedTo;
+    private User assignedTo ;
 
     private LocalDate deadline;
 

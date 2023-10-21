@@ -24,6 +24,16 @@ public class TicketMapperImpl implements TicketMapper {
     @Override
     public TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket) {
 
+        if (ticket.getAssignedTo() == null || ticket.getDeadline() == null){
+            return new TicketAdminPresentationDTO(
+                ticket.getTitle(),
+                ticket.getDescription(),
+                ticket.getPriority().toString(),
+                ticket.getStatus().toString(),
+                ticket.getRaisedBy().getUsername(),
+                "not assigned yet",
+                "not assigned yet");
+        }
         /*map the dto*/
         return new TicketAdminPresentationDTO(
                 ticket.getTitle(),

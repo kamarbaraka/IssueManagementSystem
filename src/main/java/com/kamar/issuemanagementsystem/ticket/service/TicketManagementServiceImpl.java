@@ -15,14 +15,18 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TicketManagementImpl implements TicketManagementService {
+public class TicketManagementServiceImpl implements TicketManagementService {
 
     private final TicketRepository ticketRepository;
 
     @Transactional
     @Override
     public Ticket updateTicket(Ticket ticket) {
-        return null;
+
+        /*check if exists*/
+        Ticket savedTicket = ticketRepository.findById(ticket.getTicketId()).orElseThrow();
+        ticket.setTicketId(savedTicket.getTicketId());
+        return ticketRepository.save(ticket);
     }
 
     @Override
