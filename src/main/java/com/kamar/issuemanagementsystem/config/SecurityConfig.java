@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.config;
 
+import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.service.UserManagementServiceImpl;
 import org.springframework.context.annotation.Bean;
@@ -54,9 +55,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource, UserRepository userRepository){
+    public UserDetailsService userDetailsService(UserRepository userRepository,
+                                                 EmailService emailService){
 
-        return new UserManagementServiceImpl(userRepository);
+        return new UserManagementServiceImpl(userRepository, emailService);
 
     }
 

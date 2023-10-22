@@ -11,10 +11,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * the referral request controller.
@@ -22,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = {"/api/v1/referral"})
+@RequestMapping(value = {"api/v1/tickets/referral"})
 public class ReferralRequestController {
 
     private final ReferralRequestManagementService referralRequestManagementService;
@@ -32,6 +30,7 @@ public class ReferralRequestController {
      * respond to referral request*/
     @GetMapping(value = {"{id}/{accept}"})
     @Operation(tags = {"Ticket Assignment"}, summary = "respond to a referral", description = "accept or reject ticket referral.")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> acceptReferralRequest(@PathVariable("accept") boolean accept,
                                                                       @PathVariable("id") long id){
         /*map to Referral request*/
@@ -67,6 +66,7 @@ public class ReferralRequestController {
      * @author kamar baraka.*/
     @GetMapping(value = {"{id}"})
     @Operation(tags = {"Ticket Assignment"},summary = "get referral",description = "get referral by id")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@PathVariable("id") long id){
 
         /*get referral*/

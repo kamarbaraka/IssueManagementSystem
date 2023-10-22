@@ -6,12 +6,15 @@ import com.kamar.issuemanagementsystem.ticket.controller.TicketCreationControlle
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestRepository;
+import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
+
+import javax.naming.OperationNotSupportedException;
 
 /**
  * implementation of the ticket assignment service.
@@ -119,7 +122,12 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     }
 
     @Override
-    public void assignTo(Ticket ticket) {
+    public void assignTo(Ticket ticket) throws OperationNotSupportedException{
+
+        /*check if the user is an employee*/
+        if (!userManagementService.checkUserByUsernameAndAuthority(
+                ticket.getAssignedTo().getUsername(), Authority.EMPLOYEE))
+            throw new OperationNotSupportedException();
 
         /*assign the ticket*/
         Ticket updatedTicket = ticketManagementService.updateTicket(ticket);

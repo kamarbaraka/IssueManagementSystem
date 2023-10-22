@@ -25,13 +25,9 @@ import org.springframework.web.bind.annotation.*;
  * the user controller.
  * @author kamar baraka.*/
 
-@OpenAPIDefinition(tags = {@Tag(name = "USER REGISTRATION API", description = "documentation of the exposed user APIs"),
-@Tag(name = "USER LOGIN API", description = "the user login operations api")},
-info = @Info(title = "USER API",description = "documentation of the exposed user APIs",summary = "the user api",
-        contact = @Contact(name = "kamar baraka", email = "kamar254baraka@gmail.com"), version = "1.0.0.1"))
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = {"api/v1/users"})
+@RequestMapping(value = {"api/v1/users/registration"})
 public class UserRegistrationController {
 
     private final UserRegistrationService userRegistrationService;
@@ -39,7 +35,7 @@ public class UserRegistrationController {
     /**
      * register a user*/
     @PostMapping(value = {"register"})
-    @Operation(tags = {"USER REGISTRATION API"}, summary = "register a user", description = "an api to register users")
+    @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users")
     @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> registerUser(@Validated @RequestBody UserRegistrationDTO registrationDTO){
 
@@ -60,7 +56,7 @@ public class UserRegistrationController {
     /**
      * activate a user*/
     @PostMapping(value = {"activate/{username}"})
-    @Operation(tags = {"USER REGISTRATION API"}, summary = "activate a user", description = "api to activate a")
+    @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a")
     @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> activateUser(@PathVariable(name = "username") String username,
                                                              @RequestBody ActivationSuccessDTO activationDTO){

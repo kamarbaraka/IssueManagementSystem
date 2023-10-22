@@ -15,8 +15,10 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.OperationNotSupportedException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -36,8 +38,9 @@ public class TicketAssignmentController {
     /**
      * assign a ticket to user
      */
-    @GetMapping(value = {"{id}"})
+    @PostMapping(value = {"{id}"})
     @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@PathVariable("id") long id,
                                                                 @RequestBody TicketAssignmentDTO ticketAssignmentDTO){
         /*get the ticket*/
@@ -52,7 +55,16 @@ public class TicketAssignmentController {
 
         ticket.setDeadline(deadline);
         /*assign ticket*/
-        ticketAssignmentService.assignTo(ticket);
+        try {
+            ticketAssignmentService.assignTo(ticket);
+        } catch (OperationNotSupportedException e) {
+
+            return ResponseEntity.ok(
+                    EntityModel.of(
+                            new InfoDTO("operation not supported")
+                    )
+            );
+        }
 
         /*construct a response*/
         DtoType infoDTO = new InfoDTO("ticket successfully assigned to " + userToAssign.getUsername());
@@ -70,8 +82,9 @@ public class TicketAssignmentController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = {"refer/{ticketId}"})
+    @PostMapping(value = {"refer/{ticketId}"})
     @Operation(tags = {"Ticket Assignment"}, summary = "refer a ticket", description = "refer a ticket to another user")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@PathVariable("ticketId") long ticketId,
                                                                   @RequestBody TicketReferralDTO ticketReferralDTO){
 

@@ -21,4 +21,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     void deleteUserByUsername(String username);
 
     Optional<List<User>> findUsersByAuthorityOrderByCreatedOn(Authority authority);
+
+    Optional<User> findUserByUsernameAndAuthority(String username, Authority authority);
+    List<User> findUsersByAuthority(Authority authority);
+    List<User> findUsersByAuthorityOrderByTotalStarsDesc(Authority authority);
+    List<User> findUsersByAuthorityOrderByTotalStarsAsc(Authority authority);
 }

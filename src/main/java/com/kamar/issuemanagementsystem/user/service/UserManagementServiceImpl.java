@@ -1,11 +1,15 @@
 package com.kamar.issuemanagementsystem.user.service;
 
+import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * implementation of the user management service.
@@ -16,6 +20,17 @@ import org.springframework.stereotype.Service;
 public class UserManagementServiceImpl implements UserManagementService {
     
     private final UserRepository userRepository;
+    private final EmailService emailService;
+
+    private void elevationNotification(String username, Authority authority){
+
+        /*construct email*/
+        String subject = "Elevation Notice";
+        String message = "Hello " + username + ", you have been elevated to an " + authority.getAuthority();
+
+        /*send email*/
+        emailService.sendEmail(message, subject, username);
+    }
 
     @Override
     public void deleteUserByUsername(String username) {
@@ -34,11 +49,12 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public void elevate(String username, Authority authority) {
         
-        userRepository.findUserByUsername(username).ifPresent(user -> {
-            
+        userRepository.findUserByUsername(username).ifPresent(user ->
             /*add the authority*/
-            user.setAuthority(authority);
-        });
+            user.setAuthority(authority));
+
+        /*notify*/
+        elevationNotification(username, authority);
         
     }
 
@@ -55,6 +71,27 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         /*get user by username*/
         return userRepository.findUserByUsername(username).orElseThrow();
+    }
+
+    @Override
+    public boolean checkUserByUsernameAndAuthority(String username, Authority authority) {
+
+        /*check*/
+        return userRepository.findUserByUsernameAndAuthority(username, authority).isPresent();
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+
+        /*get all users*/
+        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "totalStars"));
+    }
+
+    @Override
+    public List<User> getUsersByAuthority(Authority authority) {
+
+        /*get users by authority*/
+        return userRepository.findUsersByAuthority(authority);
     }
 
     @Override
