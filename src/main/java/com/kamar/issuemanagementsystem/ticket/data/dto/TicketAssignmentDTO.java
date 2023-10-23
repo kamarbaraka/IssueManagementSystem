@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.data.dto;
 
+import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 public record TicketAssignmentDTO(
 
         String assignTo,
+        String priority,
         String deadline
 ) implements DtoType, Serializable {
 }

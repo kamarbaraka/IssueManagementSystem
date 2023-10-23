@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.ticket.service;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketCreationController;
+import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestRepository;
@@ -12,6 +13,8 @@ import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
@@ -30,12 +33,17 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     private final ReferralRequestRepository referralRequestRepository;
 
 
+    private UserDetails getAuthenticatedUser(){
+
+        return  (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
     private void sendNotification(Ticket ticket){
 
         /*set the subject and Message*/
         String subject = "Ticket assignment";
         Link ticketLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
-                TicketCreationController.class).getTicketById(ticket.getTicketId())).withRel("the ticket");
+                TicketManagementController.class).getTicketById(ticket.getTicketId(),
+                getAuthenticatedUser())).withRel("the ticket");
         String message = "You have been assigned the ticket #" + ticket.getTicketId() + " " + ticket.getTitle() +
                 ". Resolve it before " + ticket.getDeadline() + ". \n" + ticketLink;
 
@@ -50,8 +58,8 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
         String subject = "Reassigned";
 
         Link ticketLink = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(TicketCreationController.class)
-                        .getTicketById(ticket.getTicketId())).withRel("ticket");
+                WebMvcLinkBuilder.methodOn(TicketManagementController.class)
+                        .getTicketById(ticket.getTicketId(), getAuthenticatedUser())).withRel("ticket");
 
         String message = "the ticket #" + ticket.getTicketId() + " " + ticket.getTitle()
                 + "is assigned to you upon accepting referral request. Resolve it before "

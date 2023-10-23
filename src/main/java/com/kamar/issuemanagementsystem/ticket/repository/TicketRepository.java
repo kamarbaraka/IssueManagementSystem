@@ -15,7 +15,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     Optional<List<Ticket>> findTicketsByTitle(String title);
     Optional<List<Ticket>> findTicketsByRaisedBy(User user);
-    Optional<List<Ticket>> findTicketsByAssignedTo(User user);
+    Optional<List<Ticket>> findTicketsByAssignedToOrderByDeadlineDesc(User user);
     Optional<List<Ticket>> findTicketsByStatusOrderByDeadline(TicketStatus status);
     Optional<List<Ticket>> findTicketsByStatusOrderByCreatedOn(TicketStatus status);
     Optional<List<Ticket>> findTicketsByAssignedToAndStatus(User assignedTo, TicketStatus status);

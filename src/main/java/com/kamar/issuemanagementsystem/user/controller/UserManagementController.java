@@ -64,12 +64,18 @@ public class UserManagementController {
         /*add links*/
 
         /*check authority*/
-        if (userDetails.getAuthorities().contains(Authority.EMPLOYEE))
-            return ResponseEntity.ok(
-                    EntityModel.of(
-                            new InfoDTO("you are not permitted to access this info")
-                    )
-            );
+        if (userDetails.getAuthorities().contains(Authority.EMPLOYEE)) {
+
+            if (!userDetails.getUsername().equals(username))
+                return ResponseEntity.ok(
+                        EntityModel.of(
+                                new InfoDTO("you are not permitted to access this info")
+                        )
+                );
+
+            /*return response*/
+            return ResponseEntity.ok(response);
+        }
         /*return the response*/
         return ResponseEntity.ok(response);
     }
@@ -110,7 +116,7 @@ public class UserManagementController {
         }).toList();
     }
 
-    @PatchMapping(value = {"elevate/{authority}/{username}"})
+    @PutMapping(value = {"elevate/{authority}/{username}"})
     @Operation(tags = {"User Management"}, summary = "elevate a user authority")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EntityModel<DtoType>> elevateUser(@PathVariable("authority") String authority,

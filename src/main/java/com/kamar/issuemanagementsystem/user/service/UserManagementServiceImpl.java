@@ -49,9 +49,12 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public void elevate(String username, Authority authority) {
         
-        userRepository.findUserByUsername(username).ifPresent(user ->
+        userRepository.findUserByUsername(username).ifPresent(user -> {
             /*add the authority*/
-            user.setAuthority(authority));
+            user.setAuthority(authority);
+            /*update*/
+            userRepository.save(user);
+        });
 
         /*notify*/
         elevationNotification(username, authority);

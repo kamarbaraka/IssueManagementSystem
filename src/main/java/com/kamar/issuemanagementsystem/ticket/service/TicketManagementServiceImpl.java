@@ -25,7 +25,9 @@ public class TicketManagementServiceImpl implements TicketManagementService {
 
         /*check if exists*/
         Ticket savedTicket = ticketRepository.findById(ticket.getTicketId()).orElseThrow();
-        ticket.setTicketId(savedTicket.getTicketId());
+        savedTicket.setAssignedTo(ticket.getAssignedTo());
+        savedTicket.setPriority(ticket.getPriority());
+        savedTicket.setDeadline(ticket.getDeadline());
         return ticketRepository.save(ticket);
     }
 

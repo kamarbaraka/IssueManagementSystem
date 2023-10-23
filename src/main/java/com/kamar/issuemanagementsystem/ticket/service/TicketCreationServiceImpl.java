@@ -2,12 +2,15 @@ package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketCreationController;
+import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +27,17 @@ public class TicketCreationServiceImpl implements TicketCreationService {
     private final EmailService emailService;
     private final UserRepository userRepository;
 
+    private UserDetails getAuthenticatedUser(){
+
+        /*get the user from context*/
+        return ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
     private void sendCreationNotification(Ticket ticket){
 
         /*the get ticket link*/
         String linkToTicket = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
-                TicketCreationController.class).getTicketById(
-                        ticket.getTicketId())).toUriComponentsBuilder().toUriString();
+                TicketManagementController.class).getTicketById(
+                        ticket.getTicketId(), getAuthenticatedUser())).toUriComponentsBuilder().toUriString();
         /*the subject*/
         String subject = "Ticket Raised";
         /*construct the message*/

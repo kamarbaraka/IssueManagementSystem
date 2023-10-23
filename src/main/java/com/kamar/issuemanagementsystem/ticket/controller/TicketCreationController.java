@@ -49,6 +49,7 @@ public class TicketCreationController {
         Ticket raisedTicket = ticketMapper.dtoToEntity(ticketCreationDTO);
         /*set the necessary properties*/
         raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
+        raisedTicket.setAssignedTo(userManagementService.getUserByUsername("admin"));
         /*create the user*/
         Ticket savedTicket = ticketCreationService.createTicket(raisedTicket);
         /*construct a response*/
@@ -56,8 +57,8 @@ public class TicketCreationController {
         EntityModel<DtoType> response = EntityModel.of(info);
         /*create links*/
         Link linkToTicket = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(TicketCreationController.class).getTicketById(
-                        savedTicket.getTicketId())).withRel("ticket");
+                WebMvcLinkBuilder.methodOn(TicketManagementController.class).getTicketById(
+                        savedTicket.getTicketId(), userDetails)).withRel("ticket");
 
         response.add(linkToTicket);
 
@@ -66,25 +67,5 @@ public class TicketCreationController {
 
     }
 
-    @GetMapping(value = {"{id}"})
-    @Operation(tags = {"Ticket Creation", "Ticket Assignment", "Ticket Submission"},
-            summary = "get a ticket", description = "get a ticket by ID")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<EntityModel<DtoType>> getTicketById(@PathVariable("id") long id){
 
-        /*get the ticket*/
-        Ticket ticket = ticketManagementService.getTicketById(id);
-        /*map the ticket*/
-        DtoType adminDto = ticketMapper.entityToDTOAdmin(ticket);
-        /*construct the response*/
-        EntityModel<DtoType> response = EntityModel.of(adminDto);
-        /*add links*/
-        Link referLink = WebMvcLinkBuilder.linkTo(TicketAssignmentController.class).slash("refer")
-                .slash(ticket.getTicketId()).withRel("refer");
-
-        response.add(referLink);
-
-        /*return response*/
-        return ResponseEntity.ok(response);
-    }
 }

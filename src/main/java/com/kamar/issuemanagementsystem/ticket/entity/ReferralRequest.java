@@ -20,7 +20,7 @@ public class ReferralRequest implements Serializable {
     @Column(nullable = false, updatable = false)
     private long requestId;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "reffered_ticket", insertable = false, nullable = false)
     private Ticket refferedTicket;
 

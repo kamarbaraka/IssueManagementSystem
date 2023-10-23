@@ -41,7 +41,7 @@ public class Ticket implements Serializable {
     @JoinColumn(name = "raised_by")
     private User raisedBy;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "assigned_to")
     private User assignedTo ;
 

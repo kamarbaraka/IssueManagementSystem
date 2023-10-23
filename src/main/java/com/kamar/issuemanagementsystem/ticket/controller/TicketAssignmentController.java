@@ -1,5 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.controller;
 
+import com.kamar.issuemanagementsystem.ticket.data.TicketPriority;
+import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAssignmentDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketReferralDTO;
@@ -16,6 +18,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.OperationNotSupportedException;
@@ -40,20 +44,27 @@ public class TicketAssignmentController {
      */
     @PostMapping(value = {"{id}"})
     @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@PathVariable("id") long id,
-                                                                @RequestBody TicketAssignmentDTO ticketAssignmentDTO){
+                                                                @RequestBody TicketAssignmentDTO ticketAssignmentDTO,
+                                                                @AuthenticationPrincipal UserDetails userDetails){
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(id);
         /*get the user to assign to*/
         User userToAssign = userManagementService.getUserByUsername(ticketAssignmentDTO.assignTo());
         /*set the ticket*/
+        /*deadline*/
         ticket.setAssignedTo(userToAssign);
-
+        /*priority*/
+        ticket.setPriority(TicketPriority.valueOf(ticketAssignmentDTO.priority()));
+        /*deadline*/
         LocalDate deadline = LocalDate.parse(ticketAssignmentDTO.deadline(),
                 DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
         ticket.setDeadline(deadline);
+        /*status*/
+        ticket.setStatus(TicketStatus.ASSIGNED);
+
         /*assign ticket*/
         try {
             ticketAssignmentService.assignTo(ticket);
@@ -73,8 +84,8 @@ public class TicketAssignmentController {
 
         /*create links*/
         Link ticketLink = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(TicketCreationController.class)
-                        .getTicketById(ticket.getTicketId())).withRel("ticket");
+                WebMvcLinkBuilder.methodOn(TicketManagementController.class)
+                        .getTicketById(ticket.getTicketId(), userDetails)).withRel("ticket");
 
         response.add(ticketLink);
 
@@ -84,7 +95,7 @@ public class TicketAssignmentController {
 
     @PostMapping(value = {"refer/{ticketId}"})
     @Operation(tags = {"Ticket Assignment"}, summary = "refer a ticket", description = "refer a ticket to another user")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@PathVariable("ticketId") long ticketId,
                                                                   @RequestBody TicketReferralDTO ticketReferralDTO){
 
