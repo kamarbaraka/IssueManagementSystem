@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.OperationNotSupportedException;
@@ -46,7 +47,7 @@ public class TicketAssignmentController {
     @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@PathVariable("id") long id,
-                                                                @RequestBody TicketAssignmentDTO ticketAssignmentDTO,
+                                                                @Validated @RequestBody TicketAssignmentDTO ticketAssignmentDTO,
                                                                 @AuthenticationPrincipal UserDetails userDetails){
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(id);
@@ -97,7 +98,7 @@ public class TicketAssignmentController {
     @Operation(tags = {"Ticket Assignment"}, summary = "refer a ticket", description = "refer a ticket to another user")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@PathVariable("ticketId") long ticketId,
-                                                                  @RequestBody TicketReferralDTO ticketReferralDTO){
+                                                                  @Validated @RequestBody TicketReferralDTO ticketReferralDTO){
 
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(ticketId);

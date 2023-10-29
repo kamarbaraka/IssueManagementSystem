@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.user.entity.User;
@@ -28,6 +29,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         savedTicket.setAssignedTo(ticket.getAssignedTo());
         savedTicket.setPriority(ticket.getPriority());
         savedTicket.setDeadline(ticket.getDeadline());
+        savedTicket.setStatus(TicketStatus.ASSIGNED);
         return ticketRepository.save(ticket);
     }
 

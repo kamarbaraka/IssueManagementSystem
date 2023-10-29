@@ -42,7 +42,8 @@ public class SecurityConfig {
         });
 
         /*configure login form*/
-        httpSecurity.formLogin(login -> {});
+        httpSecurity.formLogin(login -> {
+        });
         /*configure the logout*/
         httpSecurity.logout(logout -> {});
         /*configure csrf*/

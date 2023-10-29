@@ -98,6 +98,25 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
+    public void increaseTotalStars(long stars, String username) {
+
+        /*get the user*/
+        User user = userRepository.findUserByUsername(username).orElseThrow();
+        /*update the stars*/
+        user.setTotalStars(user.getTotalStars() + stars);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void decreaseTotalStars(long stars, String username) {
+
+        /*get the user*/
+        User user = userRepository.findUserByUsername(username).orElseThrow();
+        /*update the stars*/
+        user.setTotalStars(user.getTotalStars() - stars);
+    }
+
+    @Override
     public void createUser(UserDetails user) {
         
     }

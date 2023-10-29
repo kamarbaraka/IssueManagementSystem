@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
+import com.kamar.issuemanagementsystem.ticket.exceptions.ReferralRequestException;
 
 /**
  * the referral management service.
@@ -8,7 +9,7 @@ import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 
 public interface ReferralRequestManagementService {
 
-    ReferralRequest createAReferralRequest(ReferralRequest referralRequest);
+    ReferralRequest createAReferralRequest(ReferralRequest referralRequest) throws ReferralRequestException;
 
     void acceptReferralRequestById(long id);
 

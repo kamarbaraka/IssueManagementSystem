@@ -61,12 +61,16 @@ public class TicketManagementController {
             );
         }
 
+
         if (userDetails.getAuthorities().contains(Authority.EMPLOYEE) &&
-                (!userDetails.getUsername().equals(ticket.getRaisedBy().getUsername()) ||
-                        (!userDetails.getUsername().equals(ticket.getAssignedTo().getUsername()))))
-            return ResponseEntity.ok(
-                        EntityModel.of(new InfoDTO("operation not allowed"))
-            );
+                (!userDetails.getUsername().equals(ticket.getAssignedTo().getUsername()) &&
+                    (!userDetails.getUsername().equals(ticket.getRaisedBy().getUsername()))))
+                    {
+                        return ResponseEntity.ok(
+                            EntityModel.of(new InfoDTO("you are not permitted to access this resource"))
+                    );
+
+        }
 
         /*return response*/
         return ResponseEntity.ok(response);

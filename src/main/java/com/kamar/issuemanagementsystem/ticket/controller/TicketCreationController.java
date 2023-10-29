@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -41,15 +42,15 @@ public class TicketCreationController {
      * create a {@link }*/
     @PostMapping
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket")
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
-                                                            @RequestBody TicketCreationDTO ticketCreationDTO){
+                                                            @Validated @RequestBody TicketCreationDTO ticketCreationDTO){
 
         /*map the dto to entity*/
         Ticket raisedTicket = ticketMapper.dtoToEntity(ticketCreationDTO);
         /*set the necessary properties*/
         raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
-        raisedTicket.setAssignedTo(userManagementService.getUserByUsername("admin"));
+        raisedTicket.setAssignedTo(userManagementService.getUserByUsername("admin@admin.com"));
         /*create the user*/
         Ticket savedTicket = ticketCreationService.createTicket(raisedTicket);
         /*construct a response*/
