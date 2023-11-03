@@ -12,6 +12,7 @@ import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -44,7 +45,8 @@ public class TicketAssignmentController {
      * assign a ticket to user
      */
     @PostMapping(value = {"{id}"})
-    @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.")
+    @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.",
+    security = {@SecurityRequirement(name = "ADMIN")})
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@PathVariable("id") long id,
                                                                 @Validated @RequestBody TicketAssignmentDTO ticketAssignmentDTO,
@@ -95,7 +97,8 @@ public class TicketAssignmentController {
     }
 
     @PostMapping(value = {"refer/{ticketId}"})
-    @Operation(tags = {"Ticket Assignment"}, summary = "refer a ticket", description = "refer a ticket to another user")
+    @Operation(tags = {"Ticket Assignment"}, summary = "refer a ticket", description = "refer a ticket to another user",
+    security = {@SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "EMPLOYEE")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@PathVariable("ticketId") long ticketId,
                                                                   @Validated @RequestBody TicketReferralDTO ticketReferralDTO){

@@ -14,10 +14,12 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -51,7 +53,7 @@ public class UserManagementController {
 
     @GetMapping(value = {"{username}"})
     @Operation(tags = {"User Management", "Ticket Assignment"}, summary = "get a user by username")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER', 'OWNER')")
     public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@PathVariable("username") String username,
                                                                   @AuthenticationPrincipal UserDetails userDetails){
 
@@ -64,7 +66,7 @@ public class UserManagementController {
         /*add links*/
 
         /*check authority*/
-        if (userDetails.getAuthorities().contains(Authority.EMPLOYEE)) {
+        if (userDetails.getAuthorities().contains(Authority.EMPLOYEE) || userDetails.getAuthorities().contains(Authority.USER)) {
 
             if (!userDetails.getUsername().equals(username))
                 return ResponseEntity.ok(

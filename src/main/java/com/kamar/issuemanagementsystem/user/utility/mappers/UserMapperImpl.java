@@ -31,7 +31,7 @@ public class UserMapperImpl implements UserMapper {
         return new UserPresentationDTO(
                 user.getUsername(),
                 user.getAuthority().getAuthority(),
-                user.getTotalStars()
+                user.getRating().getRate()
         );
     }
 }

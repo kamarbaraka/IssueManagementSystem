@@ -21,7 +21,7 @@ import java.util.Enumeration;
 
 @Route("app/view/users")
 @RouterOperation(operation = @Operation(tags = {"Ticket Reporting"}, summary = "get a report of all users"))
-@PreAuthorize("hasAuthority('ADMIN')")
+//@PreAuthorize("hasAuthority('ADMIN')")
 public class AllUsersView extends VerticalLayout {
 
     public AllUsersView(UserManagementService userManagementService){

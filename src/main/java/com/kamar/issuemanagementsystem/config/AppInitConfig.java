@@ -1,5 +1,9 @@
 package com.kamar.issuemanagementsystem.config;
 
+import com.kamar.issuemanagementsystem.department.entity.Department;
+import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
+import com.kamar.issuemanagementsystem.rating.entity.Rating;
+import com.kamar.issuemanagementsystem.rating.repository.RatingRepository;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
@@ -19,28 +23,42 @@ public class AppInitConfig {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RatingRepository ratingRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Bean
     public CommandLineRunner commandLineRunner(){
 
         return args -> {
 
+            String username = "kamar254baraka@gmail.com.com";
             /*check if exists*/
-            if (userRepository.findUserByUsername("admin@admin.com").isPresent()) {
-                return;
+            if (userRepository.existsByUsername(username)) {
+                return ;
             }
+
             /*create a user*/
             User user = new User();
-            user.setUsername("admin@admin.com");
+            user.setUsername(username);
             user.setPassword(passwordEncoder.encode("admin"));
+            user.setAuthority(Authority.OWNER);
             user.setEnabled(true);
-            user.setAuthority(Authority.ADMIN);
-            user.setAccountNonExpired(true);
-            user.setAccountNonLocked(true);
-            user.setCredentialsNonExpired(true);
 
-            /*persist the user*/
+            /*persist the rating and user*/
+            Rating userRating = user.getRating();
+            userRating.setRatingFor(username);
+            ratingRepository.save(userRating);
             userRepository.save(user);
+
+            /*create a department*/
+            Department department = new Department();
+            department.setDepartmentName("INIT");
+            department.setHeadOfDepartment(user);
+            department.getMembers().add(user);
+
+            /*persist the rating and department*/
+            ratingRepository.save(department.getRating());
+            departmentRepository.save(department);
         };
     }
 }

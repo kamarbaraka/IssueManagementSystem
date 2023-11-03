@@ -1,10 +1,13 @@
 package com.kamar.issuemanagementsystem.user.entity;
 
 
+import com.kamar.issuemanagementsystem.rating.entity.Rating;
 import com.kamar.issuemanagementsystem.user.data.Authority;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -20,16 +23,11 @@ import java.util.UUID;
  *  @author kamar baraka.*/
 
 @Component
-@Entity
+@Entity(name = "users")
 @Data
-@Table(name = "users")
 public class User implements Serializable, UserDetails {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @Column(nullable = false, updatable = false)
-    private  UUID userId;
-
     @Column(unique = true, nullable = false)
     @Email
     private  String username;
@@ -37,12 +35,17 @@ public class User implements Serializable, UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private String activationToken;
+    private String activationToken = UUID.randomUUID().toString();
 
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
 
-    private long totalStars = 0;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn(name = "rating", columnDefinition = "VARCHAR(255)")
+    private Rating rating = new Rating();
+
+    @Column(nullable = false, updatable = false)
+    private final LocalDate createdOn = LocalDate.now();
 
     private boolean accountNonExpired = true;
 
@@ -52,8 +55,6 @@ public class User implements Serializable, UserDetails {
 
     private boolean enabled = false;
 
-    @Column(nullable = false, updatable = false)
-    private final LocalDate createdOn = LocalDate.now();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

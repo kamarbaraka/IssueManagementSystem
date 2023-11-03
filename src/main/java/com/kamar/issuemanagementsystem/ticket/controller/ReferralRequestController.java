@@ -6,6 +6,7 @@ import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestManagementS
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -29,8 +30,9 @@ public class ReferralRequestController {
     /**
      * respond to referral request*/
     @GetMapping(value = {"{id}/{accept}"})
-    @Operation(tags = {"Ticket Assignment"}, summary = "respond to a referral", description = "accept or reject ticket referral.")
-    @PreAuthorize("permitAll()")
+    @Operation(tags = {"Ticket Assignment"}, summary = "respond to a referral", description = "accept or reject ticket referral.",
+    security = {@SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "EMPLOYEE")})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> acceptReferralRequest(@PathVariable("accept") boolean accept,
                                                                       @PathVariable("id") long id){
         /*map to Referral request*/
@@ -65,8 +67,9 @@ public class ReferralRequestController {
      * get referral request by id.
      * @author kamar baraka.*/
     @GetMapping(value = {"{id}"})
-    @Operation(tags = {"Ticket Assignment"},summary = "get referral",description = "get referral by id")
-    @PreAuthorize("permitAll()")
+    @Operation(tags = {"Ticket Assignment"},summary = "get referral",description = "get referral by id",
+    security = {@SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "EMPLOYEE")})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@PathVariable("id") long id){
 
         /*get referral*/

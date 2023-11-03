@@ -13,5 +13,5 @@ public record UserActivationDTO(
         @Email
         String username,
         String token
-) implements DtoType, Serializable {
+) implements DtoType {
 }

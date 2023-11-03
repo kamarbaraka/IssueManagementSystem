@@ -15,7 +15,7 @@ import java.awt.*;
  * the home page view.
  * @author kamar baraka.*/
 
-@Route
+@Route("home")
 public class HomeView extends VerticalLayout {
 
     public HomeView() {

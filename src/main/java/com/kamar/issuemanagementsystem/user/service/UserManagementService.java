@@ -16,6 +16,4 @@ public interface UserManagementService extends UserDetailsManager {
     boolean checkUserByUsernameAndAuthority(String username, Authority authority);
     List<User> getAllUsers();
     List<User> getUsersByAuthority(Authority authority);
-    void increaseTotalStars(long stars, String username);
-    void decreaseTotalStars(long stars, String username);
 }

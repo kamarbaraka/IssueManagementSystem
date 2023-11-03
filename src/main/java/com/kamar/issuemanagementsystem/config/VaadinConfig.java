@@ -1,6 +1,5 @@
 package com.kamar.issuemanagementsystem.config;
 
-import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.spring.annotation.EnableVaadin;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.AntPathMatcher;
@@ -14,5 +13,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableVaadin
 //@PWA(name = "Ticket Management", shortName = "TMS")
-public class VaadinConfig  implements WebMvcConfigurer {
+public class VaadinConfig   {
 }

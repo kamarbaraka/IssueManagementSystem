@@ -9,6 +9,8 @@ import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.OAuthScope;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -41,7 +43,8 @@ public class TicketCreationController {
     /**
      * create a {@link }*/
     @PostMapping
-    @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket")
+    @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
+    security = {@SecurityRequirement(name = "USER"), @SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "EMPLOYEE")})
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
                                                             @Validated @RequestBody TicketCreationDTO ticketCreationDTO){
@@ -50,7 +53,7 @@ public class TicketCreationController {
         Ticket raisedTicket = ticketMapper.dtoToEntity(ticketCreationDTO);
         /*set the necessary properties*/
         raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
-        raisedTicket.setAssignedTo(userManagementService.getUserByUsername("admin@admin.com"));
+        raisedTicket.setAssignedTo(userManagementService.getUserByUsername("kamar254baraka@outlook.com"));
         /*create the user*/
         Ticket savedTicket = ticketCreationService.createTicket(raisedTicket);
         /*construct a response*/

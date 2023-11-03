@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * referral request entity.
  * @author kamar baraka.*/
 
-@Entity
+@Entity(name = "referral_requests")
 @Data
 public class ReferralRequest implements Serializable {
 

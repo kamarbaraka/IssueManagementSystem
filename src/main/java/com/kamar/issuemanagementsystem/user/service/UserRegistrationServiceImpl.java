@@ -1,6 +1,9 @@
 package com.kamar.issuemanagementsystem.user.service;
 
+import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.rating.entity.Rating;
+import com.kamar.issuemanagementsystem.rating.repository.RatingRepository;
 import com.kamar.issuemanagementsystem.user.data.dto.UserActivationDTO;
 import com.kamar.issuemanagementsystem.user.data.dto.UserRegistrationDTO;
 import com.kamar.issuemanagementsystem.user.entity.User;
@@ -13,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.UUID;
 
 /**
@@ -28,12 +32,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final UserMapper userMapper;
     private final UserExceptionService userExceptionService;
     private final PasswordEncoder passwordEncoder;
-
-    private String tokenGenerator(){
-
-        /*generate activation token*/
-        return UUID.randomUUID().toString();
-    }
+    private final RatingRepository ratingRepository;
+    private final DepartmentRepository departmentRepository;
 
     private void sendActivationEmail(String email, String token){
 
@@ -52,16 +52,16 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         /*convert the dto to user*/
         User user = userMapper.dtoToEntity(registrationDTO);
-        /*generate the activation token*/
-        String activationToken = tokenGenerator();
-        /*set the activation token*/
-        user.setActivationToken(activationToken);
         /*encode password*/
         user.setPassword(passwordEncoder.encode(registrationDTO.password()));
-        /*persist the user*/
+        /*get and set the rating*/
+        Rating userRating = user.getRating();
+        userRating.setRatingFor(user.getUsername());
+        /*persist the rating and user*/
+        ratingRepository.save(userRating);
         userRepository.save(user);
         /*send the activation message*/
-        sendActivationEmail(user.getUsername(), activationToken);
+        sendActivationEmail(user.getUsername(), user.getActivationToken());
 
     }
 
@@ -70,7 +70,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     public void activateUser(UserActivationDTO activationDTO) throws UserException {
 
         /*check if user exists*/
-        User user = userRepository.findUserByUsername(activationDTO.username())
+        User user = userRepository.findById(activationDTO.username())
                 .orElseThrow(userExceptionService::userNotFound);
 
         /*check the activation token*/
@@ -83,7 +83,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         /*send email*/
         String subject = "activation successful";
-        String message = "account activation successful. Your UserId is " + user.getUserId() + " and username is " + user.getUsername() +
+        String message = "account activation successful. Your username is " + user.getUsername() +
                 ". Keep this information safe.";
         emailService.sendEmail(message, subject, user.getUsername());
 

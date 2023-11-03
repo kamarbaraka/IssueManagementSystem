@@ -1,6 +1,9 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.rating.data.dto.UserRatingDTO;
+import com.kamar.issuemanagementsystem.rating.exceptions.RatingException;
+import com.kamar.issuemanagementsystem.rating.service.RatingService;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketUserFeedbackDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -24,6 +27,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
     private final EmailService emailService;
     private final TicketManagementService ticketManagementService;
     private final UserManagementService userManagementService;
+    private final RatingService ratingService;
 
     private void unsatisfiedNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
@@ -69,7 +73,13 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
         /*update the status and rating*/
         ticket.setStatus(TicketStatus.CLOSED);
-        userManagementService.increaseTotalStars(userFeedbackDTO.serviceRating(), ticket.getAssignedTo().getUsername());
+        try {
+            ratingService.rateUser(new UserRatingDTO(
+                    ticket.getAssignedTo().getUsername(),
+                    userFeedbackDTO.serviceRating()));
+        } catch (RatingException e) {
+            throw new TicketFeedbackException(e.getMessage());
+        }
         ticketRepository.save(ticket);
 
         /*notify*/

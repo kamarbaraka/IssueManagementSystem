@@ -42,7 +42,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         /*get the user by username*/
-        return userRepository.findUserByUsername(username).orElseThrow();
+        return userRepository.findById(username).orElseThrow();
 
     }
 
@@ -95,25 +95,6 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         /*get users by authority*/
         return userRepository.findUsersByAuthority(authority);
-    }
-
-    @Override
-    public void increaseTotalStars(long stars, String username) {
-
-        /*get the user*/
-        User user = userRepository.findUserByUsername(username).orElseThrow();
-        /*update the stars*/
-        user.setTotalStars(user.getTotalStars() + stars);
-        userRepository.save(user);
-    }
-
-    @Override
-    public void decreaseTotalStars(long stars, String username) {
-
-        /*get the user*/
-        User user = userRepository.findUserByUsername(username).orElseThrow();
-        /*update the stars*/
-        user.setTotalStars(user.getTotalStars() - stars);
     }
 
     @Override

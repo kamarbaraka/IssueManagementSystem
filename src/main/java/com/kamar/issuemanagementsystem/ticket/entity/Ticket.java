@@ -15,9 +15,8 @@ import java.time.LocalDate;
  * @author kamar baraka.*/
 
 
-@Entity
+@Entity(name = "tickets")
 @Data
-@Table(name = "tickets")
 public class Ticket implements Serializable {
 
     @Id

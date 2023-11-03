@@ -11,9 +11,8 @@ import java.time.LocalDate;
  * comment reply entity.
  * @author kamar baraka.*/
 
-@Entity
+@Entity(name = "replies")
 @Data
-@Table(name = "replies")
 public class Reply implements Serializable {
 
     @Id

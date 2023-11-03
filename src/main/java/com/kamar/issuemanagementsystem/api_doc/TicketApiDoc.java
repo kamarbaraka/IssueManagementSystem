@@ -14,17 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @OpenAPIDefinition(
         tags = {
-                @Tag(name = "Ticket Creation", description = "List of APIs for ticket creation"),
-                @Tag(name = "Ticket Assignment", description = "List of Apis for ticket assignment"),
-                @Tag(name = "Ticket Submission", description = "Apis for ticket submission"),
-                @Tag(name = "Ticket Reporting", description = "Apis to report on tickets"),
-                @Tag(name = "Ticket Analysis", description = "Apis to analyse tickets"),
-                @Tag(name = "Ticket Management", description = "Apis to manage a ticket"),
-                @Tag(name = "Ticket Feedback", description = "Api to send a feedback on a ticket"),
                 @Tag(name = "User Registration", description = "Apis to register a user"),
                 @Tag(name = "User Activation", description = "Apis to activate a user"),
                 @Tag(name = "User Management", description = "Apis to manage a user"),
-                @Tag(name = "User Analysis", description = "Apis for user analysis")
+                @Tag(name = "User Analysis", description = "Apis for user analysis"),
+                @Tag(name = "Ticket Creation", description = "List of APIs for ticket creation"),
+                @Tag(name = "Ticket Assignment", description = "List of Apis for ticket assignment"),
+                @Tag(name = "Ticket Submission", description = "Apis for ticket submission"),
+                @Tag(name = "Ticket Management", description = "Apis to manage a ticket"),
+                @Tag(name = "Ticket Feedback", description = "Api to send a feedback on a ticket"),
+                @Tag(name = "Ticket Reporting", description = "Apis to report on tickets"),
+                @Tag(name = "Ticket Analysis", description = "Apis to analyse tickets"),
+                @Tag(name = "Department Creation", description = "Apis for creation of department"),
+                @Tag(name = "Department Management", description = "Apis for department management"),
+                @Tag(name = "Department Analysis", description = "Apis for department analysis"),
+                @Tag(name = "Department Reporting", description = "Apis for department reporting")
         },
         info = @Info(
                 title = "Ticket Management System Api Documentation",

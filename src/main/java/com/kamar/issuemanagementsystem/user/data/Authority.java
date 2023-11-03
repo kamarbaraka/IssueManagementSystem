@@ -14,7 +14,7 @@ public enum Authority implements GrantedAuthority, Serializable {
     ADMIN("ADMIN"),
     USER("USER"),
     EMPLOYEE("EMPLOYEE"),
-    ANONYMOUS("ANONYMOUS"),
+    OWNER("OWNER"),
     ;
     private final String authority;
 
