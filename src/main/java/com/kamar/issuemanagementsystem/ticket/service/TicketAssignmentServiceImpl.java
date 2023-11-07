@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketCreationController;
@@ -30,8 +31,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     private final UserManagementService userManagementService;
     private final TicketManagementService ticketManagementService;
     private final EmailService emailService;
-    private final ReferralRequestRepository referralRequestRepository;
-    private final ReferralRequestManagementServiceImpl referralRequestManagementService;
+    private final DepartmentRepository departmentRepository;
 
 
     private UserDetails getAuthenticatedUser(){
@@ -50,6 +50,14 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
         /*send the message*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
+
+        /*compose and send notification to the raiser*/
+        String raiserSubject = "Ticket handling";
+        String raiserMessage = "Your ticket #" + ticket.getTicketId() + " \"" + ticket.getTitle() + "\""+
+                " is being handled by the " + departmentRepository.findDepartmentByMembersContaining(ticket.getAssignedTo())+
+                " department.";
+
+        emailService.sendEmail(raiserMessage, raiserSubject, ticket.getRaisedBy().getUsername());
 
     }
 

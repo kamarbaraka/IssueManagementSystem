@@ -45,7 +45,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         /*construct the message*/
         String message = ticket.getRaisedBy().getUsername() + " raised a ticket \"" + ticket.getTitle() + "\". #" + ticket.getTicketId()+
                 "\n "+ linkToTicket;
-        /*get all admins*/
+        /*get all admins and send the admin notification email*/
         userRepository.findUsersByAuthorityOrderByCreatedOn(Authority.ADMIN).ifPresentOrElse(
                 admins ->
                     /*send mails to each admin*/
@@ -54,6 +54,13 @@ public class TicketCreationServiceImpl implements TicketCreationService {
                     ),
                 () -> {}
         );
+
+        /*send notification to the raiser*/
+        String raiserSubject = "Ticket Success";
+        String raiserMessage = "Thank you for raising your issue. It will be handled within a week.";
+
+        emailService.sendEmail(raiserMessage, raiserSubject, ticket.getRaisedBy().getUsername());
+
     }
 
     @Transactional

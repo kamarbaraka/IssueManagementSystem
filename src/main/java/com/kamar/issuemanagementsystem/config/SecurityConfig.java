@@ -43,7 +43,7 @@ public class SecurityConfig {
             httpBasic.authenticationEntryPoint(entryPoint);
         });
 
-        httpSecurity.authorizeHttpRequests(requests -> requests.anyRequest().authenticated());
+//        httpSecurity.authorizeHttpRequests(requests -> requests.anyRequest().authenticated());
 
         /*configure session management*/
         httpSecurity.sessionManagement(session -> {
