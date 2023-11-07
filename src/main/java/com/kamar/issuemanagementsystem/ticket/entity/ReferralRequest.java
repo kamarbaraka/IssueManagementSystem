@@ -20,16 +20,16 @@ public class ReferralRequest implements Serializable {
     @Column(nullable = false, updatable = false)
     private long requestId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "reffered_ticket", insertable = false, nullable = false)
+    @ManyToOne( cascade = {CascadeType.ALL}, optional = false)
+    @JoinColumn(name = "reffered_ticket", nullable = false)
     private Ticket refferedTicket;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "request_from", insertable = false, nullable = false)
+    @ManyToOne( cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "request_from", nullable = false)
     private User from;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "request_to", insertable = false, nullable = false)
+    @ManyToOne( cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "request_to", nullable = false)
     private User to;
 
     private boolean accepted = false;

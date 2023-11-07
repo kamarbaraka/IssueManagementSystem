@@ -14,6 +14,7 @@ import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -35,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = {"api/v1/tickets/assign"})
+@Log4j2
 public class TicketAssignmentController {
 
     private final TicketAssignmentService ticketAssignmentService;
@@ -46,15 +48,28 @@ public class TicketAssignmentController {
      */
     @PostMapping(value = {"{id}"})
     @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.",
-    security = {@SecurityRequirement(name = "ADMIN")})
+    security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@PathVariable("id") long id,
                                                                 @Validated @RequestBody TicketAssignmentDTO ticketAssignmentDTO,
                                                                 @AuthenticationPrincipal UserDetails userDetails){
-        /*get the ticket*/
-        Ticket ticket = ticketManagementService.getTicketById(id);
-        /*get the user to assign to*/
-        User userToAssign = userManagementService.getUserByUsername(ticketAssignmentDTO.assignTo());
+
+        Ticket ticket;
+        User userToAssign;
+
+        try
+        {
+            /*get the ticket*/
+            ticket = ticketManagementService.getTicketById(id);
+            /*get the user to assign to*/
+            userToAssign = userManagementService.getUserByUsername(ticketAssignmentDTO.assignTo());
+        }catch (Exception e){
+
+            /*log and respond*/
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+
         /*set the ticket*/
         /*deadline*/
         ticket.setAssignedTo(userToAssign);
@@ -73,11 +88,9 @@ public class TicketAssignmentController {
             ticketAssignmentService.assignTo(ticket);
         } catch (OperationNotSupportedException e) {
 
-            return ResponseEntity.ok(
-                    EntityModel.of(
-                            new InfoDTO("operation not supported")
-                    )
-            );
+            /*log and respond*/
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
 
         /*construct a response*/
@@ -96,24 +109,4 @@ public class TicketAssignmentController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = {"refer/{ticketId}"})
-    @Operation(tags = {"Ticket Assignment"}, summary = "refer a ticket", description = "refer a ticket to another user",
-    security = {@SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "EMPLOYEE")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@PathVariable("ticketId") long ticketId,
-                                                                  @Validated @RequestBody TicketReferralDTO ticketReferralDTO){
-
-        /*get the ticket*/
-        Ticket ticket = ticketManagementService.getTicketById(ticketId);
-        /*refer*/
-        ticketAssignmentService.referTicketTo(ticket, ticketReferralDTO.To());
-
-        /*construct a response*/
-        DtoType infoDTO = new InfoDTO("referral request successfully sent");
-        EntityModel<DtoType> response = EntityModel.of(infoDTO);
-
-        /*return response*/
-        return ResponseEntity.ok(response);
-
-    }
 }

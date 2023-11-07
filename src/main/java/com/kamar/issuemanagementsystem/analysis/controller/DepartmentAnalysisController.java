@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -23,25 +24,27 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * the department analysis controller.
  * @author kamar baraka.*/
 
-@RestController("api/analysis/departments")
+@RestController
 @RequiredArgsConstructor
+@RequestMapping(value = {"api/v1/analysis/departments"})
+@Log4j2
 public class DepartmentAnalysisController {
 
     private final DepartmentAnalysisService departmentAnalysisService;
-    private final UserManagementServiceImpl userManagementService;
 
 
     @GetMapping(value = {"mostPerformant"})
     @Operation(
             tags = {"Department Analysis", "Department Reporting"},
             summary = "Api to get the most performant department",
-            security = {@SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "OWNER")}
+            security = {@SecurityRequirement(name = "basicAuth")}
     )
     @ApiResponses(
             value = {
@@ -60,10 +63,9 @@ public class DepartmentAnalysisController {
 
         } catch (AnalysisException e) {
 
-            /*compose a response*/
-            return ResponseEntity.status(404).body(
-                    EntityModel.of(new InfoDTO(e.getMessage()))
-            );
+            /*log and respond*/
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
 
         /*compose the response*/
@@ -85,7 +87,7 @@ public class DepartmentAnalysisController {
             tags = {"Department Analysis", "Department Reporting"},
             summary = "Api to get the best performant department",
             security = {
-                    @SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "OWNER")
+                    @SecurityRequirement(name = "basicAuth")
             }
     )
     @ApiResponses(
@@ -106,9 +108,8 @@ public class DepartmentAnalysisController {
         } catch (AnalysisException e) {
 
             /*compose a response*/
-            return ResponseEntity.status(404).body(
-                    EntityModel.of(new InfoDTO(e.getMessage()))
-            );
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
 
         /*compose the response*/
@@ -129,7 +130,7 @@ public class DepartmentAnalysisController {
             tags = {"Department Analysis", "Department Reporting", "Employee Analysis", "User Analysis", "User Reporting"},
             summary = "Api to get the best performant employee in a department",
             security = {
-                    @SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "OWNER")
+                    @SecurityRequirement(name = "basicAuth")
             }
     )
     @ApiResponses(
@@ -148,10 +149,9 @@ public class DepartmentAnalysisController {
             bestEmployee = departmentAnalysisService.getBestEmployeeInDepartment(departmentName);
         } catch (AnalysisException e) {
 
-            /*compose response*/
-            return ResponseEntity.status(404).body(
-                    EntityModel.of(new InfoDTO(e.getMessage()))
-            );
+            /*log and respond*/
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
 
         /*compose*/
@@ -172,7 +172,7 @@ public class DepartmentAnalysisController {
             tags = {"Department Analysis", "Department Reporting", "Employee Analysis", "User Analysis", "User Reporting"},
             summary = "Api to get the most performant employee in a department",
             security = {
-                    @SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "OWNER")
+                    @SecurityRequirement(name = "basicAuth")
             }
     )
     @ApiResponses(
@@ -191,10 +191,9 @@ public class DepartmentAnalysisController {
             mostPerformantEmpl = departmentAnalysisService.getMostPerformantEmployeeInDepartment(departmentName);
         } catch (AnalysisException e) {
 
-            /*compose response*/
-            return ResponseEntity.status(404).body(
-                    EntityModel.of(new InfoDTO(e.getMessage()))
-            );
+            /*log and respond*/
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
 
         /*compose*/

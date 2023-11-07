@@ -36,11 +36,11 @@ public class Ticket implements Serializable {
     @Enumerated(EnumType.STRING)
     private TicketStatus status = TicketStatus.OPEN;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne( cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "raised_by")
     private User raisedBy;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne( cascade = CascadeType.ALL)
     @JoinColumn(name = "assigned_to")
     private User assignedTo ;
 

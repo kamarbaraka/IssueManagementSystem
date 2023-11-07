@@ -8,7 +8,9 @@ import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.analysis.service.UserAnalysisService;
 import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = {"api/analysis/users"})
+@RequestMapping(value = {"api/v1/analysis/users"})
+@Log4j2
 public class UserAnalysisController {
 
     private final UserAnalysisService userAnalysisService;
@@ -31,7 +34,8 @@ public class UserAnalysisController {
 
     @GetMapping(value = {"employeePerformance"})
     @Operation(tags = {"Employee Analysis", "User Analysis", "User Reporting"},
-            summary = "get the most performant employee")
+            summary = "get the most performant employee",
+    security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public ResponseEntity<EntityModel<DtoType>> getMostPerformantEmployee(){
 
@@ -42,11 +46,8 @@ public class UserAnalysisController {
         } catch (AnalysisException e) {
 
             /*notify*/
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    EntityModel.of(
-                            new InfoDTO(e.getMessage())
-                    )
-            );
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
 
         /*construct a response*/

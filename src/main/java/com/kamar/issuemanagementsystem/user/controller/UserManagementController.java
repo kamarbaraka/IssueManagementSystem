@@ -8,7 +8,9 @@ import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = {"api/v1/users/management"})
+@Log4j2
 public class UserManagementController {
 
     private final UserManagementService userManagementService;
@@ -36,12 +39,23 @@ public class UserManagementController {
 
 
     @GetMapping
-    @Operation(tags = {"User Management"}, summary = "get all users")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(tags = {"User Management", "User Reporting"}, summary = "get all users",
+    security = {@SecurityRequirement(name = "basicAuth")})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public ResponseEntity<List<EntityModel<DtoType>>> getAllUsers(@AuthenticationPrincipal UserDetails userDetails){
 
-        /*get all users*/
-        List<User> allUsers = userManagementService.getAllUsers();
+        List<User> allUsers;
+
+        try
+        {
+            /*get all users*/
+            allUsers = userManagementService.getAllUsers();
+        }catch (Exception e){
+
+            /*log and respond*/
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
 
         /*construct a response*/
         List<EntityModel<DtoType>> usersDto = convertListToResponse(allUsers, userDetails);
@@ -52,13 +66,23 @@ public class UserManagementController {
     }
 
     @GetMapping(value = {"{username}"})
-    @Operation(tags = {"User Management", "Ticket Assignment"}, summary = "get a user by username")
+    @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get a user by username",
+    security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER', 'OWNER')")
     public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@PathVariable("username") String username,
                                                                   @AuthenticationPrincipal UserDetails userDetails){
 
         /*get user by username*/
-        User user = userManagementService.getUserByUsername(username);
+        User user;
+        try {
+            user = userManagementService.getUserByUsername(username);
+        } catch (Exception e) {
+
+            /*log the exception*/
+            log.warn(e.getMessage());
+            /*return status*/
+            return ResponseEntity.notFound().build();
+        }
         /*map to dto*/
         DtoType userDto = userMapper.userToPresentationDTO(user);
         /*construct a response*/
@@ -83,13 +107,24 @@ public class UserManagementController {
     }
 
     @GetMapping(value = {"authority/{authority}"})
-    @Operation(tags = {"User Management", "Ticket Assignment"}, summary = "get users by their authority")
+    @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get users by their authority",
+    security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<EntityModel<DtoType>>> getUsersByAuthority(@PathVariable("authority") String authority,
                                                                           @AuthenticationPrincipal UserDetails userDetails){
 
-        /*get users by authority*/
-        List<User> users = userManagementService.getUsersByAuthority(Authority.valueOf(authority));
+        List<User> users;
+
+        try
+        {
+            /*get users by authority*/
+            users = userManagementService.getUsersByAuthority(Authority.valueOf(authority));
+        }catch (Exception e){
+
+            /*log and respond*/
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
 
         /*construct a response*/
         List<EntityModel<DtoType>> listOfUsers = convertListToResponse(users, userDetails);
@@ -119,14 +154,24 @@ public class UserManagementController {
     }
 
     @PutMapping(value = {"elevate/{authority}/{username}"})
-    @Operation(tags = {"User Management"}, summary = "elevate a user authority")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(tags = {"User Management"}, summary = "elevate a user authority",
+    security = {@SecurityRequirement(name = "basicAuth")})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public ResponseEntity<EntityModel<DtoType>> elevateUser(@PathVariable("authority") String authority,
                                                             @PathVariable("username") String username){
 
         /*elevate user*/
-        userManagementService.elevate(username,
-                Authority.valueOf(authority));
+        try {
+            userManagementService.elevate(username,
+                    Authority.valueOf(authority));
+        } catch (IllegalArgumentException e) {
+
+            /*log the exception*/
+            log.warn(e.getMessage());
+
+            /*return status*/
+            return ResponseEntity.badRequest().build();
+        }
 
         /*construct a response*/
         return ResponseEntity.ok(

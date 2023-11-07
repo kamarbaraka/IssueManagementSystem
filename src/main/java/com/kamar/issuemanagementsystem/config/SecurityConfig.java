@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.config;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.service.UserManagementServiceImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,7 +15,10 @@ import org.springframework.security.config.annotation.web.configurers.SessionMan
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
 
 
 import javax.sql.DataSource;
@@ -28,7 +32,18 @@ import javax.sql.DataSource;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
+                                                   @Qualifier("customAuthenticationEntryPoint")
+                                                   AuthenticationEntryPoint entryPoint
+                                                   ) throws Exception{
+
+        /*configure authentication method*/
+        httpSecurity.httpBasic(httpBasic -> {
+            httpBasic.realmName("IMS");
+            httpBasic.authenticationEntryPoint(entryPoint);
+        });
+
+        httpSecurity.authorizeHttpRequests(requests -> requests.anyRequest().authenticated());
 
         /*configure session management*/
         httpSecurity.sessionManagement(session -> {
@@ -41,15 +56,8 @@ public class SecurityConfig {
             });
         });
 
-        /*configure login form*/
-        httpSecurity.formLogin(login -> {
-        });
-        /*configure the logout*/
-        httpSecurity.logout(logout -> {});
         /*configure csrf*/
         httpSecurity.csrf(csrf -> csrf.disable());
-
-
 
         return httpSecurity.build();
 

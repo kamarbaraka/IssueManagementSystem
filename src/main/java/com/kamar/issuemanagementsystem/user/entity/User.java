@@ -1,13 +1,12 @@
 package com.kamar.issuemanagementsystem.user.entity;
 
 
-import com.kamar.issuemanagementsystem.rating.entity.Rating;
+import com.kamar.issuemanagementsystem.department.entity.Department;
+import com.kamar.issuemanagementsystem.rating.entity.UserRating;
 import com.kamar.issuemanagementsystem.user.data.Authority;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,7 @@ import java.util.UUID;
 public class User implements Serializable, UserDetails {
 
     @Id
-    @Column(unique = true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     @Email
     private  String username;
 
@@ -40,9 +39,9 @@ public class User implements Serializable, UserDetails {
     @Enumerated(EnumType.STRING)
     private Authority authority = Authority.USER;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn(name = "rating", columnDefinition = "VARCHAR(255)")
-    private Rating rating = new Rating();
+    @OneToOne( cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @JoinColumn(name = "rating")
+    private final UserRating userRating = new UserRating();
 
     @Column(nullable = false, updatable = false)
     private final LocalDate createdOn = LocalDate.now();

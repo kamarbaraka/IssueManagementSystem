@@ -31,6 +31,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     private final TicketManagementService ticketManagementService;
     private final EmailService emailService;
     private final ReferralRequestRepository referralRequestRepository;
+    private final ReferralRequestManagementServiceImpl referralRequestManagementService;
 
 
     private UserDetails getAuthenticatedUser(){
@@ -52,82 +53,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
     }
 
-    private void acceptedRequestNotification(Ticket ticket){
 
-        /*set the message and subject*/
-        String subject = "Reassigned";
-
-        Link ticketLink = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(TicketManagementController.class)
-                        .getTicketById(ticket.getTicketId(), getAuthenticatedUser())).withRel("ticket");
-
-        String message = "the ticket #" + ticket.getTicketId() + " " + ticket.getTitle()
-                + "is assigned to you upon accepting referral request. Resolve it before "
-                + ticket.getDeadline() + "\n" + ticketLink;
-
-        /*send the message*/
-        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
-
-
-    }
-
-    private void receiveAcceptedRequestNotification(ReferralRequest referralRequest){
-
-        /*set the email*/
-        String subject = "Request Accepted";
-
-
-        String message = referralRequest.getTo().getUsername() + " accepted your referral request for ticket #"
-                + referralRequest.getRefferedTicket().getTicketId() + " "
-                + referralRequest.getRefferedTicket().getTitle() + "\n" ;
-
-        /*send message*/
-        emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername());
-    }
-
-    public void receiveRejectedRequestNotification(ReferralRequest referralRequest){
-
-        /*set the email*/
-        String subject = "Request Rejected";
-        String message = referralRequest.getTo().getUsername() + " rejected your referral request for ticket #"
-                + referralRequest.getRefferedTicket().getTicketId() + " "
-                + referralRequest.getRefferedTicket().getTitle();
-
-        /*send notification*/
-        emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername());
-    }
-
-    private void sendReferralRequestNotification(ReferralRequest referralRequest){
-
-        /*set up the email*/
-        String subject = "Referral Request";
-        /*add links*/
-        Link acceptRequest = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
-                ReferralRequestController.class).acceptReferralRequest(
-                        true, referralRequest.getRequestId())).withRel("accept");
-
-        Link rejectRequest = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(ReferralRequestController.class)
-                        .acceptReferralRequest(false, referralRequest.getRequestId())).withRel("reject");
-
-        /*set the message*/
-        String message = referralRequest.getFrom().getUsername() + "requests to refer to you the ticket #"
-                + referralRequest.getRefferedTicket().getTicketId() + " "
-                + referralRequest.getRefferedTicket().getTitle() + ". \n" + acceptRequest+ "\n"+ rejectRequest;
-
-        /*send message*/
-        emailService.sendEmail(message, subject, referralRequest.getTo().getUsername());
-    }
-
-    private void sendReferralRequest(ReferralRequest referralRequest){
-
-        /*persist the request*/
-        ReferralRequest savedRequest = referralRequestRepository.save(referralRequest);
-
-        /*send a referral request*/
-        sendReferralRequestNotification(savedRequest);
-
-    }
 
     @Override
     public void assignTo(Ticket ticket) throws OperationNotSupportedException{
@@ -142,37 +68,6 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
         /*send notification*/
         sendNotification(updatedTicket);
-    }
-
-    @Override
-    public void referTicketTo(Ticket ticket, String to) {
-
-        /*get data*/
-        User fromUser = ticket.getAssignedTo();
-        User toUser = userManagementService.getUserByUsername(to);
-
-        /*construct a referral request*/
-        ReferralRequest referralRequest = new ReferralRequest();
-        referralRequest.setRefferedTicket(ticket);
-        referralRequest.setFrom(fromUser);
-        referralRequest.setTo(toUser);
-
-        /*send a referral request*/
-        sendReferralRequest(referralRequest);
-
-    }
-
-    public void respondToReferralRequest(ReferralRequest referralRequest, boolean response){
-
-        if (!response){
-
-            /*notify the referrer*/
-            receiveRejectedRequestNotification(referralRequest);
-        }
-
-        /*notify the referrer*/
-        receiveAcceptedRequestNotification(referralRequest);
-        acceptedRequestNotification(referralRequest.getRefferedTicket());
     }
 
 }

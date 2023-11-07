@@ -1,14 +1,14 @@
 package com.kamar.issuemanagementsystem.department.entity;
 
-import com.kamar.issuemanagementsystem.rating.entity.Rating;
+import com.kamar.issuemanagementsystem.rating.entity.DepartmentPerformanceRating;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
 
 /**
  * the department entity.
@@ -16,23 +16,24 @@ import java.util.Vector;
 
 @Entity(name = "departments")
 @Data
-public class Department {
+public class Department implements Serializable {
 
     @Id
     @Column(name = "department_name", unique = true, updatable = false, nullable = false)
     @Size(min = 2, max = 50, message = "department name too long")
     private String departmentName;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn(name = "head_of_department")
+    @OneToOne(cascade = CascadeType.ALL, optional = false,
+            orphanRemoval = true)
+    @JoinColumn(name = "hod")
     private User headOfDepartment;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_name")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "department")
     private final Collection< User > members = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn(name = "rating", columnDefinition = "VARCHAR(255)")
-    private Rating rating = new Rating();
+    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @JoinColumn(name = "rating")
+    private final DepartmentPerformanceRating performanceRating = new DepartmentPerformanceRating();
 
 }

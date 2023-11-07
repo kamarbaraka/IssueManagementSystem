@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.controller;
 
+import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -30,32 +32,42 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = {"/api/v1/tickets"})
+@Log4j2
 public class TicketCreationController {
 
     private final TicketMapper ticketMapper;
     private final UserManagementService userManagementService;
     private final TicketCreationService ticketCreationService;
-    private final TicketManagementService ticketManagementService;
-
-
-
+    private final InnitUserProperties innitUserProperties;
 
     /**
      * create a {@link }*/
     @PostMapping
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
-    security = {@SecurityRequirement(name = "USER"), @SecurityRequirement(name = "ADMIN"), @SecurityRequirement(name = "EMPLOYEE")})
+    security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
                                                             @Validated @RequestBody TicketCreationDTO ticketCreationDTO){
+        Ticket savedTicket;
 
-        /*map the dto to entity*/
-        Ticket raisedTicket = ticketMapper.dtoToEntity(ticketCreationDTO);
-        /*set the necessary properties*/
-        raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
-        raisedTicket.setAssignedTo(userManagementService.getUserByUsername("kamar254baraka@outlook.com"));
-        /*create the user*/
-        Ticket savedTicket = ticketCreationService.createTicket(raisedTicket);
+        try
+        {
+            /*map the dto to entity*/
+            Ticket raisedTicket = ticketMapper.dtoToEntity(ticketCreationDTO);
+            /*set the necessary properties*/
+            raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
+            raisedTicket.setAssignedTo(userManagementService.getUserByUsername(innitUserProperties.username()));
+            /*create the user*/
+            savedTicket = ticketCreationService.createTicket(raisedTicket);
+        }catch (Exception e){
+
+            /*log the exception*/
+            log.error(e.getMessage());
+            /*respond*/
+            return ResponseEntity.badRequest().build();
+        }
+
+
         /*construct a response*/
         DtoType info = new InfoDTO("ticket successfully created");
         EntityModel<DtoType> response = EntityModel.of(info);
@@ -67,7 +79,7 @@ public class TicketCreationController {
         response.add(linkToTicket);
 
         /*return the response*/
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(response);
 
     }
 

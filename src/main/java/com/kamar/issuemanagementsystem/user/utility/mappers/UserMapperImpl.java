@@ -1,13 +1,9 @@
 package com.kamar.issuemanagementsystem.user.utility.mappers;
 
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
 import com.kamar.issuemanagementsystem.user.data.dto.UserRegistrationDTO;
 import com.kamar.issuemanagementsystem.user.entity.User;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * the user mapper implementation.
@@ -31,7 +27,7 @@ public class UserMapperImpl implements UserMapper {
         return new UserPresentationDTO(
                 user.getUsername(),
                 user.getAuthority().getAuthority(),
-                user.getRating().getRate()
+                user.getUserRating().getRate()
         );
     }
 }

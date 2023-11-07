@@ -2,7 +2,7 @@ package com.kamar.issuemanagementsystem.rating.utility;
 
 import com.kamar.issuemanagementsystem.rating.data.dto.DepartmentRatingDto;
 import com.kamar.issuemanagementsystem.rating.data.dto.UserRatingDTO;
-import com.kamar.issuemanagementsystem.rating.entity.Rating;
+import com.kamar.issuemanagementsystem.rating.entity.UserRating;
 
 /**
  * the rating mapper contract.
@@ -10,6 +10,5 @@ import com.kamar.issuemanagementsystem.rating.entity.Rating;
 
 public interface RatingMapper {
 
-    Rating mapToRating(DepartmentRatingDto departmentRatingDto);
-    Rating mapToRating(UserRatingDTO userRatingDTO);
+    UserRating mapToRating(UserRatingDTO userRatingDTO);
 }

@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.department.service;
 
+import com.kamar.issuemanagementsystem.department.data.AddUserToDepartmentDTO;
 import com.kamar.issuemanagementsystem.department.data.DepartmentCreationDto;
 import com.kamar.issuemanagementsystem.department.data.DepartmentDto;
 import com.kamar.issuemanagementsystem.department.data.DepartmentDtoType;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,7 +33,7 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     @Override
     @Transactional
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
-    public void createDepartment(DepartmentCreationDto departmentCreationDto) {
+    public void createDepartment(DepartmentCreationDto departmentCreationDto)throws DepartmentException {
 
         /*create the department*/
         Department department = departmentMapper.mapToDepartment(departmentCreationDto);
@@ -45,21 +47,25 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     public DepartmentDtoType getDepartmentByName(String name) throws DepartmentException {
 
         /*get the department by name*/
-        return departmentRepository.findDepartmentByDepartmentName(name).orElseThrow(
+        Department department = departmentRepository.findDepartmentByDepartmentName(name).orElseThrow(
                 () -> new DepartmentException("no such department")
         );
+
+        return departmentMapper.mapToDto(department);
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
-    public void addUsersToDepartment(String departmentName, String... usernames) throws DepartmentException {
+    public void addUsersToDepartment(AddUserToDepartmentDTO addUserToDepartmentDTO) throws DepartmentException {
 
         /*get and add the users to the department*/
-        Department department = departmentRepository.findById(departmentName).orElseThrow(
+        Department department = departmentRepository.findById(
+                addUserToDepartmentDTO.department()
+        ).orElseThrow(
                 () -> new DepartmentException("no such department"));
 
-        Arrays.stream(usernames).map(userRepository::findUserByUsername)
+        addUserToDepartmentDTO.username().parallelStream().map(userRepository::findUserByUsername)
                 .map(Optional::orElseThrow).forEach(user -> department.getMembers().add(user));
     }
 

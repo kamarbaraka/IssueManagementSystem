@@ -2,7 +2,7 @@ package com.kamar.issuemanagementsystem.rating.utility;
 
 import com.kamar.issuemanagementsystem.rating.data.dto.DepartmentRatingDto;
 import com.kamar.issuemanagementsystem.rating.data.dto.UserRatingDTO;
-import com.kamar.issuemanagementsystem.rating.entity.Rating;
+import com.kamar.issuemanagementsystem.rating.entity.UserRating;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,13 +11,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RatingMapperImpl implements RatingMapper {
-    @Override
-    public Rating mapToRating(DepartmentRatingDto departmentRatingDto) {
-        return null;
-    }
 
     @Override
-    public Rating mapToRating(UserRatingDTO userRatingDTO) {
+    public UserRating mapToRating(UserRatingDTO userRatingDTO) {
         return null;
     }
 }

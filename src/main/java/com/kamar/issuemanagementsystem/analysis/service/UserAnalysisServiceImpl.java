@@ -37,7 +37,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
 
         /*get the most performant*/
         User mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
-                        (user, user2) -> user2.getRating().getRate() > user.getRating().getRate() ? user2 : user)
+                        (user, user2) -> user2.getUserRating().getRate() > user.getUserRating().getRate() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("error occurred"));
 
         /*map to dto and return*/
@@ -52,7 +52,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
         List<User> usersByAuthority = userRepository.findUsersByAuthorityOrderByCreatedOnAsc(Authority.EMPLOYEE);
         /*get the most performant*/
         User mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
-                (user, user2) -> user2.getRating().getTotalRates() > user.getRating().getTotalRates() ? user2 : user)
+                (user, user2) -> user2.getUserRating().getTotalRates() > user.getUserRating().getTotalRates() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("error occurred!, try again"));
 
         /*map to dto and return*/
@@ -71,7 +71,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
 
         /*get the list performant*/
         User leastPerformantEmployee = usersBAuthorities.parallelStream().reduce(
-                        (user, user2) -> user2.getRating().getRate() < user.getRating().getRate() ? user2 : user)
+                        (user, user2) -> user2.getUserRating().getRate() < user.getUserRating().getRate() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("an error occurred"));
 
         /*map and return*/

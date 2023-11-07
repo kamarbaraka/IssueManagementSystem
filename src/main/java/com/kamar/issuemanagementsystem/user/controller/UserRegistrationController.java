@@ -10,8 +10,10 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = {"api/v1/users/registration"})
+@Log4j2
 public class UserRegistrationController {
 
     private final UserRegistrationService userRegistrationService;
@@ -35,12 +38,22 @@ public class UserRegistrationController {
     /**
      * register a user*/
     @PostMapping(value = {"register"})
-    @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users")
-    @PreAuthorize("permitAll()")
+    @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users",
+    security = {@SecurityRequirement(name = "basicAuth")})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public ResponseEntity<EntityModel<DtoType>> registerUser(@Validated @RequestBody UserRegistrationDTO registrationDTO){
 
         /*register the user*/
-        userRegistrationService.registerUser(registrationDTO);
+        try {
+            userRegistrationService.registerUser(registrationDTO);
+        } catch (Exception e) {
+
+            /*log the exception*/
+            log.warn(e.getMessage());
+
+            /*return status*/
+            return ResponseEntity.badRequest().build();
+        }
         /*create a response*/
         DtoType message = new ActivationSuccessDTO("registration successful, follow the link to activate.");
         EntityModel<DtoType> response = EntityModel.of(message);
@@ -56,8 +69,9 @@ public class UserRegistrationController {
     /**
      * activate a user*/
     @PostMapping(value = {"activate/{username}"})
-    @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a")
-    @PreAuthorize("permitAll()")
+    @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a",
+    security = {@SecurityRequirement(name = "basicAuth")})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public ResponseEntity<EntityModel<DtoType>> activateUser(@PathVariable(name = "username") String username,
                                                              @RequestBody ActivationSuccessDTO activationDTO){
         UserActivationDTO activationReq = new UserActivationDTO(username, activationDTO.message());
@@ -74,7 +88,7 @@ public class UserRegistrationController {
                     .slash(username).withSelfRel();
             response.add(selfLink);
             /*return*/
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            return ResponseEntity.badRequest().body(response);
         }
 
         /*create message*/

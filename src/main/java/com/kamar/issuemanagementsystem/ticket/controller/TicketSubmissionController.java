@@ -5,7 +5,9 @@ import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionExcepti
 import com.kamar.issuemanagementsystem.ticket.service.TicketSubmissionService;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -25,13 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = {"api/v1/tickets/submit"})
 @RequiredArgsConstructor
+@Log4j2
 public class TicketSubmissionController {
 
     private final TicketSubmissionService ticketSubmissionService;
 
 
     @PostMapping(value = {"{ticket_id}"})
-    @Operation(tags = {"Ticket Submission"}, summary = "submit a ticket by id")
+    @Operation(tags = {"Ticket Submission"}, summary = "submit a ticket by id",
+    security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<EntityModel<DtoType>> submitATicket(@PathVariable("ticket_id") long ticketId,
                                                               @AuthenticationPrincipal UserDetails authenticatedUser){
@@ -41,12 +45,9 @@ public class TicketSubmissionController {
             ticketSubmissionService.submitTicket(ticketId, authenticatedUser);
         } catch (TicketSubmissionException e) {
 
-            /*compose a response*/
-            return ResponseEntity.status(HttpStatus.CONFLICT).body (
-                    EntityModel.of(
-                            new InfoDTO(e.getMessage()),
-                            WebMvcLinkBuilder.linkTo(TicketSubmissionController.class).withSelfRel()
-                    ));
+            /*log and compose a response*/
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
 
         return ResponseEntity.ok(

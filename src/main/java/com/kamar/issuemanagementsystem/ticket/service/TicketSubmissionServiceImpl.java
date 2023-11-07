@@ -31,7 +31,7 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
         /*compose the email*/
         String subject = "Ticket Review";
         String message = "Ticket #" + ticket.getTicketId() + " " + ticket.getTitle() +
-                "has been resolved. Please check if it is resolved to your satisfaction and provide the feedback.";
+                ", has been resolved. Please check if it is resolved to your satisfaction and provide the feedback.";
         String messageAdmin = ticket.getAssignedTo().getUsername() + " has submitted ticket #" + ticket.getTicketId() + " " + ticket.getTitle();
 
         /*send notification to the admins*/

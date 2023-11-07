@@ -2,8 +2,8 @@ package com.kamar.issuemanagementsystem.user.service;
 
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
-import com.kamar.issuemanagementsystem.rating.entity.Rating;
-import com.kamar.issuemanagementsystem.rating.repository.RatingRepository;
+import com.kamar.issuemanagementsystem.rating.entity.UserRating;
+import com.kamar.issuemanagementsystem.rating.repository.UserRatingRepository;
 import com.kamar.issuemanagementsystem.user.data.dto.UserActivationDTO;
 import com.kamar.issuemanagementsystem.user.data.dto.UserRegistrationDTO;
 import com.kamar.issuemanagementsystem.user.entity.User;
@@ -15,9 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.beans.Transient;
-import java.util.UUID;
 
 /**
  * the user registration service implementation.
@@ -32,7 +29,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final UserMapper userMapper;
     private final UserExceptionService userExceptionService;
     private final PasswordEncoder passwordEncoder;
-    private final RatingRepository ratingRepository;
+    private final UserRatingRepository userRatingRepository;
     private final DepartmentRepository departmentRepository;
 
     private void sendActivationEmail(String email, String token){
@@ -55,10 +52,10 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         /*encode password*/
         user.setPassword(passwordEncoder.encode(registrationDTO.password()));
         /*get and set the rating*/
-        Rating userRating = user.getRating();
-        userRating.setRatingFor(user.getUsername());
+        UserRating userRating = user.getUserRating();
+//        userRating.setRatingFor(user);
         /*persist the rating and user*/
-        ratingRepository.save(userRating);
+        userRatingRepository.save(userRating);
         userRepository.save(user);
         /*send the activation message*/
         sendActivationEmail(user.getUsername(), user.getActivationToken());

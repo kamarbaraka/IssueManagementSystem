@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.department.data;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -9,6 +10,8 @@ import jakarta.validation.constraints.Size;
 public record DepartmentCreationDto(
 
         @Size(min = 2, max = 50, message = "department name too long")
-        String departmentName
+        String departmentName,
+        @Email
+        String headOfDepartment
 ) implements DepartmentDtoType{
 }

@@ -28,6 +28,7 @@ public class EmailServiceImpl implements EmailService {
 
         /*configure the email*/
         mailMessage.setTo(email);
+        mailMessage.setFrom("no-reply@example.com");
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
 

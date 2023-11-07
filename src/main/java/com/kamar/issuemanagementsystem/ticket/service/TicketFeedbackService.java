@@ -12,5 +12,5 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface TicketFeedbackService {
 
     void sendFeedback(TicketUserFeedbackDTO userFeedbackDTO, long ticketId,
-                      @AuthenticationPrincipal UserDetails authenticatedUser)throws TicketFeedbackException;
+                       UserDetails authenticatedUser)throws TicketFeedbackException;
 }

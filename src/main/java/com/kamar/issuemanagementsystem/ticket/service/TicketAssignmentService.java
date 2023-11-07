@@ -12,7 +12,5 @@ import javax.naming.OperationNotSupportedException;
 public interface TicketAssignmentService {
 
     void assignTo(Ticket ticket) throws OperationNotSupportedException;
-    void referTicketTo( Ticket ticket, String to);
-    void respondToReferralRequest(ReferralRequest referralRequest, boolean response);
 
 }

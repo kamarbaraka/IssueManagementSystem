@@ -23,12 +23,12 @@ public class Reply implements Serializable {
     @Column(nullable = false)
     private String theReply;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "replied_to", insertable = false, updatable = false)
+    @ManyToOne(cascade = {CascadeType.ALL}, optional = false)
+    @JoinColumn(name = "replied_to",  updatable = false)
     private Comment repliedTo;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "replied_to")
+    @ManyToOne(cascade = {CascadeType.ALL}, optional = false)
+    @JoinColumn(name = "replied_by")
     private User repliedBy;
 
     @Column(nullable = false, updatable = false)

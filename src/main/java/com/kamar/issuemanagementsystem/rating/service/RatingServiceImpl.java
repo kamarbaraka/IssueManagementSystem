@@ -4,12 +4,16 @@ import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.rating.data.dto.DepartmentRatingDto;
 import com.kamar.issuemanagementsystem.rating.data.dto.UserRatingDTO;
-import com.kamar.issuemanagementsystem.rating.entity.Rating;
+import com.kamar.issuemanagementsystem.rating.entity.DepartmentPerformanceRating;
+import com.kamar.issuemanagementsystem.rating.entity.UserRating;
 import com.kamar.issuemanagementsystem.rating.exceptions.RatingException;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.stream.IntStream;
 
 /**
  * implementation of the rating service.
@@ -30,9 +34,12 @@ public class RatingServiceImpl implements RatingService {
                 () -> new RatingException("no such user to rate"));
 
         /*get the rating and update it*/
-        Rating userRating = user.getRating();
+        UserRating userRating = user.getUserRating();
         userRating.setNumberOfRatings(userRating.getNumberOfRatings() + 1);
         userRating.setTotalRates(userRating.getTotalRates() + userRatingDTO.Rating());
+        userRating.setRate(
+                ((int) (userRating.getTotalRates() / userRating.getNumberOfRatings()))
+        );
 
         /*apply rating to the user*/
         userRepository.save(user);
@@ -40,19 +47,21 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public void rateDepartment(DepartmentRatingDto departmentRatingDto) throws RatingException {
+    public void rateDepartment(Department department) throws RatingException {
 
-        /*get the department to rate*/
-        Department department = departmentRepository.findById(departmentRatingDto.departmentName()).orElseThrow(
-                () -> new RatingException("no such department to rate")
-        );
+        /*get the members*/
+        Collection<User> members = department.getMembers();
 
-        /*get the rating and set it*/
-        Rating departmentRating = department.getRating();
-        departmentRating.setNumberOfRatings(departmentRating.getNumberOfRatings() + 1);
-        departmentRating.setTotalRates(departmentRating.getTotalRates() + departmentRatingDto.rating());
+        /*set the rating*/
+        department.getPerformanceRating().setNumberOfMembers(members.size());
+        department.getPerformanceRating().setTotalMemberRating(members.parallelStream().map(
+                user -> user.getUserRating().getRate()
+        ).reduce(Integer::sum).orElseThrow(
+                () -> new RatingException("error rating department")
+        ));
 
-        /*apply the rating to the department*/
+        /*update the rating*/
         departmentRepository.save(department);
+
     }
 }

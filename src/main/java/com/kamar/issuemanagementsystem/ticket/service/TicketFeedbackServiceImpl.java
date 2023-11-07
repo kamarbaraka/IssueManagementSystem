@@ -1,5 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.department.entity.Department;
+import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.rating.data.dto.UserRatingDTO;
 import com.kamar.issuemanagementsystem.rating.exceptions.RatingException;
@@ -15,6 +17,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * implementation of the ticket feedback service.
  * @author kamar baraka.*/
@@ -26,15 +30,15 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
     private final TicketManagementService ticketManagementService;
-    private final UserManagementService userManagementService;
     private final RatingService ratingService;
+    private final DepartmentRepository departmentRepository;
 
     private void unsatisfiedNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
         /*compose the email*/
         String subject = "Submission Feedback";
         String message = "Ticket #" + ticket.getTicketId() + " " + ticket.getTitle() +
-                " needs more the following resolution; \n" + userFeedbackDTO.feedback() + ". Please resolve in due time.";
+                " needs more attention: \n\"" + userFeedbackDTO.feedback() + "\". Please resolve it in due time.";
 
         /*send the email*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
@@ -52,7 +56,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
     @Override
     public void sendFeedback(final TicketUserFeedbackDTO userFeedbackDTO, final long ticketId,
-                             @AuthenticationPrincipal UserDetails authenticatedUser) throws TicketFeedbackException {
+                             UserDetails authenticatedUser) throws TicketFeedbackException {
 
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(ticketId);
@@ -69,14 +73,22 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
             ticket.setStatus(TicketStatus.ASSIGNED);
             ticketRepository.save(ticket);
 
+            return;
+
         }
 
         /*update the status and rating*/
         ticket.setStatus(TicketStatus.CLOSED);
         try {
+            /*rate the user*/
             ratingService.rateUser(new UserRatingDTO(
                     ticket.getAssignedTo().getUsername(),
                     userFeedbackDTO.serviceRating()));
+            /*rate the department*/
+            Department department = departmentRepository.findDepartmentByMembersContaining(ticket.getAssignedTo()).orElseThrow(
+                    () -> new TicketFeedbackException("no department to rate")
+            );
+            ratingService.rateDepartment(department);
         } catch (RatingException e) {
             throw new TicketFeedbackException(e.getMessage());
         }

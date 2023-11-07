@@ -87,7 +87,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     public List<User> getAllUsers() {
 
         /*get all users*/
-        return userRepository.findAll(Sort.by(Sort.Direction.DESC, "totalStars"));
+        return userRepository.findAll();
     }
 
     @Override

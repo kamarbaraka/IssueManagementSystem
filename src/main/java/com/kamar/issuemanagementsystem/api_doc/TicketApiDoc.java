@@ -1,8 +1,10 @@
 package com.kamar.issuemanagementsystem.api_doc;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
                 @Tag(name = "User Analysis", description = "Apis for user analysis"),
                 @Tag(name = "Ticket Creation", description = "List of APIs for ticket creation"),
                 @Tag(name = "Ticket Assignment", description = "List of Apis for ticket assignment"),
+                @Tag(name = "Ticket Referral", description = "Refer a ticket"),
                 @Tag(name = "Ticket Submission", description = "Apis for ticket submission"),
                 @Tag(name = "Ticket Management", description = "Apis to manage a ticket"),
                 @Tag(name = "Ticket Feedback", description = "Api to send a feedback on a ticket"),
@@ -39,5 +42,14 @@ import org.springframework.web.bind.annotation.RestController;
                         email = "kamar254baraka@gmail.com")
         )
 )
+
+@SecurityScheme(
+        name = "basicAuth",
+        type = SecuritySchemeType.HTTP,
+        paramName = "Authorization",
+        scheme = "basic",
+        description = "authenticate using the http basic authentication"
+)
 public class TicketApiDoc {
+
 }

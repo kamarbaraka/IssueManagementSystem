@@ -7,7 +7,9 @@ import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = {"api/v1/tickets/management"})
+@Log4j2
 public class TicketManagementController {
 
     private final TicketManagementService ticketManagementService;
@@ -36,13 +39,24 @@ public class TicketManagementController {
 
     @GetMapping(value = {"{id}"})
     @Operation(tags = {"Ticket Creation", "Ticket Assignment", "Ticket Submission", "Ticket Management"},
-            summary = "get a ticket", description = "get a ticket by ID")
+            summary = "get a ticket", description = "get a ticket by ID",
+    security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     public ResponseEntity<EntityModel<DtoType>> getTicketById(@PathVariable("id") long id,
                                                               @AuthenticationPrincipal UserDetails userDetails){
 
-        /*get the ticket*/
-        Ticket ticket = ticketManagementService.getTicketById(id);
+        Ticket ticket;
+        try
+        {
+            /*get the ticket*/
+            ticket = ticketManagementService.getTicketById(id);
+        }catch (Exception e){
+
+            /*log and respond*/
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+
         /*map the ticket*/
         DtoType adminDto = ticketMapper.entityToDTOAdmin(ticket);
         /*construct the response*/

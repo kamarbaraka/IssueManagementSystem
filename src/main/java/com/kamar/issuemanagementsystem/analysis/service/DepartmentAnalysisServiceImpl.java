@@ -34,7 +34,8 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
 
         return allDepartments.parallelStream().reduce(
                         (department, department2) ->
-                                department2.getRating().getRate() > department.getRating().getRate() ? department2 : department)
+                                department2.getPerformanceRating().getRating() > department.getPerformanceRating().getRating()
+                                        ? department2 : department)
                 .map(departmentMapper::mapToDto)
                 .orElseThrow(() -> new AnalysisException("sorry an error  occurred "));
     }
@@ -48,7 +49,8 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
 
         /*get the most performant*/
         return allDepartments.parallelStream().reduce((department, department2) ->
-                        department2.getRating().getTotalRates() > department.getRating().getTotalRates() ? department2 : department)
+                        department2.getPerformanceRating().getTotalMemberRating() > department.getPerformanceRating().
+                                getTotalMemberRating() ? department2 : department)
                 .map(departmentMapper::mapToDto).orElseThrow(() ->
                         new AnalysisException("sorry an error occurred !"));
     }
@@ -61,7 +63,7 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
         Department department = departmentRepository.findById(departmentName).orElseThrow();
         /*get the users*/
         return department.getMembers().parallelStream().reduce((member, member2) ->
-                member2.getRating().getTotalRates() > member.getRating().getTotalRates() ? member2 : member).map(
+                member2.getUserRating().getTotalRates() > member.getUserRating().getTotalRates() ? member2 : member).map(
                 userMapper::userToPresentationDTO
         ).orElseThrow(() -> new AnalysisException("an error occurred!"));
     }
@@ -74,7 +76,7 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
         Department department = departmentRepository.findById(departmentName).orElseThrow();
         /*get the best user*/
         return department.getMembers().parallelStream().reduce((member, member2) ->
-                        member2.getRating().getRate() > member.getRating().getRate() ? member2 : member)
+                        member2.getUserRating().getRate() > member.getUserRating().getRate() ? member2 : member)
                 .map(userMapper::userToPresentationDTO).orElseThrow(
                         () -> new AnalysisException("error occurred!")
                 );

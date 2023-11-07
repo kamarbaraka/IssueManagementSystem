@@ -8,6 +8,7 @@ import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,6 +33,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         /*get the user from context*/
         return ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
+
     private void sendCreationNotification(Ticket ticket){
 
         /*the get ticket link*/

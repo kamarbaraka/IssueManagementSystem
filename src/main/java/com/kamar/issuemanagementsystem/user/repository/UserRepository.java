@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.user.repository;
 
+import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import org.hibernate.type.descriptor.jdbc.VarcharJdbcType;
@@ -27,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     List<User> findUsersByAuthority(Authority authority);
     List<User> findUsersByAuthorityOrderByCreatedOnAsc(Authority authority);
     boolean existsByUsername(String username);
+
 }
+
