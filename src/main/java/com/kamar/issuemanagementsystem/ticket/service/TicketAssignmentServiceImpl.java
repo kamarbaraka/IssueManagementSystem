@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
@@ -32,6 +33,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     private final TicketManagementService ticketManagementService;
     private final EmailService emailService;
     private final DepartmentRepository departmentRepository;
+    private final CompanyProperties company;
 
 
     private UserDetails getAuthenticatedUser(){
@@ -45,17 +47,24 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
         Link ticketLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 TicketManagementController.class).getTicketById(ticket.getTicketId(),
                 getAuthenticatedUser())).withRel("the ticket");
-        String message = "You have been assigned the ticket #" + ticket.getTicketId() + " " + ticket.getTitle() +
-                ". Resolve it before " + ticket.getDeadline() + ". \n" + ticketLink;
+
+        String message = "You have been assigned the ticket #" + ticket.getTicketId()+ " "+ ticket.getTitle() +
+                ". Resolve it before "+ "<h4 style=\"color: red;\">"+ ticket.getDeadline()+ "</h4> <br>"+
+                "  <h4><a href=\""+ ticketLink.getHref()+ "\" >Ticket</a></h4> <br>"+
+                company.endTag();
 
         /*send the message*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
 
         /*compose and send notification to the raiser*/
         String raiserSubject = "Ticket handling";
-        String raiserMessage = "Your ticket #" + ticket.getTicketId() + " \"" + ticket.getTitle() + "\""+
-                " is being handled by the " + departmentRepository.findDepartmentByMembersContaining(ticket.getAssignedTo())+
-                " department.";
+        String raiserMessage = "Dear "+ ticket.getRaisedBy().getUsername()+ ",Your ticket #" + ticket.getTicketId()
+                + " \"" + ticket.getTitle() + "\""+
+                " is being handled by the " + departmentRepository.
+                findDepartmentByMembersContaining(ticket.getAssignedTo()).orElseThrow().getDepartmentName()+
+                " department.<br>"+
+                "Thank you for your patience.<br>"+
+                company.endTag();
 
         emailService.sendEmail(raiserMessage, raiserSubject, ticket.getRaisedBy().getUsername());
 

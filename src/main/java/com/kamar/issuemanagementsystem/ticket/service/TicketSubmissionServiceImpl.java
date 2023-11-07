@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -24,15 +25,20 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
     private final TicketManagementService ticketManagementService;
     private final TicketRepository ticketRepository;
     private final UserManagementService userManagementService;
+    private final  CompanyProperties company;
 
 
     private void submitTicketNotification(final Ticket ticket){
 
         /*compose the email*/
         String subject = "Ticket Review";
-        String message = "Ticket #" + ticket.getTicketId() + " " + ticket.getTitle() +
-                ", has been resolved. Please check if it is resolved to your satisfaction and provide the feedback.";
-        String messageAdmin = ticket.getAssignedTo().getUsername() + " has submitted ticket #" + ticket.getTicketId() + " " + ticket.getTitle();
+        String message = "Dear "+ ticket.getRaisedBy().getUsername()+ ", your ticket #"+ ticket.getTicketId()+ " \""+
+                ticket.getTitle()+ "\", has been resolved. Please check if it is resolved to your satisfaction and provide the feedback.<>br"+
+                company.endTag();
+
+        String messageAdmin = ticket.getAssignedTo().getUsername() + " has submitted ticket #"+ ticket.getTicketId()+
+                " \""+ ticket.getTitle()+ "\".<br>"+
+                company.endTag();
 
         /*send notification to the admins*/
         userManagementService.getUsersByAuthority(Authority.ADMIN).parallelStream()

@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketCreationController;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
@@ -27,6 +28,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
     private final UserRepository userRepository;
+    private final CompanyProperties company;
 
     private UserDetails getAuthenticatedUser(){
 
@@ -39,12 +41,16 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         /*the get ticket link*/
         String linkToTicket = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 TicketManagementController.class).getTicketById(
-                        ticket.getTicketId(), getAuthenticatedUser())).toUriComponentsBuilder().toUriString();
+                        ticket.getTicketId(), getAuthenticatedUser())).withRel("ticket").getHref();
         /*the subject*/
         String subject = "Ticket Raised";
         /*construct the message*/
         String message = ticket.getRaisedBy().getUsername() + " raised a ticket \"" + ticket.getTitle() + "\". #" + ticket.getTicketId()+
-                "\n "+ linkToTicket;
+                " <br> "+
+                " <h5><a href=\""+ linkToTicket+ "\" >Ticket</a></h5> <br>"+
+                "Thank you, <br>"+
+                company.endTag();
+
         /*get all admins and send the admin notification email*/
         userRepository.findUsersByAuthorityOrderByCreatedOn(Authority.ADMIN).ifPresentOrElse(
                 admins ->
@@ -57,7 +63,8 @@ public class TicketCreationServiceImpl implements TicketCreationService {
 
         /*send notification to the raiser*/
         String raiserSubject = "Ticket Success";
-        String raiserMessage = "Thank you for raising your issue. It will be handled within a week.";
+        String raiserMessage = "Dear "+ ticket.getRaisedBy().getUsername()+ ", thank you for raising your issue. <br>"+
+                "It will be handled within a week.<br>"+ company.endTag();
 
         emailService.sendEmail(raiserMessage, raiserSubject, ticket.getRaisedBy().getUsername());
 

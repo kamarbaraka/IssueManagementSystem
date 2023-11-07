@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.config;
 
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties(value = {
-        InnitUserProperties.class
+        InnitUserProperties.class,
+        CompanyProperties.class
 })
 public class ConfigPropertiesConfig {
 }

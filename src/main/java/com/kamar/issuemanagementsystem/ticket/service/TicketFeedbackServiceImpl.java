@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
@@ -32,13 +33,18 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
     private final TicketManagementService ticketManagementService;
     private final RatingService ratingService;
     private final DepartmentRepository departmentRepository;
+    private final CompanyProperties company;
 
     private void unsatisfiedNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
         /*compose the email*/
         String subject = "Submission Feedback";
-        String message = "Ticket #" + ticket.getTicketId() + " " + ticket.getTitle() +
-                " needs more attention: \n\"" + userFeedbackDTO.feedback() + "\". Please resolve it in due time.";
+        String message = "Ticket #"+ ticket.getTicketId()+ " \""+ ticket.getTitle()+ "\" needs more attention: <br>"+
+                "<div style=\"border-radius: 20px; background: grey;\">"+
+                "<p style=\"color: yellow;\">"+
+                userFeedbackDTO.feedback()+
+                "</p><div><br>"+
+                "Please resolve it in due time.<br>"+ company.endTag();
 
         /*send the email*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
@@ -47,8 +53,9 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
         /*compose the email*/
         String subject = "Congratulation!";
-        String message = "Congratulation!, you have managed to resolve ticket #" + ticket.getTicketId() +
-                " " + ticket.getTitle() + ". Your rating is " + userFeedbackDTO.serviceRating();
+        String message = "Congratulation!, you have managed to resolve ticket #"+ ticket.getTicketId()+
+                " \""+ ticket.getTitle()+ "\". Your rating is "+ userFeedbackDTO.serviceRating()+
+                company.endTag();
 
         /*send the email*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());

@@ -19,6 +19,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 
 import javax.sql.DataSource;
@@ -43,13 +45,12 @@ public class SecurityConfig {
             httpBasic.authenticationEntryPoint(entryPoint);
         });
 
-//        httpSecurity.authorizeHttpRequests(requests -> requests.anyRequest().authenticated());
-
         /*configure session management*/
         httpSecurity.sessionManagement(session -> {
-            session.maximumSessions(2);
+            session.maximumSessions(1);
             session.sessionFixation(
-                    SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId);
+                    SessionManagementConfigurer.SessionFixationConfigurer::newSession
+                    );
             session.sessionConcurrency(concurrency -> {
                 concurrency.maximumSessions(1);
                 concurrency.maxSessionsPreventsLogin(true);

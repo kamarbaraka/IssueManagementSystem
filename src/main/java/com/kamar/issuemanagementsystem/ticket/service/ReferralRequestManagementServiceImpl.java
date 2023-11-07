@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.external_resouces.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
@@ -34,6 +35,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
     private final ReferralRequestMapper referralRequestMapper;
+    private final CompanyProperties company;
 
     private void sendReferralRequest(final ReferralRequest referralRequest){
 
@@ -54,8 +56,11 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*compose the email*/
         String subject = "Referral Request";
         String message = referralRequest.getFrom().getUsername()+ " has requested you to handle the ticket #" +
-                referralRequest.getRefferedTicket().getTicketId()+ " "+ referralRequest.getRefferedTicket().getTitle()
-                + " \n"+ acceptRequest+ " \n"+ rejectRequest+ " \n";
+                referralRequest.getRefferedTicket().getTicketId()+ " \""+ referralRequest.getRefferedTicket().getTitle()
+                + "\" <br>"+
+                "<h4 style=\"color: green;\"><a href=\""+ acceptRequest.getHref()+ "\">Accept</a></h4> <br>"+
+                "<h4 style=\"color: red;\"><a href=\""+ rejectRequest.getHref()+ "\">Reject</a></h4> <br>"+
+                company.endTag();
 
         /*send the email*/
         emailService.sendEmail(message, subject, referralRequest.getTo().getUsername());
@@ -71,8 +76,10 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                         .getTicketById(ticket.getTicketId(), authenticatedUser)).withRel("ticket");
 
         String message = "The ticket #" + ticket.getTicketId() + " " + ticket.getTitle()
-                + " is assigned to you upon accepting the referral request. Resolve it before "
-                + ticket.getDeadline() + "\n" + ticketLink;
+                + " is assigned to you upon accepting the referral request. Resolve it before "+
+                "<h4 style=\"color: red;\">" + ticket.getDeadline()+ "</h4> <br>"+
+                "<h4><a href=\""+ ticketLink.getHref()+ "\">Ticket</a></h4> <br>"+
+                company.endTag();
 
         /*send the message*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
@@ -85,10 +92,10 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*set the email*/
         String subject = "Request Accepted";
 
-
         String message = referralRequest.getTo().getUsername() + " accepted your referral request for ticket #"
-                + referralRequest.getRefferedTicket().getTicketId() + " "
-                + referralRequest.getRefferedTicket().getTitle() + "\n" ;
+                + referralRequest.getRefferedTicket().getTicketId() + " \""
+                + referralRequest.getRefferedTicket().getTitle() + "\". <br>"+
+                company.endTag();
 
         /*send message*/
         emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername());
@@ -99,8 +106,9 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*set the email*/
         String subject = "Request Rejected";
         String message = referralRequest.getTo().getUsername() + " rejected your referral request for ticket #"
-                + referralRequest.getRefferedTicket().getTicketId() + " "
-                + referralRequest.getRefferedTicket().getTitle();
+                + referralRequest.getRefferedTicket().getTicketId() + " \""
+                + referralRequest.getRefferedTicket().getTitle()+ "\". <br>"+
+                company.endTag();
 
         /*send notification*/
         emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername());
