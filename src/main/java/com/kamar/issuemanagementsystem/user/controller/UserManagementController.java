@@ -68,7 +68,7 @@ public class UserManagementController {
     @GetMapping(value = {"{username}"})
     @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get a user by username",
     security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER', 'OWNER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@PathVariable("username") String username,
                                                                   @AuthenticationPrincipal UserDetails userDetails){
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @OpenAPIDefinition(
         tags = {
                 @Tag(name = "Utilities", description = "Useful apis"),
+                @Tag(name = "Authentication", description = "Apis for authentication functionalities"),
                 @Tag(name = "User Registration", description = "Apis to register a user"),
                 @Tag(name = "User Activation", description = "Apis to activate a user"),
                 @Tag(name = "User Management", description = "Apis to manage a user"),

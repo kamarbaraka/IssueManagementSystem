@@ -1,4 +1,4 @@
-package com.kamar.issuemanagementsystem.authorization;
+package com.kamar.issuemanagementsystem.authentication;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 import javax.sql.DataSource;
@@ -46,7 +47,7 @@ public class SecurityConfig {
         });
 
         /*configure session management*/
-        httpSecurity.sessionManagement(session -> {
+        /*httpSecurity.sessionManagement(session -> {
             session.maximumSessions(1);
             session.sessionFixation(
                     SessionManagementConfigurer.SessionFixationConfigurer::newSession
@@ -55,10 +56,13 @@ public class SecurityConfig {
                 concurrency.maximumSessions(1);
                 concurrency.maxSessionsPreventsLogin(true);
             });
-        });
+        });*/
+
+//        disable cors
+        httpSecurity.cors(AbstractHttpConfigurer::disable);
 
         /*configure csrf*/
-        httpSecurity.csrf(csrf -> csrf.disable());
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
 
