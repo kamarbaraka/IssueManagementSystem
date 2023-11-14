@@ -22,11 +22,6 @@ public class UserRating implements Serializable {
     @Column(name = "ID", nullable = false, updatable = false)
     private long ratingId;
 
-    /*@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
-            optional = false, orphanRemoval = true)
-    @JoinColumn(name = "username")
-    private User ratingFor;*/
-
     @Column(name = "number_of_ratings", nullable = false)
     private long numberOfRatings = 0;
 

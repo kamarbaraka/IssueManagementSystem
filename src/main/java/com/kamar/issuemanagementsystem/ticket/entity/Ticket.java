@@ -33,9 +33,9 @@ public class Ticket implements Serializable {
     @Size(max = 500)
     private String description;
 
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "attachments")
-//    private final Collection<Attachment> attachments = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "attachments")
+    private final Collection<Attachment> attachments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private TicketPriority priority = TicketPriority.MEDIUM;

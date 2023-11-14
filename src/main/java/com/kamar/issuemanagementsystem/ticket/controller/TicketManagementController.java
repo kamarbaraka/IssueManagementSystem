@@ -18,10 +18,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,6 +40,7 @@ public class TicketManagementController {
             summary = "get a ticket", description = "get a ticket by ID",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getTicketById(@PathVariable("id") long id,
                                                               @AuthenticationPrincipal UserDetails userDetails){
 

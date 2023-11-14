@@ -41,6 +41,7 @@ public class UserRegistrationController {
     @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> registerUser(@Validated @RequestBody UserRegistrationDTO registrationDTO){
 
         /*register the user*/
@@ -72,6 +73,7 @@ public class UserRegistrationController {
     @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> activateUser(@PathVariable(name = "username") String username,
                                                              @RequestBody ActivationSuccessDTO activationDTO){
         UserActivationDTO activationReq = new UserActivationDTO(username, activationDTO.message());

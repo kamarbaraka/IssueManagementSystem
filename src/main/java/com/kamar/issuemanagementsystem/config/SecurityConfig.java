@@ -23,6 +23,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 
 import javax.sql.DataSource;
@@ -54,25 +55,8 @@ public class SecurityConfig {
             session.sessionFixation(
                     SessionManagementConfigurer.SessionFixationConfigurer::newSession
                     );
-            /*session.sessionConcurrency(concurrency -> {
-                concurrency.maximumSessions(1);
-                concurrency.maxSessionsPreventsLogin(true);
-            });*/
         });
 
-
-//        configure cors
-        httpSecurity.cors(cors ->
-            cors.configurationSource(source ->
-            {
-               CorsConfiguration corsConfiguration = new CorsConfiguration();
-               corsConfiguration.addAllowedOrigin("*");
-               corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
-               corsConfiguration.setAllowedHeaders(List.of("*"));
-               corsConfiguration.setAllowCredentials(true);
-               return corsConfiguration;
-            })
-        );
 
         /*configure csrf*/
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
@@ -80,6 +64,7 @@ public class SecurityConfig {
         return httpSecurity.build();
 
     }
+
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository,

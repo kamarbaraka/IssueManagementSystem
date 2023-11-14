@@ -20,10 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -65,6 +62,7 @@ public class TicketReportingController {
     @Operation(tags = {"Ticket Reporting", "Ticket Analysis"}, summary = "Get tickets by the provided status",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByStatus(@PathVariable("status") String status,
                                                                          @AuthenticationPrincipal UserDetails userDetails){
 
@@ -92,6 +90,7 @@ public class TicketReportingController {
     @Operation(tags = {"Ticket Reporting", "Ticket Analysis"}, summary = "get all the tickets in the database",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getAllTickets(@AuthenticationPrincipal UserDetails userDetails){
 
 
@@ -118,6 +117,7 @@ public class TicketReportingController {
     @Operation(tags = {"Ticket Reporting"}, summary = "get tickets by the user and status",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
+    @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByUserAndStatus(@PathVariable("username") String username,
                                                                                 @PathVariable("status") String status,
                                                                                 @AuthenticationPrincipal

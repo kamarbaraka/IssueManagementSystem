@@ -35,6 +35,7 @@ public class TicketFeedbackController {
     @Operation(tags = {"Ticket Feedback", "Ticket Submission"}, summary = "send a feedback on a ticket.",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER', 'EMPLOYEE')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> sendFeedback(@PathVariable("ticket_id") long ticketId,
                                                              @Validated @RequestBody TicketUserFeedbackDTO userFeedbackDTO,
                                                              @AuthenticationPrincipal UserDetails authenticatedUser){

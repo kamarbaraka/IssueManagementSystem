@@ -42,6 +42,7 @@ public class ReferralRequestController {
     @Operation(tags = { "Ticket Referral"}, summary = "respond to a referral", description = "accept or reject ticket referral.",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> respondToReferralRequest(@PathVariable("accept") boolean accept,
                                                                          @PathVariable("id") long id,
                                                                          @AuthenticationPrincipal UserDetails authenticatedUser){
@@ -84,6 +85,7 @@ public class ReferralRequestController {
     @Operation(tags = {"Ticket Referral"},summary = "get referral",description = "get referral by id",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@PathVariable("id") long id){
 
         ReferralRequest referral;
@@ -112,6 +114,7 @@ public class ReferralRequestController {
     @Operation(tags = { "Ticket Referral"}, summary = "refer a ticket", description = "refer a ticket to another user",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@PathVariable("ticketId") long ticketId,
                                                                   @Validated @RequestBody TicketReferralDTO ticketReferralDTO){
 

@@ -50,6 +50,7 @@ public class TicketAssignmentController {
     @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAuthority('ADMIN')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@PathVariable("id") long id,
                                                                 @Validated @RequestBody TicketAssignmentDTO ticketAssignmentDTO,
                                                                 @AuthenticationPrincipal UserDetails userDetails){

@@ -44,6 +44,7 @@ public class DepartmentManagementController {
             @ApiResponse(responseCode = "201", description = "successfully created")
     })
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createDepartment(@RequestBody DepartmentCreationDto departmentCreationDto){
 
         /*create the department*/
@@ -81,6 +82,7 @@ public class DepartmentManagementController {
             }
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getDepartmentByName(@PathVariable("department_name") String departmentName){
 
         /*get the department*/
@@ -108,6 +110,7 @@ public class DepartmentManagementController {
             security = {@SecurityRequirement(name = "basicAuth", scopes = {"read:add"})}
     )
     @PreAuthorize("hasAuthority('ADMIN')")
+    @CrossOrigin
     public ResponseEntity<Object> addUsersToDepartment(@Validated @RequestBody AddUserToDepartmentDTO addUserToDepartmentDTO){
 
         /*add users to department*/

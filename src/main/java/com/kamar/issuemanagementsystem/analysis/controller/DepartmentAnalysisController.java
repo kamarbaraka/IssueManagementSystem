@@ -22,10 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * the department analysis controller.
@@ -53,6 +50,7 @@ public class DepartmentAnalysisController {
             }
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> mostPerformantDepartment(){
 
         DepartmentDto mostPerformantDept;
@@ -97,6 +95,7 @@ public class DepartmentAnalysisController {
             }
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> bestPerformantDepartment(){
 
         DepartmentDto bestPerformantDept;
@@ -140,6 +139,7 @@ public class DepartmentAnalysisController {
             }
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> bestEmployeeInDepartment(@PathVariable("department_name") String departmentName,
                                                                          @AuthenticationPrincipal UserDetails userDetails){
 
@@ -182,6 +182,7 @@ public class DepartmentAnalysisController {
             }
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> mostPerformantEmployeeInDepartment(@PathVariable("department_name") String departmentName,
                                                                          @AuthenticationPrincipal UserDetails userDetails){
 

@@ -46,7 +46,6 @@ public class AppInitConfig {
             user.setPassword(passwordEncoder.encode(innitUserProperties.password()));
             user.setAuthority(Authority.OWNER);
             user.setEnabled(true);
-//            user.getUserRating().setRatingFor(user);
 
             /*persist the rating and user*/
             userRepository.save(user);
@@ -56,7 +55,6 @@ public class AppInitConfig {
             department.setDepartmentName(innitUserProperties.departmentName());
             department.setHeadOfDepartment(user);
             department.getMembers().add(user);
-//            department.getPerformanceRating().setDepartment(department);
 
             /*persist the rating and department*/
             departmentRepository.save(department);

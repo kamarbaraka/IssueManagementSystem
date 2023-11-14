@@ -1,6 +1,9 @@
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
+import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
+import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
+import com.kamar.issuemanagementsystem.attachment.utils.AttachmentMapperImpl;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -18,12 +21,15 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * the controller for ticket creation.
@@ -39,13 +45,15 @@ public class TicketCreationController {
     private final UserManagementService userManagementService;
     private final TicketCreationService ticketCreationService;
     private final InnitUserProperties innitUserProperties;
+    private final AttachmentMapperImpl attachmentMapper;
 
     /**
      * create a {@link }*/
-    @PostMapping
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
                                                             @Validated @RequestBody TicketCreationDTO ticketCreationDTO){
         Ticket savedTicket;
@@ -54,6 +62,7 @@ public class TicketCreationController {
         {
             /*map the dto to entity*/
             Ticket raisedTicket = ticketMapper.dtoToEntity(ticketCreationDTO);
+
             /*set the necessary properties*/
             raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
             raisedTicket.setAssignedTo(userManagementService.getUserByUsername(innitUserProperties.username()));

@@ -42,6 +42,7 @@ public class UserManagementController {
     @Operation(tags = {"User Management", "User Reporting"}, summary = "get all users",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getAllUsers(@AuthenticationPrincipal UserDetails userDetails){
 
         List<User> allUsers;
@@ -69,6 +70,7 @@ public class UserManagementController {
     @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get a user by username",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("isAuthenticated()")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@PathVariable("username") String username,
                                                                   @AuthenticationPrincipal UserDetails userDetails){
 
@@ -110,6 +112,7 @@ public class UserManagementController {
     @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get users by their authority",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAuthority('ADMIN')")
+    @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getUsersByAuthority(@PathVariable("authority") String authority,
                                                                           @AuthenticationPrincipal UserDetails userDetails){
 
@@ -157,6 +160,7 @@ public class UserManagementController {
     @Operation(tags = {"User Management"}, summary = "elevate a user authority",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> elevateUser(@PathVariable("authority") String authority,
                                                             @PathVariable("username") String username){
 
