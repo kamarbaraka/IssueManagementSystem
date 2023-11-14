@@ -21,10 +21,12 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * the security configuration.
@@ -47,19 +49,30 @@ public class SecurityConfig {
         });
 
         /*configure session management*/
-        /*httpSecurity.sessionManagement(session -> {
+        httpSecurity.sessionManagement(session -> {
             session.maximumSessions(1);
             session.sessionFixation(
                     SessionManagementConfigurer.SessionFixationConfigurer::newSession
                     );
-            session.sessionConcurrency(concurrency -> {
+            /*session.sessionConcurrency(concurrency -> {
                 concurrency.maximumSessions(1);
                 concurrency.maxSessionsPreventsLogin(true);
-            });
-        });*/
+            });*/
+        });
 
-//        disable cors
-        httpSecurity.cors(AbstractHttpConfigurer::disable);
+
+//        configure cors
+        httpSecurity.cors(cors ->
+            cors.configurationSource(source ->
+            {
+               CorsConfiguration corsConfiguration = new CorsConfiguration();
+               corsConfiguration.addAllowedOrigin("*");
+               corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+               corsConfiguration.setAllowedHeaders(List.of("*"));
+               corsConfiguration.setAllowCredentials(true);
+               return corsConfiguration;
+            })
+        );
 
         /*configure csrf*/
         httpSecurity.csrf(AbstractHttpConfigurer::disable);

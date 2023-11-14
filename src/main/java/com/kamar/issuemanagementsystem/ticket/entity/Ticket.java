@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.entity;
 
+import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.ticket.data.TicketPriority;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.user.entity.User;
@@ -9,6 +10,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * ticket entity.
@@ -29,6 +32,10 @@ public class Ticket implements Serializable {
 
     @Size(max = 500)
     private String description;
+
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "attachments")
+//    private final Collection<Attachment> attachments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private TicketPriority priority = TicketPriority.MEDIUM;

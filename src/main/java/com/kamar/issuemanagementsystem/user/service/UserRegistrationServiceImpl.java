@@ -47,6 +47,10 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Override
     public void registerUser(UserRegistrationDTO registrationDTO) {
 
+        /*check if user exists*/
+        if (userRepository.existsById(registrationDTO.username())) {
+            return;
+        }
         /*convert the dto to user*/
         User user = userMapper.dtoToEntity(registrationDTO);
         /*encode password*/
