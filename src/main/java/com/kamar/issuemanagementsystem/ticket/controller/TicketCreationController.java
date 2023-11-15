@@ -28,6 +28,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -45,17 +47,20 @@ public class TicketCreationController {
     private final UserManagementService userManagementService;
     private final TicketCreationService ticketCreationService;
     private final InnitUserProperties innitUserProperties;
-    private final AttachmentMapperImpl attachmentMapper;
 
     /**
      * create a {@link }*/
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.MULTIPART_MIXED_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
-                                                            @Validated @RequestBody TicketCreationDTO ticketCreationDTO){
+                                                             @RequestParam String title,
+                                                             @RequestParam String description,
+                                                             @RequestBody List<MultipartFile> attachment){
+
+        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, attachment);
         Ticket savedTicket;
 
         try

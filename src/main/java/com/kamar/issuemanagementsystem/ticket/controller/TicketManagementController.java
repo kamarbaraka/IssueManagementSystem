@@ -1,6 +1,8 @@
 package com.kamar.issuemanagementsystem.ticket.controller;
 
+import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
+import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.service.TicketManagementService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
@@ -13,6 +15,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +24,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileOutputStream;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -35,7 +41,7 @@ public class TicketManagementController {
     private final TicketManagementService ticketManagementService;
     private final TicketMapper ticketMapper;
 
-    @GetMapping(value = {"{id}"})
+    @GetMapping(value = {"{id}"}, produces = {MediaType.MULTIPART_RELATED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Creation", "Ticket Assignment", "Ticket Submission", "Ticket Management"},
             summary = "get a ticket", description = "get a ticket by ID",
     security = {@SecurityRequirement(name = "basicAuth")})
@@ -56,8 +62,10 @@ public class TicketManagementController {
             return ResponseEntity.notFound().build();
         }
 
+
+
         /*map the ticket*/
-        DtoType adminDto = ticketMapper.entityToDTOAdmin(ticket);
+        TicketAdminPresentationDTO adminDto = ticketMapper.entityToDTOAdmin(ticket);
         /*construct the response*/
         EntityModel<DtoType> response = EntityModel.of(adminDto);
         /*add links*/
@@ -85,7 +93,13 @@ public class TicketManagementController {
 
         }
 
+        /*set the headers*/
+        /*HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentLength(adminDto.attachments().stream().map(attachment -> attachment.length)
+                .reduce(Integer::sum).orElseThrow());
+        httpHeaders.setContentDispositionFormData("attachment", "attachment.pdf");*/
+
         /*return response*/
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().body(response);
     }
 }

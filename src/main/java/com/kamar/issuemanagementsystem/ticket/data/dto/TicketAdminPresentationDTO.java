@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.ticket.data.dto;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * ticket state exposure for admin.
@@ -16,6 +17,7 @@ public record TicketAdminPresentationDTO(
         String status,
         String raisedBy,
         String assignedTo,
-        String deadline
+        String deadline,
+        List<byte[]> attachments
 ) implements DtoType, Serializable {
 }

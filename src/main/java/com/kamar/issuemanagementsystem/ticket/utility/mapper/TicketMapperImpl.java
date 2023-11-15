@@ -9,7 +9,16 @@ import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * implementation of the ticket mapper.
@@ -45,6 +54,17 @@ public class TicketMapperImpl implements TicketMapper {
     @Override
     public TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket) {
 
+        /*get attachments*/
+        /*check if ticket has attachment and create a download link if present*/
+        Collection<Attachment> attachments = ticket.getAttachments();
+        List<byte[]> attachmentStream = new ArrayList<>();
+
+        if (!attachments.isEmpty()) {
+
+            attachmentStream = attachments.parallelStream().map(Attachment::getContent).map(this::convertToBytes).toList();
+
+        }
+
         if (ticket.getAssignedTo() == null || ticket.getDeadline() == null){
             return new TicketAdminPresentationDTO(
                 ticket.getTitle(),
@@ -53,8 +73,10 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
                 "not assigned yet",
-                "not assigned yet");
+                "not assigned yet",
+                    attachmentStream);
         }
+
         /*map the dto*/
         return new TicketAdminPresentationDTO(
                 ticket.getTitle(),
@@ -63,8 +85,18 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
                 ticket.getAssignedTo().getUsername(),
-                ticket.getDeadline().toString()
+                ticket.getDeadline().toString(),
+                attachmentStream
         );
 
+    }
+
+    private byte[] convertToBytes(Blob blob){
+
+        try {
+            return blob.getBytes(1, ((int) blob.length()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

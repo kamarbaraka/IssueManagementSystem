@@ -3,6 +3,9 @@ package com.kamar.issuemanagementsystem.attachment.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.sql.Blob;
+
 /**
  * the attachment entity.
  * @author kamar baraka.*/
@@ -20,5 +23,6 @@ public class Attachment {
 
     private String contentType;
 
-    private byte[] content;
+    @Lob
+    private Blob content;
 }
