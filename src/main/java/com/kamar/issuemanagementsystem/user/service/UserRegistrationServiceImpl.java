@@ -1,7 +1,8 @@
 package com.kamar.issuemanagementsystem.user.service;
 
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
-import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.rating.entity.UserRating;
 import com.kamar.issuemanagementsystem.rating.repository.UserRatingRepository;
 import com.kamar.issuemanagementsystem.user.data.dto.UserActivationDTO;
@@ -30,16 +31,18 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final UserExceptionService userExceptionService;
     private final PasswordEncoder passwordEncoder;
     private final UserRatingRepository userRatingRepository;
-    private final DepartmentRepository departmentRepository;
+    private final CompanyProperties companyProperties;
 
     private void sendActivationEmail(String email, String token){
 
         /*set the email and message*/
         String subject = "TMS account activation";
-        String message = "Use the token to activate your account  "+ token;
+        String message = "Use the token to activate your account  "+
+                "<h3 style='color: blue;'>"+ token+ "<h3> <br>"+
+                companyProperties.endTag();
 
         /*send the activation message*/
-        emailService.sendEmail(message, subject, email);
+        emailService.sendEmail(message, subject, email, null);
 
     }
 
@@ -84,9 +87,11 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         /*send email*/
         String subject = "activation successful";
-        String message = "account activation successful. Your username is " + user.getUsername() +
-                ". Keep this information safe.";
-        emailService.sendEmail(message, subject, user.getUsername());
+        String message = "account activation successful. Your username is <h3 style='color: blue;'>"+
+                user.getUsername()+ ".<h3> <br>"+
+                "Keep this information safe. <br>"+
+                companyProperties.endTag();
+        emailService.sendEmail(message, subject, user.getUsername(), null);
 
     }
 }

@@ -3,7 +3,8 @@ package com.kamar.issuemanagementsystem.ticket.service;
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
-import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
+import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.rating.data.dto.UserRatingDTO;
 import com.kamar.issuemanagementsystem.rating.exceptions.RatingException;
 import com.kamar.issuemanagementsystem.rating.service.RatingService;
@@ -12,13 +13,12 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketUserFeedbackDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketFeedbackException;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
-import com.kamar.issuemanagementsystem.user.service.UserManagementService;
+import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * implementation of the ticket feedback service.
@@ -34,6 +34,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
     private final RatingService ratingService;
     private final DepartmentRepository departmentRepository;
     private final CompanyProperties company;
+    private final TicketUtilities ticketUtilities;
 
     private void unsatisfiedNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
@@ -46,8 +47,11 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
                 "</p><div><br>"+
                 "Please resolve it in due time.<br>"+ company.endTag();
 
+        /*get attachments*/
+        List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
+
         /*send the email*/
-        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
+        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), attachments);
     }
     private void satisfactionNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
@@ -58,7 +62,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
                 company.endTag();
 
         /*send the email*/
-        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
+        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), null);
     }
 
     @Override

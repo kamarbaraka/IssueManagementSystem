@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.config;
 
-import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.service.UserManagementServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,17 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-
-
-import javax.sql.DataSource;
-import java.util.List;
 
 /**
  * the security configuration.
@@ -68,9 +58,10 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository,
-                                                 EmailService emailService){
+                                                 EmailService emailService,
+                                                 CompanyProperties companyProperties){
 
-        return new UserManagementServiceImpl(userRepository, emailService);
+        return new UserManagementServiceImpl(userRepository, emailService, companyProperties);
 
     }
 

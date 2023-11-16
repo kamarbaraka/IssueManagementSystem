@@ -1,7 +1,8 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
-import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
+import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.data.dto.ReferralRequestDTO;
@@ -11,6 +12,7 @@ import com.kamar.issuemanagementsystem.ticket.exceptions.ReferralRequestExceptio
 import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestRepository;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
+import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
@@ -21,6 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * implementation of the referral management service.
@@ -36,6 +40,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private final TicketRepository ticketRepository;
     private final ReferralRequestMapper referralRequestMapper;
     private final CompanyProperties company;
+    private final TicketUtilities ticketUtilities;
 
     private void sendReferralRequest(final ReferralRequest referralRequest){
 
@@ -63,7 +68,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 company.endTag();
 
         /*send the email*/
-        emailService.sendEmail(message, subject, referralRequest.getTo().getUsername());
+        emailService.sendEmail(message, subject, referralRequest.getTo().getUsername(), null);
     }
 
     private void receiveAcceptedRequestNotification(Ticket ticket, UserDetails authenticatedUser){
@@ -81,8 +86,11 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 "<h4><a href=\""+ ticketLink.getHref()+ "\">Ticket</a></h4> <br>"+
                 company.endTag();
 
+        /*get attachments*/
+        List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
+
         /*send the message*/
-        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
+        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), attachments);
 
 
     }
@@ -98,7 +106,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 company.endTag();
 
         /*send message*/
-        emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername());
+        emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername(), null);
     }
 
     private void sendRejectedRequestNotification(ReferralRequest referralRequest){
@@ -111,7 +119,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 company.endTag();
 
         /*send notification*/
-        emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername());
+        emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername(), null);
     }
 
     private ReferralRequest createAReferralRequest(ReferralRequest referralRequest)

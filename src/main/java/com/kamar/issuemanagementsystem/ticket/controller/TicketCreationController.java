@@ -50,7 +50,7 @@ public class TicketCreationController {
 
     /**
      * create a {@link }*/
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.MULTIPART_MIXED_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
@@ -71,7 +71,7 @@ public class TicketCreationController {
             /*set the necessary properties*/
             raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
             raisedTicket.setAssignedTo(userManagementService.getUserByUsername(innitUserProperties.username()));
-            /*create the user*/
+            /*create the ticket*/
             savedTicket = ticketCreationService.createTicket(raisedTicket);
         }catch (Exception e){
 

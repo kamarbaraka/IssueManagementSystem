@@ -1,7 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
-import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionException;
@@ -42,10 +42,10 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
 
         /*send notification to the admins*/
         userManagementService.getUsersByAuthority(Authority.ADMIN).parallelStream()
-                .forEach(user -> emailService.sendEmail(messageAdmin, subject, user.getUsername()));
+                .forEach(user -> emailService.sendEmail(messageAdmin, subject, user.getUsername(), null));
 
         /*send the email to the user*/
-        emailService.sendEmail(message, subject, ticket.getRaisedBy().getUsername());
+        emailService.sendEmail(message, subject, ticket.getRaisedBy().getUsername(), null);
 
     }
 

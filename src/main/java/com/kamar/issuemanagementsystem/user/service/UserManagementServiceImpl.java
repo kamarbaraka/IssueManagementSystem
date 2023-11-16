@@ -1,11 +1,11 @@
 package com.kamar.issuemanagementsystem.user.service;
 
-import com.kamar.issuemanagementsystem.external_resouces.EmailService;
+import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +21,18 @@ public class UserManagementServiceImpl implements UserManagementService {
     
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final CompanyProperties companyProperties;
 
     private void elevationNotification(String username, Authority authority){
 
         /*construct email*/
         String subject = "Elevation Notice";
-        String message = "Hello " + username + ", you have been elevated to an " + authority.getAuthority();
+        String message = "Hello " + username + ", you have been elevated to an "+
+                authority.getAuthority()+
+                ". <br>"+ companyProperties.endTag();
 
         /*send email*/
-        emailService.sendEmail(message, subject, username);
+        emailService.sendEmail(message, subject, username, null);
     }
 
     @Override

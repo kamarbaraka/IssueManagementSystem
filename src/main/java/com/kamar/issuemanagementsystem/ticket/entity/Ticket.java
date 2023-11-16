@@ -5,6 +5,8 @@ import com.kamar.issuemanagementsystem.ticket.data.TicketPriority;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -51,6 +53,7 @@ public class Ticket implements Serializable {
     @JoinColumn(name = "assigned_to")
     private User assignedTo ;
 
+    @FutureOrPresent(message = "deadline must be in the future.")
     private LocalDate deadline;
 
     @Column(nullable = false, updatable = false)

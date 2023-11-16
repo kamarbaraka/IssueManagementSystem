@@ -2,15 +2,12 @@ package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
-import com.kamar.issuemanagementsystem.external_resouces.EmailService;
-import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
-import com.kamar.issuemanagementsystem.ticket.controller.TicketCreationController;
+import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
+import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
-import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
-import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestRepository;
+import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import com.kamar.issuemanagementsystem.user.data.Authority;
-import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
@@ -20,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
+import java.util.List;
 
 /**
  * implementation of the ticket assignment service.
@@ -34,6 +32,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     private final EmailService emailService;
     private final DepartmentRepository departmentRepository;
     private final CompanyProperties company;
+    private final TicketUtilities ticketUtilities;
 
 
     private UserDetails getAuthenticatedUser(){
@@ -53,8 +52,11 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
                 "  <h4><a href=\""+ ticketLink.getHref()+ "\" >Ticket</a></h4> <br>"+
                 company.endTag();
 
+        /*get attachments*/
+        List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
+
         /*send the message*/
-        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername());
+        emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), attachments);
 
         /*compose and send notification to the raiser*/
         String raiserSubject = "Ticket handling";
@@ -66,7 +68,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
                 "Thank you for your patience.<br>"+
                 company.endTag();
 
-        emailService.sendEmail(raiserMessage, raiserSubject, ticket.getRaisedBy().getUsername());
+        emailService.sendEmail(raiserMessage, raiserSubject, ticket.getRaisedBy().getUsername(), null);
 
     }
 

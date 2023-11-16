@@ -6,19 +6,15 @@ import com.kamar.issuemanagementsystem.attachment.utils.AttachmentMapper;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
+import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * implementation of the ticket mapper.
@@ -29,6 +25,7 @@ import static java.util.stream.Collectors.toList;
 public class TicketMapperImpl implements TicketMapper {
 
     private final AttachmentMapper attachmentMapper;
+    private final TicketUtilities ticketUtilities;
 
     @Override
     public Ticket dtoToEntity(TicketCreationDTO ticketCreationDTO) {
@@ -61,11 +58,13 @@ public class TicketMapperImpl implements TicketMapper {
 
         if (!attachments.isEmpty()) {
 
-            attachmentStream = attachments.parallelStream().map(Attachment::getContent).map(this::convertToBytes).toList();
+            attachmentStream = attachments.parallelStream()
+                    .map(Attachment::getContent)
+                    .map(ticketUtilities::convertBlobToBytes).toList();
 
         }
 
-        if (ticket.getAssignedTo() == null || ticket.getDeadline() == null){
+        if (ticket.getDeadline() == null){
             return new TicketAdminPresentationDTO(
                 ticket.getTitle(),
                 ticket.getDescription(),
@@ -89,14 +88,5 @@ public class TicketMapperImpl implements TicketMapper {
                 attachmentStream
         );
 
-    }
-
-    private byte[] convertToBytes(Blob blob){
-
-        try {
-            return blob.getBytes(1, ((int) blob.length()));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -4,6 +4,8 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDT
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 
+import java.sql.Blob;
+
 /**
  * the ticket mapper.
  * @author kamar baraka.*/
@@ -12,4 +14,5 @@ public interface TicketMapper {
 
     Ticket dtoToEntity(TicketCreationDTO ticketCreationDTO);
     TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket);
+
 }
