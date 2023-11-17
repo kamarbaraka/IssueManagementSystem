@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.ticket.data.dto;
 
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
+import jakarta.validation.constraints.Email;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
 
 public record TicketReferralDTO(
 
+        @Email
         String To
 ) implements DtoType, Serializable {
 }

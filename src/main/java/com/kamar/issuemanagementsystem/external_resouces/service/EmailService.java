@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface EmailService {
 
-    boolean authenticateEmail(String email);
+    boolean checkEmailExists(String email);
 
-    boolean sendEmail(String message, String subject, String email, List<AttachmentResourceDto> attachments);
+    void sendEmail(String message, String subject, String email, List<AttachmentResourceDto> attachments);
 }

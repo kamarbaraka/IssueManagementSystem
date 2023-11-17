@@ -48,11 +48,14 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     @Transactional
     @Override
-    public void registerUser(UserRegistrationDTO registrationDTO) {
+    public void registerUser(UserRegistrationDTO registrationDTO) throws UserException {
+
 
         /*check if user exists*/
-        if (userRepository.existsById(registrationDTO.username())) {
-            return;
+        if ( userRepository.existsById(registrationDTO.username())) {
+
+            /*throw an exception*/
+            throw new UserException("user exists or the email is not valid");
         }
         /*convert the dto to user*/
         User user = userMapper.dtoToEntity(registrationDTO);
@@ -60,7 +63,6 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         user.setPassword(passwordEncoder.encode(registrationDTO.password()));
         /*get and set the rating*/
         UserRating userRating = user.getUserRating();
-//        userRating.setRatingFor(user);
         /*persist the rating and user*/
         userRatingRepository.save(userRating);
         userRepository.save(user);

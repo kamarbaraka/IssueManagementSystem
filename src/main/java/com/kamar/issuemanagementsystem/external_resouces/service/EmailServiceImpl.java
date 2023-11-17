@@ -2,10 +2,13 @@ package com.kamar.issuemanagementsystem.external_resouces.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
-import jakarta.mail.MessagingException;
+import com.sun.mail.smtp.SMTPTransport;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -26,13 +29,60 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender javaMailSender;
     private final CompanyProperties company;
 
+    @Value("${spring.mail.username}")
+    private String emailUsername;
+    @Value("${spring.mail.password}")
+    private String emailPassword;
+    @Value("${spring.mail.host}")
+    private String emailHost;
+    @Value("${spring.mail.port}")
+    private int emailPort;
+
     @Override
-    public boolean authenticateEmail(String email) {
+    public boolean checkEmailExists(String email) {
+
+        try
+        {
+            /*create the mime message and set the recipient*/
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            mimeMessage.setRecipients(Message.RecipientType.TO, email);
+
+            /*get the session*/
+            Session session = mimeMessage.getSession();
+
+            /*get the transport and connect*/
+            Transport smtpTransport = session.getTransport("smtp");
+
+            smtpTransport.connect(emailHost, emailPort, emailUsername, emailPassword);
+
+            /*verify the email exists*/
+
+            /*close the connection*/
+            smtpTransport.close();
+
+            return true;
+        }catch (NoSuchProviderException e){
+
+            /*log*/
+            log.error(e.getMessage());
+
+        }catch (MessagingException e){
+
+            /*check error if contains a code for email doesn't exist*/
+            if (e.getMessage().contains("550 5.1.1")) {
+                /*log*/
+                log.error(e.getMessage());
+                return false;
+            }
+            /*log*/
+            log.error(e.getMessage());
+        }
+
         return false;
     }
 
     @Override
-    public boolean sendEmail(String message, String subject, String email, List<AttachmentResourceDto> attachments) {
+    public void sendEmail(String message, String subject, String email, List<AttachmentResourceDto> attachments) {
 
         /*configure the email*/
 
@@ -44,7 +94,6 @@ public class EmailServiceImpl implements EmailService {
 
             /*log*/
             log.error(e.getMessage());
-            return false;
         }
 
 
@@ -81,6 +130,5 @@ public class EmailServiceImpl implements EmailService {
         /*send the email*/
         javaMailSender.send(mimeMessage);
 
-        return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.config;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.cors.AppCorsConfigurationSourceImpl;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.service.UserManagementServiceImpl;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
  * the security configuration.
@@ -30,7 +32,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    @Qualifier("customAuthenticationEntryPoint")
-                                                   AuthenticationEntryPoint entryPoint
+                                                   AuthenticationEntryPoint entryPoint,
+                                                   @Qualifier("appCorsConfigurationSourceImpl")
+                                                   AppCorsConfigurationSourceImpl corsConfigurationSource
                                                    ) throws Exception{
 
         /*configure authentication method*/
@@ -47,6 +51,7 @@ public class SecurityConfig {
                     );
         });
 
+        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource));
 
         /*configure csrf*/
         httpSecurity.csrf(AbstractHttpConfigurer::disable);

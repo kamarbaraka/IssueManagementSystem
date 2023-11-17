@@ -9,12 +9,16 @@ import com.kamar.issuemanagementsystem.ticket.service.TicketManagementService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,13 +42,14 @@ public class ReferralRequestController {
 
     /**
      * respond to referral request*/
-    @GetMapping(value = {"{id}/{accept}"})
+    @GetMapping
     @Operation(tags = { "Ticket Referral"}, summary = "respond to a referral", description = "accept or reject ticket referral.",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> respondToReferralRequest(@PathVariable("accept") boolean accept,
-                                                                         @PathVariable("id") long id,
+    public ResponseEntity<EntityModel<DtoType>> respondToReferralRequest(@RequestParam("accept") boolean accept,
+                                                                         @RequestParam("id") long id,
                                                                          @AuthenticationPrincipal UserDetails authenticatedUser){
         /*map to Referral request*/
 
@@ -81,12 +86,12 @@ public class ReferralRequestController {
     /**
      * get referral request by id.
      * @author kamar baraka.*/
-    @GetMapping(value = {"{id}"})
+    @GetMapping(value = {"byId"})
     @Operation(tags = {"Ticket Referral"},summary = "get referral",description = "get referral by id",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@PathVariable("id") long id){
+    public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@RequestParam("id") long id){
 
         ReferralRequest referral;
 
@@ -110,13 +115,17 @@ public class ReferralRequestController {
 
     }
 
-    @PostMapping(value = {"refer/{ticketId}"})
+    @PostMapping(value = {"refer"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = { "Ticket Referral"}, summary = "refer a ticket", description = "refer a ticket to another user",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@PathVariable("ticketId") long ticketId,
-                                                                  @Validated @RequestBody TicketReferralDTO ticketReferralDTO){
+    public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@RequestParam("ticketId") long ticketId,
+                                                                  @Validated @RequestParam("to") @Email String username){
+
+        /*create a dto*/
+        TicketReferralDTO ticketReferralDTO = new TicketReferralDTO(username);
 
         Ticket ticket;
         try

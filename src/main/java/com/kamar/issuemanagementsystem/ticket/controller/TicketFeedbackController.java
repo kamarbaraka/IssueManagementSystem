@@ -6,12 +6,17 @@ import com.kamar.issuemanagementsystem.ticket.exceptions.TicketFeedbackException
 import com.kamar.issuemanagementsystem.ticket.service.TicketFeedbackService;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,14 +36,21 @@ public class TicketFeedbackController {
 
     private final TicketFeedbackService ticketFeedbackService;
 
-    @PostMapping(value = {"{ticket_id}"})
+    @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = {"Ticket Feedback", "Ticket Submission"}, summary = "send a feedback on a ticket.",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER', 'EMPLOYEE')")
+    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> sendFeedback(@PathVariable("ticket_id") long ticketId,
-                                                             @Validated @RequestBody TicketUserFeedbackDTO userFeedbackDTO,
+    public ResponseEntity<EntityModel<DtoType>> sendFeedback(@RequestParam("ticket_id") long ticketId,
+                                                             @Validated @RequestParam("feedback") String feedback,
+                                                             @Validated @RequestParam("satisfied") boolean satisfied,
+                                                             @Validated @RequestParam("rating") @Max(value = 5, message = "max rating is 5")
+                                                             @Min(value = 0) int rating,
                                                              @AuthenticationPrincipal UserDetails authenticatedUser){
+
+        /*create a dto*/
+        TicketUserFeedbackDTO userFeedbackDTO = new TicketUserFeedbackDTO(feedback, satisfied, rating);
 
         /*send the feedback*/
         try {

@@ -41,13 +41,13 @@ public class TicketManagementController {
     private final TicketManagementService ticketManagementService;
     private final TicketMapper ticketMapper;
 
-    @GetMapping(value = {"{id}"}, produces = {MediaType.MULTIPART_RELATED_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping( produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Creation", "Ticket Assignment", "Ticket Submission", "Ticket Management"},
             summary = "get a ticket", description = "get a ticket by ID",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> getTicketById(@PathVariable("id") long id,
+    public ResponseEntity<EntityModel<DtoType>> getTicketById(@RequestParam("id") long id,
                                                               @AuthenticationPrincipal UserDetails userDetails){
 
         Ticket ticket;

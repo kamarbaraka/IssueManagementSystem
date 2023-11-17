@@ -58,12 +58,12 @@ public class TicketReportingController {
         }).toList();
     }
 
-    @GetMapping(value = {"status/{status}"})
+    @GetMapping(value = {"status"})
     @Operation(tags = {"Ticket Reporting", "Ticket Analysis"}, summary = "Get tickets by the provided status",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'OWNER')")
     @CrossOrigin
-    public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByStatus(@PathVariable("status") String status,
+    public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByStatus(@RequestParam("status") String status,
                                                                          @AuthenticationPrincipal UserDetails userDetails){
 
         List<Ticket> tickets;
@@ -71,7 +71,7 @@ public class TicketReportingController {
         try
         {
             /*get tickets by status*/
-            tickets = ticketReportingService.ticketsByStatus(TicketStatus.valueOf(status), userDetails);
+            tickets = ticketReportingService.ticketsByStatus(TicketStatus.valueOf(status.toUpperCase()), userDetails);
         }catch (Exception e){
 
             /*log and respond*/
@@ -113,13 +113,13 @@ public class TicketReportingController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = {"users/{username}/status/{status}"})
+    @GetMapping(value = {"users/status"})
     @Operation(tags = {"Ticket Reporting"}, summary = "get tickets by the user and status",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByUserAndStatus(@PathVariable("username") String username,
-                                                                                @PathVariable("status") String status,
+    public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByUserAndStatus(@RequestParam("username") String username,
+                                                                                @RequestParam("status") String status,
                                                                                 @AuthenticationPrincipal
                                                                                     UserDetails userDetails){
 
@@ -131,7 +131,12 @@ public class TicketReportingController {
             /*get user*/
             currentUser = userManagementService.getUserByUsername(userDetails.getUsername());
             /*get the tickets*/
-            tickets = ticketReportingService.userTicketsByStatus(currentUser, TicketStatus.valueOf(status));
+            if (userDetails.getAuthorities().contains(Authority.ADMIN)) {
+                User user = userManagementService.getUserByUsername(username);
+                tickets = ticketReportingService.userTicketsByStatus(user, TicketStatus.valueOf(status.toUpperCase()));
+            }
+            else
+                tickets = ticketReportingService.userTicketsByStatus(currentUser, TicketStatus.valueOf(status.toUpperCase()));
         }catch (Exception e){
 
             /*log and respond*/

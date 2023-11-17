@@ -12,6 +12,6 @@ import java.io.Serializable;
 
 public interface UserRegistrationService  {
 
-    void registerUser(UserRegistrationDTO registrationDTO);
+    void registerUser(UserRegistrationDTO registrationDTO) throws UserException;
     void activateUser(UserActivationDTO activationDTO) throws UserException;
 }
