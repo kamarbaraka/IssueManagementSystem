@@ -77,7 +77,7 @@ public class TicketManagementController {
         /*check authorities and perform actions based*/
         if (userDetails.getAuthorities().contains(Authority.USER) && !userDetails.getUsername().equals(ticket.getRaisedBy().getUsername())){
             /*return a response*/
-            return ResponseEntity.ok(
+            return ResponseEntity.badRequest().body(
                     EntityModel.of(new InfoDTO("operation not allowed"))
             );
         }
@@ -87,7 +87,7 @@ public class TicketManagementController {
                 (!userDetails.getUsername().equals(ticket.getAssignedTo().getUsername()) &&
                     (!userDetails.getUsername().equals(ticket.getRaisedBy().getUsername()))))
                     {
-                        return ResponseEntity.ok(
+                        return ResponseEntity.badRequest().body(
                             EntityModel.of(new InfoDTO("you are not permitted to access this resource"))
                     );
 

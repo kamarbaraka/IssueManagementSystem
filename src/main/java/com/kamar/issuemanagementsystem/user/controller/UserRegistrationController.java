@@ -6,18 +6,14 @@ import com.kamar.issuemanagementsystem.user.data.dto.UserActivationDTO;
 import com.kamar.issuemanagementsystem.user.data.dto.UserRegistrationDTO;
 import com.kamar.issuemanagementsystem.user.exceptions.UserException;
 import com.kamar.issuemanagementsystem.user.service.UserRegistrationService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +33,7 @@ public class UserRegistrationController {
 
     /**
      * register a user*/
-    @PostMapping(value = {"register"})
+    @PostMapping(value = {"register"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
@@ -64,17 +60,17 @@ public class UserRegistrationController {
         /*add link*/
         response.add(activationLink);
         /*return response*/
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * activate a user*/
-    @PostMapping(value = {"activate/{username}"})
+    @PostMapping(value = {"activate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> activateUser(@PathVariable(name = "username") String username,
+    public ResponseEntity<EntityModel<DtoType>> activateUser(@RequestParam(name = "username") String username,
                                                              @RequestBody ActivationSuccessDTO activationDTO){
         UserActivationDTO activationReq = new UserActivationDTO(username, activationDTO.message());
         /*activate the user*/

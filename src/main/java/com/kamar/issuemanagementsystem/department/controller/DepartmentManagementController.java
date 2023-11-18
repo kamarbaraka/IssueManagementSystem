@@ -67,7 +67,7 @@ public class DepartmentManagementController {
         }
 
         /*construct the response*/
-        return ResponseEntity.status(201).body(
+        return ResponseEntity.ok(
                 EntityModel.of(
                         new InfoDTO("department created successfully"),
                         WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(

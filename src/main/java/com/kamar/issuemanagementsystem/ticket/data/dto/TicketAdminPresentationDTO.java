@@ -11,6 +11,7 @@ import java.util.List;
 
 public record TicketAdminPresentationDTO(
 
+        long id,
         String title,
         String description,
         String priority,

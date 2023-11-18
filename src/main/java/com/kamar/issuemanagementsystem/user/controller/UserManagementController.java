@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
@@ -66,12 +67,12 @@ public class UserManagementController {
 
     }
 
-    @GetMapping(value = {"{username}"})
+    @GetMapping(value = {"user"})
     @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get a user by username",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@PathVariable("username") String username,
+    public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@RequestParam("username") String username,
                                                                   @AuthenticationPrincipal UserDetails userDetails){
 
         /*get user by username*/
@@ -95,7 +96,7 @@ public class UserManagementController {
         if (userDetails.getAuthorities().contains(Authority.EMPLOYEE) || userDetails.getAuthorities().contains(Authority.USER)) {
 
             if (!userDetails.getUsername().equals(username))
-                return ResponseEntity.ok(
+                return ResponseEntity.badRequest().body(
                         EntityModel.of(
                                 new InfoDTO("you are not permitted to access this info")
                         )
@@ -108,12 +109,12 @@ public class UserManagementController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = {"authority/{authority}"})
+    @GetMapping(value = {"authority"})
     @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get users by their authority",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAuthority('ADMIN')")
     @CrossOrigin
-    public ResponseEntity<List<EntityModel<DtoType>>> getUsersByAuthority(@PathVariable("authority") String authority,
+    public ResponseEntity<List<EntityModel<DtoType>>> getUsersByAuthority(@RequestParam("authority") String authority,
                                                                           @AuthenticationPrincipal UserDetails userDetails){
 
         List<User> users;
@@ -156,13 +157,13 @@ public class UserManagementController {
         }).toList();
     }
 
-    @PutMapping(value = {"elevate/{authority}/{username}"})
+    @PutMapping(value = {"elevate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"User Management"}, summary = "elevate a user authority",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> elevateUser(@PathVariable("authority") String authority,
-                                                            @PathVariable("username") String username){
+    public ResponseEntity<EntityModel<DtoType>> elevateUser(@RequestParam("authority") String authority,
+                                                            @RequestParam("username") String username){
 
         /*elevate user*/
         try {
