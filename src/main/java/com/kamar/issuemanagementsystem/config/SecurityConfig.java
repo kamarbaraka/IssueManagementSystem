@@ -51,7 +51,7 @@ public class SecurityConfig {
                     );
         });
 
-        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource));
+//        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource));
 
         /*configure csrf*/
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
