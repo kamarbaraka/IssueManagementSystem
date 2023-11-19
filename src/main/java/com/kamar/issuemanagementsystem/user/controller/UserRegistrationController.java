@@ -7,6 +7,7 @@ import com.kamar.issuemanagementsystem.user.data.dto.UserRegistrationDTO;
 import com.kamar.issuemanagementsystem.user.exceptions.UserException;
 import com.kamar.issuemanagementsystem.user.service.UserRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +37,10 @@ public class UserRegistrationController {
     @PostMapping(value = {"register"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users",
     security = {@SecurityRequirement(name = "basicAuth")})
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
+            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+    })
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> registerUser(@Validated @RequestBody UserRegistrationDTO registrationDTO){
@@ -69,6 +74,10 @@ public class UserRegistrationController {
     @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
+            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+    })
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> activateUser(@RequestParam(name = "username") String username,
                                                              @RequestBody ActivationSuccessDTO activationDTO){

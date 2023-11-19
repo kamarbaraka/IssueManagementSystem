@@ -13,6 +13,7 @@ import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,9 @@ public class TicketCreationController {
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
+            @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+    })
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
                                                              @RequestParam String title,

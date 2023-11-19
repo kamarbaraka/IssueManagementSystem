@@ -8,6 +8,8 @@ import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -160,6 +162,8 @@ public class UserManagementController {
     @PutMapping(value = {"elevate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"User Management"}, summary = "elevate a user authority",
     security = {@SecurityRequirement(name = "basicAuth")})
+    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> elevateUser(@RequestParam("authority") String authority,

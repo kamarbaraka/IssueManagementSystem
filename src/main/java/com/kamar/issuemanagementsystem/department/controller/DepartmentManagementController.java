@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.department.controller;
 import com.google.api.client.auth.openidconnect.IdToken;
 import com.kamar.issuemanagementsystem.department.data.AddUserToDepartmentDTO;
 import com.kamar.issuemanagementsystem.department.data.DepartmentCreationDto;
+import com.kamar.issuemanagementsystem.department.data.DepartmentDto;
 import com.kamar.issuemanagementsystem.department.data.DepartmentDtoType;
 import com.kamar.issuemanagementsystem.department.exception.DepartmentException;
 import com.kamar.issuemanagementsystem.department.service.DepartmentManagementService;
@@ -78,9 +79,9 @@ public class DepartmentManagementController {
     }
 
 
-    @GetMapping
+    @GetMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(
-            tags = {"Department Management", "Department Report"}, summary = "api to get department by name",
+            tags = {"Department Management", "Department Reporting"}, summary = "api to get department by name",
             security = {
                     @SecurityRequirement(name = "basicAuth")}
     )
@@ -91,7 +92,8 @@ public class DepartmentManagementController {
             }
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
-    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
+    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getDepartmentByName(@RequestParam("department_name") String departmentName){
 
@@ -122,7 +124,7 @@ public class DepartmentManagementController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
-    public ResponseEntity<Object> addUsersToDepartment(@Validated @RequestParam("users") List<@Email String > users,
+    public ResponseEntity<Void> addUsersToDepartment(@Validated @RequestParam("users") List<@Email String > users,
                                                        @Validated @RequestParam("department_name") String departmentName){
 
         /*create the dto*/
@@ -139,5 +141,19 @@ public class DepartmentManagementController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = {"all"})
+    @Operation(tags = {"Department Management", "Department Reporting"}, summary = "Api to get all departments.",
+    security = {@SecurityRequirement(name = "basicAuth")})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
+    public ResponseEntity<List<DepartmentDto>> getAllDepartments(){
+
+        /*get all departments*/
+        List<DepartmentDto> allDepartments = departmentManagementService.getAllDepartments();
+
+        /*return response*/
+        return ResponseEntity.ok(allDepartments);
     }
 }

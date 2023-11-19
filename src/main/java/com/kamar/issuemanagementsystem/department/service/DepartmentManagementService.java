@@ -18,4 +18,5 @@ public interface DepartmentManagementService {
     DepartmentDtoType getDepartmentByName(String name)throws DepartmentException;
 
     void addUsersToDepartment(AddUserToDepartmentDTO addUserToDepartmentDTO) throws DepartmentException;
+    List<DepartmentDto> getAllDepartments();
 }

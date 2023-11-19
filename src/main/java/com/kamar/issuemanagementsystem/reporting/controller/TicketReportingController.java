@@ -10,12 +10,15 @@ import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -113,9 +116,11 @@ public class TicketReportingController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = {"users/status"})
+    @GetMapping(value = {"users/status"},consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Reporting"}, summary = "get tickets by the user and status",
     security = {@SecurityRequirement(name = "basicAuth")})
+    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
     @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByUserAndStatus(@RequestParam("username") String username,

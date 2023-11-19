@@ -24,6 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DepartmentManagementServiceImpl implements DepartmentManagementService {
 
     private final DepartmentRepository departmentRepository;
@@ -31,7 +32,6 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     private final UserRepository userRepository;
 
     @Override
-    @Transactional
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public void createDepartment(DepartmentCreationDto departmentCreationDto)throws DepartmentException {
 
@@ -55,7 +55,6 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     }
 
     @Override
-    @Transactional
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public void addUsersToDepartment(AddUserToDepartmentDTO addUserToDepartmentDTO) throws DepartmentException {
 
@@ -67,6 +66,16 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
 
         addUserToDepartmentDTO.username().parallelStream().map(userRepository::findUserByUsername)
                 .map(Optional::orElseThrow).forEach(user -> department.getMembers().add(user));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @Override
+    public List<DepartmentDto> getAllDepartments(){
+
+        /*get all departments*/
+        List<Department> departments = departmentRepository.findAll();
+        /*map to dto*/
+        return departments.stream().map(departmentMapper::mapToDto).toList();
     }
 
 }
