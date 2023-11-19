@@ -18,7 +18,6 @@ public record TicketAdminPresentationDTO(
         String status,
         String raisedBy,
         String assignedTo,
-        String deadline,
-        List<byte[]> attachments
+        String deadline
 ) implements DtoType, Serializable {
 }

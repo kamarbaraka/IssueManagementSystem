@@ -73,8 +73,7 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
                 "not assigned yet",
-                "not assigned yet",
-                    attachmentStream);
+                "not assigned yet");
         }
 
         /*map the dto*/
@@ -86,8 +85,7 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
                 ticket.getAssignedTo().getUsername(),
-                ticket.getDeadline().toString(),
-                attachmentStream
+                ticket.getDeadline().toString()
         );
 
     }

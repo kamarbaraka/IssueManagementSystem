@@ -1,8 +1,10 @@
 package com.kamar.issuemanagementsystem.authentication.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogoutController {
 
     @GetMapping
-    @Operation(tags = {"Authentication"}, summary = "logout a user")
+    @Operation(tags = {"Authentication"}, summary = "logout a user", security = {@SecurityRequirement(name = "basicAuth")})
+    @PreAuthorize("isAuthenticated()")
     @CrossOrigin
     public void logout(HttpServletRequest request, HttpServletResponse response,
                                           Authentication authentication){
