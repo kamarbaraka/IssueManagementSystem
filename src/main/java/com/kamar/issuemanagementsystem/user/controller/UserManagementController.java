@@ -122,7 +122,7 @@ public class UserManagementController {
         try
         {
             /*get users by authority*/
-            users = userManagementService.getUsersByAuthority(Authority.valueOf(authority));
+            users = userManagementService.getUsersByAuthority(Authority.valueOf(authority.toUpperCase()));
         }catch (Exception e){
 
             /*log and respond*/
@@ -168,7 +168,7 @@ public class UserManagementController {
         /*elevate user*/
         try {
             userManagementService.elevate(username,
-                    Authority.valueOf(authority));
+                    Authority.valueOf(authority.toUpperCase()));
         } catch (IllegalArgumentException e) {
 
             /*log the exception*/
