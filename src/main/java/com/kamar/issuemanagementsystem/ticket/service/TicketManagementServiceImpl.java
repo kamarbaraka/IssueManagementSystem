@@ -1,10 +1,14 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
+import com.kamar.issuemanagementsystem.department.entity.Department;
+import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
+import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
+import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,8 @@ import java.util.Optional;
 public class TicketManagementServiceImpl implements TicketManagementService {
 
     private final TicketRepository ticketRepository;
+    private final TicketMapper ticketMapper;
+    private final DepartmentRepository departmentRepository;
 
     @Override
     public Ticket updateTicket(Ticket ticket) {
@@ -66,5 +72,24 @@ public class TicketManagementServiceImpl implements TicketManagementService {
 
         return optAttachments.orElse(null);
 
+    }
+
+    @Override
+    public List<TicketAdminPresentationDTO> getTicketsByDepartmentAndStatus(Department departmentAssigned, TicketStatus  status) {
+
+
+        /*get the tickets*/
+        List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedAndStatus(departmentAssigned, status);
+        /*map to dto*/
+        return departmentTickets.parallelStream().map(ticketMapper::entityToDTOAdmin).toList();
+    }
+
+    @Override
+    public List<TicketAdminPresentationDTO> getTicketsByDepartment(Department departmentAssigned) {
+
+        /*get the tickets*/
+        List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssigned(departmentAssigned);
+        /*map to dto*/
+        return departmentTickets.parallelStream().map(ticketMapper::entityToDTOAdmin).toList();
     }
 }

@@ -19,6 +19,8 @@ public record TicketCreationDTO(
         @Size(max = 500, message = "description exceeds limit")
         String description,
 
+        String departmentToAssign,
+
         List<@Size(max = (10 * 1024 * 1024)) MultipartFile> attachment
 ) implements DtoType {
 }

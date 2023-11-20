@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogoutController {
 
     @GetMapping
-    @Operation(tags = {"Authentication"}, summary = "logout a user", security = {@SecurityRequirement(name = "basicAuth")})
+    @Operation(tags = {"Authentication"}, summary = "logout a user",
+            security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
     public void logout(HttpServletRequest request, HttpServletResponse response,

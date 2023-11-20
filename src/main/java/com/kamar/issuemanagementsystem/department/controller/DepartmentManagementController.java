@@ -41,22 +41,26 @@ public class DepartmentManagementController {
 
     private final DepartmentManagementService departmentManagementService;
 
-    @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Department Creation", "Department Management"}, summary = "api to create a department",
             security = {@SecurityRequirement(name = "basicAuth")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "successfully created")
     })
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
-    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
+    @RequestBody(content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createDepartment(@RequestParam("department_name")
                                                                      @Size(min = 2, max = 50, message = "department name too long")
                                                                      String departmentName,
-                                                                 @RequestParam("head_of_department") @Email String headOfDepartment){
+                                                                 @Validated @RequestParam("email") @Email String email,
+                                                                 @Validated @RequestParam("head_of_department") @Email String headOfDepartment){
 
         /*create a dto*/
-        DepartmentCreationDto departmentCreationDto = new DepartmentCreationDto(departmentName, headOfDepartment);
+        DepartmentCreationDto departmentCreationDto = new DepartmentCreationDto(departmentName, email, headOfDepartment);
         /*create the department*/
         try {
             departmentManagementService.createDepartment(departmentCreationDto);
@@ -83,7 +87,7 @@ public class DepartmentManagementController {
     @Operation(
             tags = {"Department Management", "Department Reporting"}, summary = "api to get department by name",
             security = {
-                    @SecurityRequirement(name = "basicAuth")}
+                    @SecurityRequirement(name = "basicAuth", scopes = {"OWNER", "ADMIN", "DEPARTMENT_ADMIN"})}
     )
     @ApiResponses(
             value = {
@@ -91,9 +95,9 @@ public class DepartmentManagementController {
                     @ApiResponse(responseCode = "200", description = "successfully fetched the department")
             }
     )
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER', 'DEPARTMENT_ADMIN')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getDepartmentByName(@RequestParam("department_name") String departmentName){
 
@@ -112,17 +116,19 @@ public class DepartmentManagementController {
         return ResponseEntity.ok(EntityModel.of(department));
     }
 
-    @PostMapping(value = {"add"}, produces = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    @PostMapping(value = {"add"}, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(
             tags = {"Department Management", "User Management"},
             summary = "Api to add users to a department",
             responses = {
                     @ApiResponse(responseCode = "200", description = "users have been successfully added to department"),
             },
-            security = {@SecurityRequirement(name = "basicAuth", scopes = {"read:add"})}
+            security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN","DEPARTMENT_ADMIN"})}
     )
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN')")
+    @RequestBody(content = {
+            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @CrossOrigin
     public ResponseEntity<Void> addUsersToDepartment(@Validated @RequestParam("users") List<@Email String > users,
                                                        @Validated @RequestParam("department_name") String departmentName){
@@ -145,7 +151,7 @@ public class DepartmentManagementController {
 
     @GetMapping(value = {"all"})
     @Operation(tags = {"Department Management", "Department Reporting"}, summary = "Api to get all departments.",
-    security = {@SecurityRequirement(name = "basicAuth")})
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
     public ResponseEntity<List<DepartmentDto>> getAllDepartments(){

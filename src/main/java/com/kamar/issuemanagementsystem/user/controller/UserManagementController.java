@@ -1,9 +1,8 @@
 package com.kamar.issuemanagementsystem.user.controller;
 
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
-import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
-import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
@@ -19,12 +18,10 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -95,7 +92,8 @@ public class UserManagementController {
         /*add links*/
 
         /*check authority*/
-        if (userDetails.getAuthorities().contains(Authority.EMPLOYEE) || userDetails.getAuthorities().contains(Authority.USER)) {
+        if (userDetails.getAuthorities().contains(UserAuthority.getFor("employee")) ||
+                userDetails.getAuthorities().contains(UserAuthority.getFor("user"))) {
 
             if (!userDetails.getUsername().equals(username))
                 return ResponseEntity.badRequest().body(
@@ -124,7 +122,7 @@ public class UserManagementController {
         try
         {
             /*get users by authority*/
-            users = userManagementService.getUsersByAuthority(Authority.valueOf(authority.toUpperCase()));
+            users = userManagementService.getUsersByAuthority(UserAuthority.getFor(authority));
         }catch (Exception e){
 
             /*log and respond*/
@@ -172,7 +170,7 @@ public class UserManagementController {
         /*elevate user*/
         try {
             userManagementService.elevate(username,
-                    Authority.valueOf(authority.toUpperCase()));
+                    UserAuthority.getFor(authority));
         } catch (IllegalArgumentException e) {
 
             /*log the exception*/

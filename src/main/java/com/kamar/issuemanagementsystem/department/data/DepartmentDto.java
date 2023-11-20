@@ -12,6 +12,7 @@ import java.util.List;
 public record DepartmentDto(
 
         String departmentName,
+        String email,
         String headOfDepartment,
         int rating,
         List<String > members

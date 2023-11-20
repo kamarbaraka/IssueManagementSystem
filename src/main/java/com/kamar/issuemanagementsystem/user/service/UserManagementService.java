@@ -1,8 +1,8 @@
 package com.kamar.issuemanagementsystem.user.service;
 
-import com.kamar.issuemanagementsystem.user.data.Authority;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.user.entity.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.kamar.issuemanagementsystem.user.exceptions.UserException;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 import java.util.List;
@@ -10,10 +10,10 @@ import java.util.List;
 public interface UserManagementService extends UserDetailsManager {
 
     void deleteUserByUsername(String username);
-    void elevate(String username, Authority authority);
-    void downgrade(String username, Authority authority);
+    void elevate(String username, UserAuthority authority);
+    void downgrade(String username, UserAuthority authority) throws UserException;
     User getUserByUsername(String username);
-    boolean checkUserByUsernameAndAuthority(String username, Authority authority);
+    boolean checkUserByUsernameAndAuthority(String username, UserAuthority authority);
     List<User> getAllUsers();
-    List<User> getUsersByAuthority(Authority authority);
+    List<User> getUsersByAuthority(UserAuthority authority);
 }

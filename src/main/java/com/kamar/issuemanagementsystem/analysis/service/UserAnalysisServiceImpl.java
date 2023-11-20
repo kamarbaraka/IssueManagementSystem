@@ -1,7 +1,7 @@
 package com.kamar.issuemanagementsystem.analysis.service;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
-import com.kamar.issuemanagementsystem.user.data.Authority;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
@@ -9,6 +9,7 @@ import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserAnalysisServiceImpl implements UserAnalysisService {
 
     private final UserRepository userRepository;
@@ -28,7 +30,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO bestPerformantEmployee() throws AnalysisException{
 
         /*get users by authority */
-        List<User> usersByAuthority = userRepository.findUsersByAuthorityOrderByCreatedOnAsc(Authority.EMPLOYEE);
+        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("employee"));
 
         /*check if the list is empty*/
         if (usersByAuthority.isEmpty()) {
@@ -49,7 +51,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO mostPerformantEmployee() throws AnalysisException {
 
         /*get the most performant employee*/
-        List<User> usersByAuthority = userRepository.findUsersByAuthorityOrderByCreatedOnAsc(Authority.EMPLOYEE);
+        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("employee"));
         /*get the most performant*/
         User mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
                 (user, user2) -> user2.getUserRating().getTotalRates() > user.getUserRating().getTotalRates() ? user2 : user)
@@ -64,7 +66,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO leastPerformantEmployee() throws AnalysisException{
 
         /*get the least performant*/
-        List<User> usersBAuthorities = userRepository.findUsersByAuthorityOrderByCreatedOnAsc(Authority.EMPLOYEE);
+        List<User> usersBAuthorities = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("employee"));
 
         /*assert the list is not empty*/
         assert !usersBAuthorities.isEmpty();

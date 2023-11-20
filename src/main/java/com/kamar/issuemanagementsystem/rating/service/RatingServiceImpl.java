@@ -11,6 +11,7 @@ import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.stream.IntStream;
@@ -21,6 +22,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RatingServiceImpl implements RatingService {
 
     private final DepartmentRepository departmentRepository;

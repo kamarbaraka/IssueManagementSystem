@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.entity;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
+import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.ticket.data.TicketPriority;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.user.entity.User;
@@ -39,15 +40,15 @@ public class Ticket implements Serializable {
     @JoinColumn(name = "attachments")
     private final Collection<Attachment> attachments = new ArrayList<>();
 
+    @ManyToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "department_assigned")
+    private Department departmentAssigned;
+
     @Enumerated(EnumType.STRING)
     private TicketPriority priority = TicketPriority.MEDIUM;
 
     @Enumerated(EnumType.STRING)
     private TicketStatus status = TicketStatus.OPEN;
-
-    @ManyToOne( cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "raised_by")
-    private User raisedBy;
 
     @ManyToOne( cascade = CascadeType.ALL)
     @JoinColumn(name = "assigned_to")
@@ -55,6 +56,10 @@ public class Ticket implements Serializable {
 
     @FutureOrPresent(message = "deadline must be in the future.")
     private LocalDate deadline;
+
+    @ManyToOne( cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "raised_by")
+    private User raisedBy;
 
     @Column(nullable = false, updatable = false)
     private final LocalDate createdOn = LocalDate.now();

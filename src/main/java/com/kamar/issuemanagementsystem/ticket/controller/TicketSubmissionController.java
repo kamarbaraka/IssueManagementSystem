@@ -33,11 +33,12 @@ public class TicketSubmissionController {
     private final TicketSubmissionService ticketSubmissionService;
 
 
-    @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = {"Ticket Submission"}, summary = "submit a ticket by id",
-    security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"EMPLOYEE"})})
+    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> submitATicket(@RequestParam("ticket_id") long ticketId,
                                                               @AuthenticationPrincipal UserDetails authenticatedUser){

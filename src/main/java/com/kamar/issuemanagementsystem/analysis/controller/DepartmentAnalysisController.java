@@ -41,7 +41,7 @@ public class DepartmentAnalysisController {
     @Operation(
             tags = {"Department Analysis", "Department Reporting"},
             summary = "Api to get the most performant department",
-            security = {@SecurityRequirement(name = "basicAuth")}
+            security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})}
     )
     @ApiResponses(
             value = {
@@ -85,7 +85,7 @@ public class DepartmentAnalysisController {
             tags = {"Department Analysis", "Department Reporting"},
             summary = "Api to get the best performant department",
             security = {
-                    @SecurityRequirement(name = "basicAuth")
+                    @SecurityRequirement(name = "basicAuth", scopes = {"ADMIN","OWNER"})
             }
     )
     @ApiResponses(
@@ -129,7 +129,7 @@ public class DepartmentAnalysisController {
             tags = {"Department Analysis", "Department Reporting", "Employee Analysis", "User Analysis", "User Reporting"},
             summary = "Api to get the best performant employee in a department",
             security = {
-                    @SecurityRequirement(name = "basicAuth")
+                    @SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})
             }
     )
     @ApiResponses(
@@ -172,7 +172,7 @@ public class DepartmentAnalysisController {
             tags = {"Department Analysis", "Department Reporting", "Employee Analysis", "User Analysis", "User Reporting"},
             summary = "Api to get the most performant employee in a department",
             security = {
-                    @SecurityRequirement(name = "basicAuth")
+                    @SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})
             }
     )
     @ApiResponses(

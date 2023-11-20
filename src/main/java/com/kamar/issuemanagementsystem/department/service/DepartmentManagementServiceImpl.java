@@ -64,7 +64,7 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
         ).orElseThrow(
                 () -> new DepartmentException("no such department"));
 
-        addUserToDepartmentDTO.username().parallelStream().map(userRepository::findUserByUsername)
+        addUserToDepartmentDTO.username().stream().map(userRepository::findUserByUsername)
                 .map(Optional::orElseThrow).forEach(user -> department.getMembers().add(user));
     }
 

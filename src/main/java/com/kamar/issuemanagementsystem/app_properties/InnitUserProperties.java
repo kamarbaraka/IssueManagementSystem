@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.app_properties;
 
+import jakarta.validation.constraints.Email;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -9,8 +10,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app.init")
 public record InnitUserProperties(
 
+        @Email
         String username,
         String password,
-        String departmentName
+        String departmentName,
+        @Email
+        String departmentEmail
 ) {
 }

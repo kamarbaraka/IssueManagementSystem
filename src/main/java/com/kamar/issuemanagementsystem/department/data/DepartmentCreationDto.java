@@ -12,6 +12,8 @@ public record DepartmentCreationDto(
         @Size(min = 2, max = 50, message = "department name too long")
         String departmentName,
         @Email
+        String email,
+        @Email
         String headOfDepartment
 ) implements DepartmentDtoType{
 }

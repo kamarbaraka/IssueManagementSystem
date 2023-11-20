@@ -1,18 +1,17 @@
 package com.kamar.issuemanagementsystem.user.entity;
 
 
-import com.kamar.issuemanagementsystem.department.entity.Department;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.rating.entity.UserRating;
-import com.kamar.issuemanagementsystem.user.data.Authority;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -36,10 +35,11 @@ public class User implements Serializable, UserDetails {
 
     private String activationToken = UUID.randomUUID().toString();
 
-    @Enumerated(EnumType.STRING)
-    private Authority authority = Authority.USER;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "authorities", nullable = false)
+    private Collection<UserAuthority> authorities = new ArrayList<>(List.of(new UserAuthority()));
 
-    @OneToOne( cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @OneToOne( cascade = CascadeType.ALL, optional = false, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "rating")
     private final UserRating userRating = new UserRating();
 
@@ -54,10 +54,4 @@ public class User implements Serializable, UserDetails {
 
     private boolean enabled = false;
 
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        return List.of(this.authority);
-    }
 }

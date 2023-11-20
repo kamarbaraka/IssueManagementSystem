@@ -54,8 +54,8 @@ public class TicketAssignmentController {
      */
     @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.",
-    security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAuthority('ADMIN')")
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN, DEPARTMENT_ADMIN"})})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN')")
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @CrossOrigin

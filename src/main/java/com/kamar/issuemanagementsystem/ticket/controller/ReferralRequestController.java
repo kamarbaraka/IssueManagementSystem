@@ -42,11 +42,13 @@ public class ReferralRequestController {
 
     /**
      * respond to referral request*/
-    @GetMapping
+    @GetMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = { "Ticket Referral"}, summary = "respond to a referral", description = "accept or reject ticket referral.",
-    security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"EMPLOYEE"})})
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
+    @RequestBody(content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> respondToReferralRequest(@RequestParam("accept") boolean accept,
                                                                          @RequestParam("id") long id,
@@ -86,10 +88,10 @@ public class ReferralRequestController {
     /**
      * get referral request by id.
      * @author kamar baraka.*/
-    @GetMapping(value = {"byId"})
+    @GetMapping(value = {"byId"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Referral"},summary = "get referral",description = "get referral by id",
-    security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"EMPLOYEE"})})
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@RequestParam("id") long id){
 
@@ -115,11 +117,14 @@ public class ReferralRequestController {
 
     }
 
-    @PostMapping(value = {"refer"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    @PostMapping(value = {"refer"}, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = { "Ticket Referral"}, summary = "refer a ticket", description = "refer a ticket to another user",
-    security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "EMPLOYEE", "DEPARTMENT_ADMIN"})})
+    @RequestBody(content = {
+            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+    })
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'DEPARTMENT_ADMIN')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@RequestParam("ticketId") long ticketId,
                                                                   @Validated @RequestParam("to") @Email String username){

@@ -3,6 +3,8 @@ package com.kamar.issuemanagementsystem.ticket.utility.mapper;
 import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.attachment.utils.AttachmentMapper;
+import com.kamar.issuemanagementsystem.department.entity.Department;
+import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -26,13 +28,19 @@ public class TicketMapperImpl implements TicketMapper {
 
     private final AttachmentMapper attachmentMapper;
     private final TicketUtilities ticketUtilities;
+    private final DepartmentRepository departmentRepository;
 
     @Override
     public Ticket dtoToEntity(TicketCreationDTO ticketCreationDTO) {
+
+        /*get the department to assign to ticket*/
+        Department department = departmentRepository.findDepartmentByDepartmentName(
+                ticketCreationDTO.departmentToAssign()).orElseThrow();
         /*map the dto*/
         Ticket ticket = new Ticket();
         ticket.setTitle(ticketCreationDTO.title());
         ticket.setDescription(ticketCreationDTO.description());
+        ticket.setDepartmentAssigned(department);
 
         /*check for attachments*/
         if (!ticketCreationDTO.attachment().isEmpty()) {
@@ -53,16 +61,6 @@ public class TicketMapperImpl implements TicketMapper {
 
         /*get attachments*/
         /*check if ticket has attachment and create a download link if present*/
-        Collection<Attachment> attachments = ticket.getAttachments();
-        List<byte[]> attachmentStream = new ArrayList<>();
-
-        if (!attachments.isEmpty()) {
-
-            attachmentStream = attachments.parallelStream()
-                    .map(Attachment::getContent)
-                    .map(ticketUtilities::convertBlobToBytes).toList();
-
-        }
 
         if (ticket.getDeadline() == null){
             return new TicketAdminPresentationDTO(
@@ -72,6 +70,7 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getPriority().toString(),
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
+                ticket.getDepartmentAssigned().getDepartmentName(),
                 "not assigned yet",
                 "not assigned yet");
         }
@@ -84,6 +83,7 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getPriority().toString(),
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
+                ticket.getDepartmentAssigned().getDepartmentName(),
                 ticket.getAssignedTo().getUsername(),
                 ticket.getDeadline().toString()
         );

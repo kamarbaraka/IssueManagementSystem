@@ -13,6 +13,7 @@ import com.kamar.issuemanagementsystem.user.exceptions.UserExceptionService;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
+@Transactional
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private final UserRepository userRepository;
@@ -80,8 +83,9 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 .orElseThrow(userExceptionService::userNotFound);
 
         /*check the activation token*/
-        if (!user.getActivationToken().equals(activationDTO.token()))
+        if (!user.getActivationToken().equals(activationDTO.token())) {
             throw userExceptionService.invalidToken();
+        }
 
         /*activate the user*/
         user.setEnabled(true);

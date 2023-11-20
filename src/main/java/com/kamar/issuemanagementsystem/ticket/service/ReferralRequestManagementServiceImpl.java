@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
@@ -13,7 +14,6 @@ import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestReposito
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
-import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +32,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReferralRequestManagementServiceImpl implements ReferralRequestManagementService {
 
     private final ReferralRequestRepository referralRequestRepository;
@@ -126,7 +127,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
             throws ReferralRequestException{
 
         /*check whether the referred to is an employee*/
-        if (!referralRequest.getTo().getAuthorities().contains(Authority.EMPLOYEE))
+        if (!referralRequest.getTo().getAuthorities().contains(UserAuthority.getFor("employee")))
             throw new ReferralRequestException("user is not an employee");
         /*create a referral request*/
         ReferralRequest savedRequest = referralRequestRepository.save(referralRequest);

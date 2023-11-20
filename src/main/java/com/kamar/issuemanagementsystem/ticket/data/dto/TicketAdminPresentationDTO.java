@@ -17,6 +17,7 @@ public record TicketAdminPresentationDTO(
         String priority,
         String status,
         String raisedBy,
+        String departmentAssigned,
         String assignedTo,
         String deadline
 ) implements DtoType, Serializable {

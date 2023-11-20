@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.department.entity;
 import com.kamar.issuemanagementsystem.rating.entity.DepartmentPerformanceRating;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -22,6 +23,10 @@ public class Department implements Serializable {
     @Column(name = "department_name", unique = true, updatable = false, nullable = false)
     @Size(min = 2, max = 50, message = "department name too long")
     private String departmentName;
+
+    @Email
+    @Column(name = "department_email", nullable = false)
+    private String departmentEmail;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false,
             orphanRemoval = true)

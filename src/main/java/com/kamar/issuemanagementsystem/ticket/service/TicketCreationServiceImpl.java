@@ -1,25 +1,22 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
-import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
-import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
-import com.kamar.issuemanagementsystem.user.data.Authority;
+import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,6 +26,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TicketCreationServiceImpl implements TicketCreationService {
 
     private final TicketRepository ticketRepository;
@@ -52,25 +50,29 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         /*the subject*/
         String subject = "Ticket Raised";
         /*construct the message for the admin*/
-        String message = ticket.getRaisedBy().getUsername() + " raised a ticket \"" + ticket.getTitle() + "\". #" + ticket.getTicketId()+
+        String message = ticket.getRaisedBy().getUsername() + " raised a ticket \""+ "\". #" + ticket.getTicketId()+
+                " "+ ticket.getTitle()+ " to <h3 style='color: cyan; >'"+ ticket.getDepartmentAssigned().getDepartmentName()+
+                ". </h3>"+
                 " <br> "+
                 " <h5><a href=\""+ linkToTicket+ "\" >Ticket</a></h5> <br>"+
                 "Thank you, <br>"+
                 company.endTag();
 
-
         /*get attachments*/
         List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
 
         /*get all admins and send the admin notification email*/
-        userRepository.findUsersByAuthorityOrderByCreatedOn(Authority.ADMIN).ifPresentOrElse(
-                admins ->
-                    /*send mails to each admin*/
-                    admins.parallelStream().forEach(
-                            admin -> emailService.sendEmail(message, subject, admin.getUsername(), attachments)
-                    ),
-                () -> {}
-        );
+        List<User> admins = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("admin"));
+
+        if (!admins.isEmpty()) {
+
+            admins.parallelStream().forEach(admin -> emailService.sendEmail(
+                    message, subject, admin.getUsername(), attachments
+            ));
+        }
+
+        /*notify the department*/
+        emailService.sendEmail(message, subject, ticket.getDepartmentAssigned().getDepartmentEmail(), attachments);
 
         /*send notification to the raiser*/
         String raiserSubject = "Ticket Success";
@@ -81,7 +83,6 @@ public class TicketCreationServiceImpl implements TicketCreationService {
 
     }
 
-    @Transactional
     @Override
     public Ticket createTicket(Ticket ticket) {
 

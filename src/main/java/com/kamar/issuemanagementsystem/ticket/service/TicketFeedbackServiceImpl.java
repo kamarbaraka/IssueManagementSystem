@@ -17,6 +17,7 @@ import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
     private final TicketRepository ticketRepository;

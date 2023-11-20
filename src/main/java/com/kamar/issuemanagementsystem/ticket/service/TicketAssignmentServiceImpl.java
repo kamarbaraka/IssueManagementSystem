@@ -1,13 +1,13 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
-import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
@@ -15,6 +15,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
     private final UserManagementService userManagementService;
@@ -62,8 +64,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
         String raiserSubject = "Ticket handling";
         String raiserMessage = "Dear "+ ticket.getRaisedBy().getUsername()+ ",Your ticket #" + ticket.getTicketId()
                 + " \"" + ticket.getTitle() + "\""+
-                " is being handled by the " + departmentRepository.
-                findDepartmentByMembersContaining(ticket.getAssignedTo()).orElseThrow().getDepartmentName()+
+                " is being handled by the " + ticket.getDepartmentAssigned().getDepartmentName()+
                 " department.<br>"+
                 "Thank you for your patience.<br>"+
                 company.endTag();
@@ -79,7 +80,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
         /*check if the user is an employee*/
         if (!userManagementService.checkUserByUsernameAndAuthority(
-                ticket.getAssignedTo().getUsername(), Authority.EMPLOYEE))
+                ticket.getAssignedTo().getUsername(), UserAuthority.getFor("employee")))
             throw new OperationNotSupportedException();
 
         /*assign the ticket*/

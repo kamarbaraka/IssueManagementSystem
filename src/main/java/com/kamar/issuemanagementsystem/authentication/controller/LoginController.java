@@ -30,7 +30,7 @@ public class LoginController {
     @GetMapping
     @Operation(tags = {"Authentication"},
     summary = "The login Api.",
-    security = {@SecurityRequirement(name = "basicAuth")})
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
     public ResponseEntity<UserPresentationDTO> login(@AuthenticationPrincipal UserDetails userDetails){

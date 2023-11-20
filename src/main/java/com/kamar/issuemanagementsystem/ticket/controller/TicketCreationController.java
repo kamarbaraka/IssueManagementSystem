@@ -4,6 +4,7 @@ import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
 import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.attachment.utils.AttachmentMapperImpl;
+import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -54,17 +55,18 @@ public class TicketCreationController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('USER', 'EMPLOYEE')")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
     })
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
-                                                             @RequestParam String title,
-                                                             @RequestParam String description,
+                                                             @RequestParam("department") String departmentToAssign,
+                                                             @RequestParam("title") String title,
+                                                             @RequestParam("description") String description,
                                                              @RequestBody List<MultipartFile> attachment){
 
-        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, attachment);
+        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, attachment);
         Ticket savedTicket;
 
         try
@@ -81,8 +83,9 @@ public class TicketCreationController {
 
             /*log the exception*/
             log.error(e.getMessage());
+            throw e;
             /*respond*/
-            return ResponseEntity.badRequest().build();
+//            return ResponseEntity.badRequest().build();
         }
 
 

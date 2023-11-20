@@ -34,11 +34,13 @@ public class UserRegistrationController {
 
     /**
      * register a user*/
-    @PostMapping(value = {"register"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = {"register"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users",
     security = {@SecurityRequirement(name = "basicAuth")})
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     })
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
@@ -60,8 +62,7 @@ public class UserRegistrationController {
         DtoType message = new ActivationSuccessDTO("registration successful, follow the link to activate.");
         EntityModel<DtoType> response = EntityModel.of(message);
         /*create link*/
-        Link activationLink = WebMvcLinkBuilder.linkTo(UserRegistrationController.class)
-                .slash("activate").slash(registrationDTO.username()).withRel("activate");
+        Link activationLink = WebMvcLinkBuilder.linkTo(UserRegistrationController.class).withRel("activate");
         /*add link*/
         response.add(activationLink);
         /*return response*/
@@ -70,12 +71,14 @@ public class UserRegistrationController {
 
     /**
      * activate a user*/
-    @PostMapping(value = {"activate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = {"activate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE,
+    MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     })
     @CrossOrigin
@@ -86,6 +89,9 @@ public class UserRegistrationController {
         try {
             userRegistrationService.activateUser(activationReq);
         } catch (UserException e) {
+
+            /*log*/
+            log.warn(e.getMessage());
             /*construct message*/
             DtoType message = new ActivationSuccessDTO("invalid token");
             /*construct response*/

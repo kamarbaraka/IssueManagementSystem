@@ -1,11 +1,11 @@
 package com.kamar.issuemanagementsystem.reporting.controller;
 
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.reporting.service.TicketReportingService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
-import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
@@ -61,10 +61,14 @@ public class TicketReportingController {
         }).toList();
     }
 
-    @GetMapping(value = {"status"})
+    @GetMapping(value = {"status"}, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = {"Ticket Reporting", "Ticket Analysis"}, summary = "Get tickets by the provided status",
-    security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'OWNER')")
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
+    @RequestBody(content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    })
+    @PreAuthorize("isAuthenticated()")
     @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByStatus(@RequestParam("status") String status,
                                                                          @AuthenticationPrincipal UserDetails userDetails){
@@ -91,8 +95,8 @@ public class TicketReportingController {
 
     @GetMapping
     @Operation(tags = {"Ticket Reporting", "Ticket Analysis"}, summary = "get all the tickets in the database",
-    security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'USER', 'OWNER')")
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
+    @PreAuthorize("isAuthenticated()")
     @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getAllTickets(@AuthenticationPrincipal UserDetails userDetails){
 
@@ -118,10 +122,10 @@ public class TicketReportingController {
 
     @GetMapping(value = {"users/status"},consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Reporting"}, summary = "get tickets by the user and status",
-    security = {@SecurityRequirement(name = "basicAuth")})
+    security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
-    @PreAuthorize("hasAnyAuthority('ADMIN','EMPLOYEE')")
+    @PreAuthorize("isAuthenticated()")
     @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByUserAndStatus(@RequestParam("username") String username,
                                                                                 @RequestParam("status") String status,
@@ -136,7 +140,7 @@ public class TicketReportingController {
             /*get user*/
             currentUser = userManagementService.getUserByUsername(userDetails.getUsername());
             /*get the tickets*/
-            if (userDetails.getAuthorities().contains(Authority.ADMIN)) {
+            if (userDetails.getAuthorities().contains(UserAuthority.getFor("admin"))) {
                 User user = userManagementService.getUserByUsername(username);
                 tickets = ticketReportingService.userTicketsByStatus(user, TicketStatus.valueOf(status.toUpperCase()));
             }
@@ -147,15 +151,6 @@ public class TicketReportingController {
             /*log and respond*/
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
-        }
-
-        /*check authority*/
-        if (userDetails.getAuthorities().contains(Authority.EMPLOYEE)){
-
-            /*map to dto*/
-            List<EntityModel<DtoType>> response = convertToDto(tickets, userDetails);
-            /*return the response*/
-            return ResponseEntity.ok(response);
         }
 
 

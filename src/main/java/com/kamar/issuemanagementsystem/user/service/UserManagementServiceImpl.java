@@ -1,15 +1,19 @@
 package com.kamar.issuemanagementsystem.user.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
-import com.kamar.issuemanagementsystem.user.data.Authority;
 import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user.exceptions.UserException;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * implementation of the user management service.
@@ -17,13 +21,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserManagementServiceImpl implements UserManagementService {
     
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final CompanyProperties companyProperties;
 
-    private void elevationNotification(String username, Authority authority){
+    private void elevationNotification(String username, UserAuthority authority){
 
         /*construct email*/
         String subject = "Elevation Notice";
@@ -50,11 +55,11 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void elevate(String username, Authority authority) {
+    public void elevate(String username, UserAuthority authority) {
         
         userRepository.findUserByUsername(username).ifPresent(user -> {
             /*add the authority*/
-            user.setAuthority(authority);
+            user.getAuthorities().add(authority);
             /*update*/
             userRepository.save(user);
         });
@@ -65,10 +70,21 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void downgrade(String username, Authority authority) {
-        
-        userRepository.findUserByUsername(username).ifPresent(user -> 
-                /*downgrade*/user.setAuthority(authority));
+    public void downgrade(String username, UserAuthority authority) throws UserException {
+
+
+        Optional<User> userByUsername = userRepository.findUserByUsername(username);
+
+        if (userByUsername.isPresent()) {
+            User user = userByUsername.get();
+            /*check if the user contains the authority*/
+            Collection<UserAuthority> authorities = user.getAuthorities();
+            if (authorities.contains(authority)) {
+                /*update the authorities*/
+                user.getAuthorities().remove(authority);
+                userRepository.save(user);
+            }else throw new UserException("user doesn't have the authority");
+        }else throw new UserException("no such user");
 
     }
 
@@ -80,10 +96,10 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public boolean checkUserByUsernameAndAuthority(String username, Authority authority) {
+    public boolean checkUserByUsernameAndAuthority(String username, UserAuthority authority) {
 
         /*check*/
-        return userRepository.findUserByUsernameAndAuthority(username, authority).isPresent();
+        return userRepository.findUserByUsernameAndAuthoritiesContaining(username, authority).isPresent();
     }
 
     @Override
@@ -94,10 +110,10 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public List<User> getUsersByAuthority(Authority authority) {
+    public List<User> getUsersByAuthority(UserAuthority authority) {
 
         /*get users by authority*/
-        return userRepository.findUsersByAuthority(authority);
+        return userRepository.findUserByAuthoritiesContaining(authority);
     }
 
     @Override
