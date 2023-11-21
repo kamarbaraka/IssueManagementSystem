@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.user.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.exceptions.UserException;
@@ -27,6 +28,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final CompanyProperties companyProperties;
+    private final UserAuthorityRepository userAuthorityRepository;
 
     private void elevationNotification(String username, UserAuthority authority){
 
@@ -70,18 +72,23 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void downgrade(String username, UserAuthority authority) throws UserException {
+    public void downgrade(String username, String authority) throws UserException {
 
 
         Optional<User> userByUsername = userRepository.findUserByUsername(username);
 
         if (userByUsername.isPresent()) {
             User user = userByUsername.get();
+
+            /*check if authority exists*/
+            UserAuthority userAuthority = userAuthorityRepository.findById(authority.toUpperCase()).orElseThrow(
+                    () -> new UserException("no such authority"));
+
             /*check if the user contains the authority*/
             Collection<UserAuthority> authorities = user.getAuthorities();
-            if (authorities.contains(authority)) {
+            if (authorities.contains(userAuthority)) {
                 /*update the authorities*/
-                user.getAuthorities().remove(authority);
+                user.getAuthorities().remove(userAuthority);
                 userRepository.save(user);
             }else throw new UserException("user doesn't have the authority");
         }else throw new UserException("no such user");

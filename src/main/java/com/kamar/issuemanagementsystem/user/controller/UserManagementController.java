@@ -1,15 +1,18 @@
 package com.kamar.issuemanagementsystem.user.controller;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user.exceptions.UserException;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
@@ -20,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +40,7 @@ public class UserManagementController {
 
     private final UserManagementService userManagementService;
     private final UserMapper userMapper;
+    private final UserAuthorityUtility userAuthorityUtility;
 
 
     @GetMapping
@@ -92,8 +97,8 @@ public class UserManagementController {
         /*add links*/
 
         /*check authority*/
-        if (userDetails.getAuthorities().contains(UserAuthority.getFor("employee")) ||
-                userDetails.getAuthorities().contains(UserAuthority.getFor("user"))) {
+        if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("employee")) ||
+                userDetails.getAuthorities().contains(userAuthorityUtility.getFor("user"))) {
 
             if (!userDetails.getUsername().equals(username))
                 return ResponseEntity.badRequest().body(
@@ -122,7 +127,7 @@ public class UserManagementController {
         try
         {
             /*get users by authority*/
-            users = userManagementService.getUsersByAuthority(UserAuthority.getFor(authority));
+            users = userManagementService.getUsersByAuthority(userAuthorityUtility.getFor(authority));
         }catch (Exception e){
 
             /*log and respond*/
@@ -158,7 +163,7 @@ public class UserManagementController {
     }
 
     @PutMapping(value = {"elevate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    @Operation(tags = {"User Management"}, summary = "elevate a user authority",
+    @Operation(tags = {"User Management", "Role Management"}, summary = "elevate a user authority",
     security = {@SecurityRequirement(name = "basicAuth")})
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
@@ -170,7 +175,7 @@ public class UserManagementController {
         /*elevate user*/
         try {
             userManagementService.elevate(username,
-                    UserAuthority.getFor(authority));
+                    userAuthorityUtility.getFor(authority));
         } catch (IllegalArgumentException e) {
 
             /*log the exception*/
@@ -186,6 +191,27 @@ public class UserManagementController {
                         new InfoDTO(username + " successfully elevated")
                 )
         );
+    }
+
+    @GetMapping(value = {"downgrade"})
+    @Operation(tags = {"User Management", "Role Management"}, summary = "Api to remove a user's role.",
+            security = {@SecurityRequirement(name = "basicAuth")}
+    )
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
+    @CrossOrigin
+    public ResponseEntity<Void> downgradeUser(@RequestParam("username") @Validated @Email String username,
+                                              @RequestParam("role_to_remove") String role){
+
+        /*downgrade the user*/
+        try {
+            userManagementService.downgrade(username, role);
+        } catch (UserException e) {
+            /*log and respond*/
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 
 }

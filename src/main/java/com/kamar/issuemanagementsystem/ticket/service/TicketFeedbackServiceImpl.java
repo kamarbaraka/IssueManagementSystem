@@ -42,9 +42,9 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
         /*compose the email*/
         String subject = "Submission Feedback";
-        String message = "Ticket #"+ ticket.getTicketId()+ " \""+ ticket.getTitle()+ "\" needs more attention: <br>"+
-                "<div style=\"border-radius: 20px; background: grey;\">"+
-                "<p style=\"color: yellow;\">"+
+        String message = "Ticket \"#"+ ticket.getTicketId()+ " "+ ticket.getTitle()+ "\" needs more attention: <br>"+
+                "<div style='border-radius: 20px; background: grey;'>"+
+                "<p style='color: yellow;'>"+
                 userFeedbackDTO.feedback()+
                 "</p><div><br>"+
                 "Please resolve it in due time.<br>"+ company.endTag();
@@ -59,8 +59,8 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
         /*compose the email*/
         String subject = "Congratulation!";
-        String message = "Congratulation!, you have managed to resolve ticket #"+ ticket.getTicketId()+
-                " \""+ ticket.getTitle()+ "\". Your rating is "+ userFeedbackDTO.serviceRating()+
+        String message = "Congratulation!, you have managed to resolve ticket \"#"+ ticket.getTicketId()+
+                " "+ ticket.getTitle()+ "\". Your rating is "+ userFeedbackDTO.serviceRating()+ "<br>"+
                 company.endTag();
 
         /*send the email*/

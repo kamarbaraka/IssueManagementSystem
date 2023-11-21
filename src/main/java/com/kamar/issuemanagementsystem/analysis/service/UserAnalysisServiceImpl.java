@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.analysis.service;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
@@ -24,13 +25,14 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserAuthorityUtility userAuthorityUtility;
 
     @Override
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public UserPresentationDTO bestPerformantEmployee() throws AnalysisException{
 
         /*get users by authority */
-        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("employee"));
+        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
 
         /*check if the list is empty*/
         if (usersByAuthority.isEmpty()) {
@@ -51,7 +53,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO mostPerformantEmployee() throws AnalysisException {
 
         /*get the most performant employee*/
-        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("employee"));
+        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
         /*get the most performant*/
         User mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
                 (user, user2) -> user2.getUserRating().getTotalRates() > user.getUserRating().getTotalRates() ? user2 : user)
@@ -66,7 +68,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO leastPerformantEmployee() throws AnalysisException{
 
         /*get the least performant*/
-        List<User> usersBAuthorities = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("employee"));
+        List<User> usersBAuthorities = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
 
         /*assert the list is not empty*/
         assert !usersBAuthorities.isEmpty();

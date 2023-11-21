@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
@@ -34,6 +35,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
     private final UserRepository userRepository;
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
+    private final UserAuthorityUtility userAuthorityUtility;
 
     private UserDetails getAuthenticatedUser(){
 
@@ -50,9 +52,9 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         /*the subject*/
         String subject = "Ticket Raised";
         /*construct the message for the admin*/
-        String message = ticket.getRaisedBy().getUsername() + " raised a ticket \""+ "\". #" + ticket.getTicketId()+
-                " "+ ticket.getTitle()+ " to <h3 style='color: cyan; >'"+ ticket.getDepartmentAssigned().getDepartmentName()+
-                ". </h3>"+
+        String message = ticket.getRaisedBy().getUsername() + " raised a ticket \""+ "#" + ticket.getTicketId()+
+                " "+ ticket.getTitle()+ "\" to <h3 style='color: blue;' >"+ ticket.getDepartmentAssigned().getDepartmentName()+
+                " </h3> department."+
                 " <br> "+
                 " <h5><a href=\""+ linkToTicket+ "\" >Ticket</a></h5> <br>"+
                 "Thank you, <br>"+
@@ -62,7 +64,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
 
         /*get all admins and send the admin notification email*/
-        List<User> admins = userRepository.findUserByAuthoritiesContaining(UserAuthority.getFor("admin"));
+        List<User> admins = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("admin"));
 
         if (!admins.isEmpty()) {
 

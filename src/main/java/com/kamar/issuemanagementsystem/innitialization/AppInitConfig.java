@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.innitialization;
 
 import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.service.UserAuthorityManagementService;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.rating.repository.DepartmentPerformanceRatingRepository;
@@ -26,10 +27,9 @@ public class AppInitConfig {
     public InitializingBean initializingBean(
             final UserRepository userRepository,
             final PasswordEncoder passwordEncoder,
-            final UserRatingRepository userRatingRepository,
             final DepartmentRepository departmentRepository,
             final InnitUserProperties innitUserProperties,
-            final DepartmentPerformanceRatingRepository departmentPerformanceRatingRepository
+            final UserAuthorityManagementService userAuthorityManagementService
             ){
 
         return () -> {
@@ -39,12 +39,19 @@ public class AppInitConfig {
             if (userRepository.existsByUsername(username)) {
                 return ;
             }
+            /*create a roles*/
+            UserAuthority ownerAuthority = userAuthorityManagementService.createAuthority("owner");
+            userAuthorityManagementService.createAuthority("user");
+            userAuthorityManagementService.createAuthority("admin");
+            userAuthorityManagementService.createAuthority("employee");
+            userAuthorityManagementService.createAuthority("department_admin");
+
 
             /*create a user*/
             User user = new User();
             user.setUsername(username);
             user.setPassword(passwordEncoder.encode(innitUserProperties.password()));
-            user.getAuthorities().add(UserAuthority.getFor("owner"));
+            user.getAuthorities().add(ownerAuthority);
             user.setEnabled(true);
 
             /*persist the rating and user*/

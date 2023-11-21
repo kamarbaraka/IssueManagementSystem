@@ -11,7 +11,7 @@ public interface UserManagementService extends UserDetailsManager {
 
     void deleteUserByUsername(String username);
     void elevate(String username, UserAuthority authority);
-    void downgrade(String username, UserAuthority authority) throws UserException;
+    void downgrade(String username, String  authority) throws UserException;
     User getUserByUsername(String username);
     boolean checkUserByUsernameAndAuthority(String username, UserAuthority authority);
     List<User> getAllUsers();

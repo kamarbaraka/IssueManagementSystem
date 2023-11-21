@@ -2,6 +2,8 @@ package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
@@ -42,6 +44,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private final ReferralRequestMapper referralRequestMapper;
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
+    private final UserAuthorityUtility userAuthorityUtility;
 
     private void sendReferralRequest(final ReferralRequest referralRequest){
 
@@ -83,7 +86,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
         String message = "The ticket #" + ticket.getTicketId() + " " + ticket.getTitle()
                 + " is assigned to you upon accepting the referral request. Resolve it before "+
-                "<h4 style=\"color: red;\">" + ticket.getDeadline()+ "</h4> <br>"+
+                "<h4 style='color: red;'>" + ticket.getDeadline()+ "</h4> <br>"+
                 "<h4><a href=\""+ ticketLink.getHref()+ "\">Ticket</a></h4> <br>"+
                 company.endTag();
 
@@ -101,8 +104,8 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*set the email*/
         String subject = "Request Accepted";
 
-        String message = referralRequest.getTo().getUsername() + " accepted your referral request for ticket #"
-                + referralRequest.getRefferedTicket().getTicketId() + " \""
+        String message = referralRequest.getTo().getUsername() + " accepted your referral request for ticket \"#"
+                + referralRequest.getRefferedTicket().getTicketId() + " "
                 + referralRequest.getRefferedTicket().getTitle() + "\". <br>"+
                 company.endTag();
 
@@ -114,8 +117,8 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
         /*set the email*/
         String subject = "Request Rejected";
-        String message = referralRequest.getTo().getUsername() + " rejected your referral request for ticket #"
-                + referralRequest.getRefferedTicket().getTicketId() + " \""
+        String message = referralRequest.getTo().getUsername() + " rejected your referral request for ticket \"#"
+                + referralRequest.getRefferedTicket().getTicketId() + " "
                 + referralRequest.getRefferedTicket().getTitle()+ "\". <br>"+
                 company.endTag();
 
@@ -127,7 +130,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
             throws ReferralRequestException{
 
         /*check whether the referred to is an employee*/
-        if (!referralRequest.getTo().getAuthorities().contains(UserAuthority.getFor("employee")))
+        if (!referralRequest.getTo().getAuthorities().contains(userAuthorityUtility.getFor("employee")))
             throw new ReferralRequestException("user is not an employee");
         /*create a referral request*/
         ReferralRequest savedRequest = referralRequestRepository.save(referralRequest);

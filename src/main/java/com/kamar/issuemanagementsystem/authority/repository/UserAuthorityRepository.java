@@ -11,5 +11,5 @@ import java.nio.file.LinkOption;
  * @author kamar baraka.*/
 
 @Repository
-public interface UserAuthorityRepository extends JpaRepository<UserAuthority, Long> {
+public interface UserAuthorityRepository extends JpaRepository<UserAuthority, String > {
 }

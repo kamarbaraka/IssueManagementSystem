@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * dto to hold user registration data.
@@ -18,6 +19,7 @@ public record UserRegistrationDTO(
         /*@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.\\d)",
         message = "password must contain at least one uppercase, lowercase letter and a special character " +
                 "and minimum length of eight characters")*/
-        String password
+        String password,
+        String role
 ) implements DtoType, Serializable {
 }

@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
@@ -32,7 +33,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     private final UserManagementService userManagementService;
     private final TicketManagementService ticketManagementService;
     private final EmailService emailService;
-    private final DepartmentRepository departmentRepository;
+    private final UserAuthorityUtility userAuthorityUtility;
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
 
@@ -80,7 +81,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
         /*check if the user is an employee*/
         if (!userManagementService.checkUserByUsernameAndAuthority(
-                ticket.getAssignedTo().getUsername(), UserAuthority.getFor("employee")))
+                ticket.getAssignedTo().getUsername(), userAuthorityUtility.getFor("employee")))
             throw new OperationNotSupportedException();
 
         /*assign the ticket*/

@@ -83,9 +83,8 @@ public class TicketCreationController {
 
             /*log the exception*/
             log.error(e.getMessage());
-            throw e;
             /*respond*/
-//            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build();
         }
 
 

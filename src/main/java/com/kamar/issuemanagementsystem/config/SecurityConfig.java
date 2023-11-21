@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.config;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
 import com.kamar.issuemanagementsystem.cors.AppCorsConfigurationSourceImpl;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
@@ -64,9 +65,10 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(UserRepository userRepository,
                                                  EmailService emailService,
-                                                 CompanyProperties companyProperties){
+                                                 CompanyProperties companyProperties,
+                                                 UserAuthorityRepository userAuthorityRepository){
 
-        return new UserManagementServiceImpl(userRepository, emailService, companyProperties);
+        return new UserManagementServiceImpl(userRepository, emailService, companyProperties, userAuthorityRepository);
 
     }
 

@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.reporting.service;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
@@ -22,6 +23,7 @@ import java.util.List;
 public class TicketReportingServiceImpl implements TicketReportingService {
 
     private final TicketRepository ticketRepository;
+    private final UserAuthorityUtility userAuthorityUtility;
 
     @Override
     public List<Ticket> ticketsByStatus(TicketStatus status, UserDetails authenticatedUser) {
@@ -29,8 +31,8 @@ public class TicketReportingServiceImpl implements TicketReportingService {
         /*get tickets by status*/
         List<Ticket> ticketsByStatus = ticketRepository.findTicketsByStatusOrderByCreatedOn(status).orElseThrow();
 
-        if (authenticatedUser.getAuthorities().contains(UserAuthority.getFor("employee")) &&
-                (!authenticatedUser.getAuthorities().contains(UserAuthority.getFor("department_admin")))) {
+        if (authenticatedUser.getAuthorities().contains(userAuthorityUtility.getFor("employee")) &&
+                (!authenticatedUser.getAuthorities().contains(userAuthorityUtility.getFor("department_admin")))) {
 
             /*filter the result*/
             return ticketsByStatus.parallelStream().filter(
@@ -54,8 +56,8 @@ public class TicketReportingServiceImpl implements TicketReportingService {
         /*get all tickets*/
         List<Ticket> allTickets = ticketRepository.findAll();
 
-        if (authenticatedUser.getAuthorities().contains(UserAuthority.getFor("employee")) &&
-                (authenticatedUser.getAuthorities().contains(UserAuthority.getFor("department_admin")))) {
+        if (authenticatedUser.getAuthorities().contains(userAuthorityUtility.getFor("employee")) &&
+                (authenticatedUser.getAuthorities().contains(userAuthorityUtility.getFor("department_admin")))) {
 
             /*filter the tickets*/
             return allTickets.parallelStream().filter(
@@ -65,8 +67,8 @@ public class TicketReportingServiceImpl implements TicketReportingService {
         }
 
         /*check the authorities*/
-        if (authenticatedUser.getAuthorities().contains(UserAuthority.getFor("user")) &&
-                (!authenticatedUser.getAuthorities().contains(UserAuthority.getFor("admin")))) {
+        if (authenticatedUser.getAuthorities().contains(userAuthorityUtility.getFor("user")) &&
+                (!authenticatedUser.getAuthorities().contains(userAuthorityUtility.getFor("admin")))) {
 
             /*filter*/
             return allTickets.parallelStream().filter(

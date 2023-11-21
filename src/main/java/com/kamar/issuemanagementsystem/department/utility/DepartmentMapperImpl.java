@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.department.utility;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.data.DepartmentCreationDto;
 import com.kamar.issuemanagementsystem.department.data.DepartmentDto;
 import com.kamar.issuemanagementsystem.department.entity.Department;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DepartmentMapperImpl implements DepartmentMapper {
     private final UserRepository userRepository;
+    private final UserAuthorityUtility userAuthorityUtility;
 
     @Override
     public Department mapToDepartment(DepartmentCreationDto departmentCreationDto)throws DepartmentException {
@@ -35,7 +37,7 @@ public class DepartmentMapperImpl implements DepartmentMapper {
         );
         department.setHeadOfDepartment(hOD);
         /*set the authority of the HOD*/
-        hOD.getAuthorities().add(UserAuthority.getFor("department_admin"));
+        hOD.getAuthorities().add(userAuthorityUtility.getFor("department_admin"));
         /*add the hod as the member of the department*/
         department.getMembers().add(hOD);
         return department;

@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.reporting.controller;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -40,6 +41,7 @@ public class TicketReportingController {
     private final TicketReportingService ticketReportingService;
     private final TicketMapper ticketMapper;
     private final UserManagementService userManagementService;
+    private final UserAuthorityUtility userAuthorityUtility;
 
 
     private List<EntityModel<DtoType>> convertToDto(List<Ticket> ticketList, UserDetails userDetails){
@@ -140,7 +142,7 @@ public class TicketReportingController {
             /*get user*/
             currentUser = userManagementService.getUserByUsername(userDetails.getUsername());
             /*get the tickets*/
-            if (userDetails.getAuthorities().contains(UserAuthority.getFor("admin"))) {
+            if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("admin"))) {
                 User user = userManagementService.getUserByUsername(username);
                 tickets = ticketReportingService.userTicketsByStatus(user, TicketStatus.valueOf(status.toUpperCase()));
             }

@@ -1,6 +1,8 @@
 package com.kamar.issuemanagementsystem.user.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.rating.entity.UserRating;
@@ -17,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.service.invoker.UrlArgumentResolver;
 
 /**
  * the user registration service implementation.
@@ -35,6 +38,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final PasswordEncoder passwordEncoder;
     private final UserRatingRepository userRatingRepository;
     private final CompanyProperties companyProperties;
+    private final UserAuthorityRepository userAuthorityRepository;
 
     private void sendActivationEmail(String email, String token){
 
@@ -66,6 +70,11 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         user.setPassword(passwordEncoder.encode(registrationDTO.password()));
         /*get and set the rating*/
         UserRating userRating = user.getUserRating();
+        /*set the roles/authorities*/
+        UserAuthority userAuthority = userAuthorityRepository.findById(registrationDTO.role().toUpperCase()).orElseThrow(
+                () -> new UserException("role doesn't exist."));
+        user.getAuthorities().add(userAuthority);
+
         /*persist the rating and user*/
         userRatingRepository.save(userRating);
         userRepository.save(user);

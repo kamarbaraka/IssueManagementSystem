@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
@@ -50,6 +51,7 @@ public class TicketManagementController {
     private final TicketMapper ticketMapper;
     private final TicketUtilities ticketUtilities;
     private final DepartmentRepository departmentRepository;
+    private final UserAuthorityUtility userAuthorityUtility;
 
     @GetMapping(value = {"get"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Creation", "Ticket Assignment", "Ticket Submission", "Ticket Management"},
@@ -86,12 +88,12 @@ public class TicketManagementController {
         response.add(referLink);
         response.add(attachmentLink);
 
-        if (userDetails.getAuthorities().contains(UserAuthority.getFor("department_admin")) &&
+        if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("department_admin")) &&
                 (!ticket.getDepartmentAssigned().getMembers().contains((User) userDetails)))
             return ResponseEntity.badRequest().body(
                             EntityModel.of(new InfoDTO("you are not permitted to access this resource")));
 
-        if (userDetails.getAuthorities().contains(UserAuthority.getFor("employee")) &&
+        if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("employee")) &&
                 (!userDetails.getUsername().equals(ticket.getAssignedTo().getUsername()) &&
                     (!userDetails.getUsername().equals(ticket.getRaisedBy().getUsername()))))
                     {
@@ -102,8 +104,8 @@ public class TicketManagementController {
         }
 
         /*check authorities and perform actions based*/
-        if ((userDetails.getAuthorities().contains(UserAuthority.getFor("user")) &&
-                (!userDetails.getAuthorities().contains(UserAuthority.getFor("admin")))) &&
+        if ((userDetails.getAuthorities().contains(userAuthorityUtility.getFor("user")) &&
+                (!userDetails.getAuthorities().contains(userAuthorityUtility.getFor("admin")))) &&
                 !userDetails.getUsername().equals(ticket.getRaisedBy().getUsername())){
             /*return a response*/
             return ResponseEntity.badRequest().body(
@@ -169,7 +171,7 @@ public class TicketManagementController {
             Collection<? extends GrantedAuthority> authorities = authenticatedUser.getAuthorities();
             TicketStatus ticketStatus = TicketStatus.valueOf(status.toUpperCase());
             /*check the authority if admin or department admin*/
-            if (authorities.contains(UserAuthority.getFor("admin"))) {
+            if (authorities.contains(userAuthorityUtility.getFor("admin"))) {
 
                 /*get parsed department*/
                 Department passedDept = departmentRepository.findDepartmentByDepartmentName(department).orElseThrow();
@@ -213,7 +215,7 @@ public class TicketManagementController {
             /*get the authorities and status*/
             Collection<? extends GrantedAuthority> authorities = authenticatedUser.getAuthorities();
             /*check the authority if admin or department admin*/
-            if (authorities.contains(UserAuthority.getFor("admin"))) {
+            if (authorities.contains(userAuthorityUtility.getFor("admin"))) {
 
                 /*get parsed department*/
                 Department passedDept = departmentRepository.findDepartmentByDepartmentName(department).orElseThrow();

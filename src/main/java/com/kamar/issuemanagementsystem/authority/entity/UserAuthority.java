@@ -13,16 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class UserAuthority implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "authority", nullable = false, unique = true)
+    private String authority;
 
-    @Column(name = "authority", nullable = false)
-    private String authority = "USER";
-
-    public static UserAuthority getFor(String authority){
-
-        UserAuthority userAuthority = new UserAuthority();
-        userAuthority.setAuthority(authority.toUpperCase());
-        return userAuthority;
-    }
 }
