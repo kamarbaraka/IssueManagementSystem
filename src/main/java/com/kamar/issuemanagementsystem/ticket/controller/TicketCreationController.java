@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,12 +53,13 @@ public class TicketCreationController {
 
     /**
      * create a {@link }*/
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('USER', 'EMPLOYEE')")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
-            @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     })
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
@@ -66,7 +68,9 @@ public class TicketCreationController {
                                                              @RequestParam("description") String description,
                                                              @RequestBody List<MultipartFile> attachment){
 
-        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, attachment);
+        List<MultipartFile> inAttachment = attachment == null ? new ArrayList<>() : attachment;
+
+        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, inAttachment);
         Ticket savedTicket;
 
         try
