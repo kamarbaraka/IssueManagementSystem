@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -60,7 +61,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         return ticketRepository.findTicketsByRaisedBy(user).orElseThrow();
     }
 
-    public Attachment downloadTicketAttachment(final long ticketId) throws TicketException{
+    public List<Attachment> downloadTicketAttachment(final long ticketId) throws TicketException{
 
         /*get the ticket*/
         Optional<Ticket> optSavedTicket = ticketRepository.findById(ticketId);
@@ -71,10 +72,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
 
         Ticket ticket = optSavedTicket.get();
         Collection<Attachment> attachments = ticket.getAttachments();
-        Optional<Attachment> optAttachments = attachments.parallelStream().findFirst();
-
-        return optAttachments.orElse(null);
-
+        return new ArrayList<>(attachments);
     }
 
     @Override

@@ -19,7 +19,7 @@ public interface TicketManagementService {
     Ticket updateTicket(Ticket ticket);
     Ticket getTicketById(long id);
     List<Ticket> getTicketsByRaisedBy(User user);
-    Attachment downloadTicketAttachment(final long ticketId) throws TicketException;
+    List<Attachment> downloadTicketAttachment(final long ticketId) throws TicketException;
     List<TicketAdminPresentationDTO> getTicketsByDepartmentAndStatus(Department departmentAssigned, TicketStatus status);
     List<TicketAdminPresentationDTO> getTicketsByDepartment(Department departmentAssigned);
 }

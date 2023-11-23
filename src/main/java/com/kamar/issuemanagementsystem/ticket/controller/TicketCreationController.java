@@ -31,6 +31,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
@@ -66,11 +69,18 @@ public class TicketCreationController {
                                                              @RequestParam("department") String departmentToAssign,
                                                              @RequestParam("title") String title,
                                                              @RequestParam("description") String description,
-                                                             @RequestBody List<MultipartFile> attachment){
+                                                             @RequestBody List<MultipartFile> attachments){
 
-        List<MultipartFile> inAttachment = attachment == null ? new ArrayList<>() : attachment;
+        /*List<MultipartFile> attachments;
+        if (attachment != null) {
+            attachments = new ArrayList<>(List.of(attachment));
+        }else {
+            attachments = new ArrayList<>();
+        }*/
 
-        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, inAttachment);
+//        List<MultipartFile> inAttachment = attachment == null ? new ArrayList<>() : attachment;
+
+        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, attachments);
         Ticket savedTicket;
 
         try

@@ -127,7 +127,7 @@ public class TicketManagementController {
         Attachment attachment;
         try {
             /*get the attachment*/
-            attachment = ticketManagementService.downloadTicketAttachment(id);
+            attachment = ticketManagementService.downloadTicketAttachment(id).stream().findFirst().orElseThrow();
         } catch (TicketException e) {
 
             /*log*/
