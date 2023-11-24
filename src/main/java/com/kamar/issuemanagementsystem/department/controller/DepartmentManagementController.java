@@ -113,6 +113,10 @@ public class DepartmentManagementController {
             return ResponseEntity.notFound().build();
         }
 
+        if (department == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(EntityModel.of(department));
     }
 

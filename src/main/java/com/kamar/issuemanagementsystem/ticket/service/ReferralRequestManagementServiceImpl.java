@@ -18,6 +18,7 @@ import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapp
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
+import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -45,6 +46,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
     private final UserAuthorityUtility userAuthorityUtility;
+    private final UserUtilityService userUtilityService;
 
     private void sendReferralRequest(final ReferralRequest referralRequest){
 
@@ -129,8 +131,10 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private ReferralRequest createAReferralRequest(ReferralRequest referralRequest)
             throws ReferralRequestException{
 
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         /*check whether the referred to is an employee*/
-        if (!referralRequest.getTo().getAuthorities().contains(userAuthorityUtility.getFor("employee")))
+        if (!userUtilityService.hasAuthority(authenticatedUser, "employee"))
             throw new ReferralRequestException("user is not an employee");
         /*create a referral request*/
         ReferralRequest savedRequest = referralRequestRepository.save(referralRequest);

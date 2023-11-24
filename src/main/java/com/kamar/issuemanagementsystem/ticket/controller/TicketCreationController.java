@@ -59,11 +59,11 @@ public class TicketCreationController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('USER', 'EMPLOYEE')")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     })
+    @PreAuthorize("hasAnyAuthority('USER', 'EMPLOYEE')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
                                                              @RequestParam("department") String departmentToAssign,
@@ -71,16 +71,9 @@ public class TicketCreationController {
                                                              @RequestParam("description") String description,
                                                              @RequestBody List<MultipartFile> attachments){
 
-        /*List<MultipartFile> attachments;
-        if (attachment != null) {
-            attachments = new ArrayList<>(List.of(attachment));
-        }else {
-            attachments = new ArrayList<>();
-        }*/
+        List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : attachments;
 
-//        List<MultipartFile> inAttachment = attachment == null ? new ArrayList<>() : attachment;
-
-        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, attachments);
+        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, requestAttachments);
         Ticket savedTicket;
 
         try
