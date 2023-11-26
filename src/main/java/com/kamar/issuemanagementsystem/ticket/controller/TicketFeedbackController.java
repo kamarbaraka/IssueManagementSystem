@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketUserFeedbackDTO;
+import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketFeedbackException;
 import com.kamar.issuemanagementsystem.ticket.service.TicketFeedbackService;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
@@ -58,7 +59,7 @@ public class TicketFeedbackController {
         /*send the feedback*/
         try {
             ticketFeedbackService.sendFeedback(userFeedbackDTO, ticketId, authenticatedUser);
-        } catch (TicketFeedbackException e) {
+        } catch (TicketFeedbackException | TicketException e) {
 
             /*log and return response*/
             log.error(e.getMessage());

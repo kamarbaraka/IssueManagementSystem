@@ -4,10 +4,13 @@ import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
+import com.kamar.issuemanagementsystem.department.entity.Department;
+import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
+import com.kamar.issuemanagementsystem.ticket.data.dto.MembersDto;
 import com.kamar.issuemanagementsystem.ticket.data.dto.ReferralRequestDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
@@ -47,6 +50,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private final TicketUtilities ticketUtilities;
     private final UserAuthorityUtility userAuthorityUtility;
     private final UserUtilityService userUtilityService;
+    private final DepartmentRepository departmentRepository;
 
     private void sendReferralRequest(final ReferralRequest referralRequest){
 
@@ -128,14 +132,8 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername(), null);
     }
 
-    private ReferralRequest createAReferralRequest(ReferralRequest referralRequest)
-            throws ReferralRequestException{
+    private ReferralRequest createAReferralRequest(ReferralRequest referralRequest){
 
-        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        /*check whether the referred to is an employee*/
-        if (!userUtilityService.hasAuthority(authenticatedUser, "employee"))
-            throw new ReferralRequestException("user is not an employee");
         /*create a referral request*/
         ReferralRequest savedRequest = referralRequestRepository.save(referralRequest);
         /*notify*/
@@ -157,11 +155,40 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     public ReferralRequestDTO referTicketTo(Ticket ticket, String to)
             throws ReferralRequestException {
 
+        /*get the authenticated user*/
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         /*get data*/
         User fromUser = ticket.getAssignedTo();
         User toUser = userRepository.findUserByUsername(to).orElseThrow(
                 () -> new ReferralRequestException(" employee to refer to not found")
         );
+        Department toUserDepartment = departmentRepository.findDepartmentByMembersContaining(toUser).orElseThrow(
+                () -> new ReferralRequestException("user doesn't belong to a department."));
+
+        /*filter for employee */
+        if (userUtilityService.hasAuthority(authenticatedUser, "employee")) {
+
+            /*check if he owns the ticket*/
+            if (!ticket.getAssignedTo().getUsername().equals(authenticatedUser.getUsername())) {
+                throw new ReferralRequestException("you dont own the resource");
+            }
+            /*check if user to refer to belongs to the department*/
+            if (!ticket.getDepartmentAssigned().equals(toUserDepartment)) {
+                throw new ReferralRequestException("can't refer to a different department");
+            }
+        }
+
+        /*filter for department admin*/
+        if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
+
+            /*check if the ticket belongs to his department*/
+            User user = (User) authenticatedUser;
+            Department authenticatedUserDept = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow(
+                    () -> new ReferralRequestException("you dont belong to a department."));
+            if (!ticket.getDepartmentAssigned().equals(authenticatedUserDept)) {
+                throw new ReferralRequestException("you dont own the resource");
+            }
+        }
 
         /*construct a referral request*/
         ReferralRequest referralRequest = new ReferralRequest();
@@ -202,5 +229,21 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*notify the referrer*/
         sendAcceptedRequestNotification(referralRequest);
         receiveAcceptedRequestNotification(refferedTicket, authenticatedUser);
+    }
+
+    @Override
+    public MembersDto refer() throws ReferralRequestException {
+
+        /*get authenticated user*/
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) userDetails;
+
+        /*get department*/
+        Department department = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow(
+                () -> new ReferralRequestException("user doesn't belong to a department"));
+
+        List<String> members = department.getMembers().stream().map(User::getUsername).toList();
+
+        return new MembersDto(department.getDepartmentName(), members);
     }
 }

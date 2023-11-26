@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,5 +12,5 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface TicketSubmissionService {
 
     void submitTicket(final long ticketId, @AuthenticationPrincipal UserDetails authenticatedUser)
-            throws TicketSubmissionException;
+            throws TicketSubmissionException, TicketException;
 }

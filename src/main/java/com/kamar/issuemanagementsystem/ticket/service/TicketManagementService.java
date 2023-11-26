@@ -7,6 +7,7 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDT
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.user.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public interface TicketManagementService {
 
     Ticket updateTicket(Ticket ticket);
-    Ticket getTicketById(long id);
+    Ticket getTicketById(long id) throws TicketException;
     List<Ticket> getTicketsByRaisedBy(User user);
     List<Attachment> downloadTicketAttachment(final long ticketId) throws TicketException;
     List<TicketAdminPresentationDTO> getTicketsByDepartmentAndStatus(Department departmentAssigned, TicketStatus status);

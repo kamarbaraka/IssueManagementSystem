@@ -1,11 +1,14 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.ticket.data.dto.MembersDto;
 import com.kamar.issuemanagementsystem.ticket.data.dto.ReferralRequestDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.ReferralRequestException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.List;
 
 /**
  * the referral management service.
@@ -19,5 +22,7 @@ public interface ReferralRequestManagementService {
 
     void respondToReferralRequest(long referralRequestId, boolean response, UserDetails authenticatedUser)
             throws ReferralRequestException;
+
+    MembersDto refer() throws ReferralRequestException;
 
 }

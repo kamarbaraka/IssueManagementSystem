@@ -103,29 +103,6 @@ public class TicketManagementController {
         response.add(referLink);
         response.add(attachmentLink);
 
-        /*filter for department admin*/
-        if (userUtilityService.hasAuthority(userDetails, "department_admin"))
-            return ResponseEntity.badRequest().body(
-                            EntityModel.of(new InfoDTO("you are not permitted to access this resource")));
-
-        if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("employee")) &&
-                (!userDetails.getUsername().equals(ticket.getAssignedTo().getUsername()) &&
-                    (!userDetails.getUsername().equals(ticket.getRaisedBy().getUsername()))))
-                    {
-                        return ResponseEntity.badRequest().body(
-                            EntityModel.of(new InfoDTO("you are not permitted to access this resource"))
-                    );
-
-        }
-
-        /*check authorities and perform actions based*/
-        if (userUtilityService.hasAuthority(userDetails, "user")){
-            /*return a response*/
-            return ResponseEntity.badRequest().body(
-                    EntityModel.of(new InfoDTO("operation not allowed"))
-            );
-        }
-
         /*return response*/
         return ResponseEntity.ok().body(response);
     }

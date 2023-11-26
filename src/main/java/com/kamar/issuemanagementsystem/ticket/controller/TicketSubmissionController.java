@@ -1,6 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
+import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionException;
 import com.kamar.issuemanagementsystem.ticket.service.TicketSubmissionService;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
@@ -46,7 +47,7 @@ public class TicketSubmissionController {
         /*submit the ticket*/
         try {
             ticketSubmissionService.submitTicket(ticketId, authenticatedUser);
-        } catch (TicketSubmissionException e) {
+        } catch (TicketSubmissionException | TicketException e) {
 
             /*log and compose a response*/
             log.error(e.getMessage());

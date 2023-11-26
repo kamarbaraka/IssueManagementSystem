@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.kamar"
-version = "0.0.5-SNAPSHOT"
+version = "0.0.5"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

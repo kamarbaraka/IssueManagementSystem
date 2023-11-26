@@ -1,9 +1,11 @@
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
+import com.kamar.issuemanagementsystem.ticket.data.dto.MembersDto;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketReferralDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
+import com.kamar.issuemanagementsystem.ticket.exceptions.ReferralRequestException;
 import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestManagementService;
 import com.kamar.issuemanagementsystem.ticket.service.TicketManagementService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
@@ -25,6 +27,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * the referral request controller.
@@ -124,7 +128,7 @@ public class ReferralRequestController {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     })
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE', 'DEPARTMENT_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN', 'EMPLOYEE')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@RequestParam("ticketId") long ticketId,
                                                                   @Validated @RequestParam("to") @Email String username){
@@ -153,5 +157,26 @@ public class ReferralRequestController {
         /*return response*/
         return ResponseEntity.ok(response);
 
+    }
+
+
+    @GetMapping(value = {"refer"})
+    @Operation(tags = {"Ticket Referral"}, summary = "Api to get users to refer ticket to. {EMPLOYEE, ADMIN, DEPARTMENT_ADMIN" +
+            "}", security = {
+            @SecurityRequirement(name = "basicAuth")
+    })
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'DEPARTMENT_ADMIN')")
+    @CrossOrigin
+    public ResponseEntity<MembersDto> refer(){
+
+        /*get members*/
+        try {
+            MembersDto membersDto = referralRequestManagementService.refer();
+            return ResponseEntity.ok(membersDto);
+        } catch (ReferralRequestException e) {
+            /*log*/
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

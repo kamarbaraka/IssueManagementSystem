@@ -11,6 +11,7 @@ import com.kamar.issuemanagementsystem.rating.service.RatingService;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketUserFeedbackDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
+import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketFeedbackException;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
@@ -69,7 +70,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
     @Override
     public void sendFeedback(final TicketUserFeedbackDTO userFeedbackDTO, final long ticketId,
-                             UserDetails authenticatedUser) throws TicketFeedbackException {
+                             UserDetails authenticatedUser) throws TicketFeedbackException, TicketException {
 
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(ticketId);

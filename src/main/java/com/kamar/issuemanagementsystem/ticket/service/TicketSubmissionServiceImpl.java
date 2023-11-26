@@ -6,6 +6,7 @@ import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
+import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionException;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
@@ -58,7 +59,7 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
 
     @Override
     public void submitTicket(final long ticketId, final @AuthenticationPrincipal UserDetails authenticatedUser)
-            throws TicketSubmissionException {
+            throws TicketSubmissionException, TicketException {
 
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(ticketId);
