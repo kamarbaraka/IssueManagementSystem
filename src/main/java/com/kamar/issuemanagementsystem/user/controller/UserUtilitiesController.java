@@ -22,7 +22,7 @@ public class UserUtilitiesController {
 
 
     @GetMapping(value = {"", "who"})
-    @Operation(tags = {"Utilities"}, summary = "api to discover the authenticated user",
+    @Operation(tags = {"Utilities"}, summary = "api to discover the authenticated user.",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "USER", "EMPLOYEE"})})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin

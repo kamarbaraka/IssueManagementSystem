@@ -36,8 +36,9 @@ public class User implements Serializable, UserDetails {
     private String activationToken = UUID.randomUUID().toString();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "members")
-    private Collection<UserAuthority> authorities = new ArrayList<>();
+    @JoinTable(name = "users_authorities",joinColumns = {@JoinColumn(name = "user")},
+            inverseJoinColumns = {@JoinColumn(name = "authority")})
+    private List<UserAuthority> authorities = new ArrayList<>();
 
     @OneToOne( cascade = CascadeType.ALL, optional = false, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "rating")

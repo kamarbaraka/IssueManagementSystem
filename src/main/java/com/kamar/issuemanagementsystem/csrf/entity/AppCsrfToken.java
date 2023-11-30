@@ -13,7 +13,7 @@ public class AppCsrfToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false, name = "id")
+    @Column(nullable = false, updatable = false, name = "ticketNumber")
     private long id;
 
     @Column(nullable = false, name = "app_id")

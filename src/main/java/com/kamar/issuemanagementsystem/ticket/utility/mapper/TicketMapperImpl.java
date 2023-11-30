@@ -64,7 +64,7 @@ public class TicketMapperImpl implements TicketMapper {
 
         if (ticket.getDeadline() == null){
             return new TicketAdminPresentationDTO(
-                    ticket.getTicketId(),
+                    ticket.getTicketNumber(),
                 ticket.getTitle(),
                 ticket.getDescription(),
                 ticket.getPriority().toString(),
@@ -77,7 +77,7 @@ public class TicketMapperImpl implements TicketMapper {
 
         /*map the dto*/
         return new TicketAdminPresentationDTO(
-                ticket.getTicketId(),
+                ticket.getTicketNumber(),
                 ticket.getTitle(),
                 ticket.getDescription(),
                 ticket.getPriority().toString(),

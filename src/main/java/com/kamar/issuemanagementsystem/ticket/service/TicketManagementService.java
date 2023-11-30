@@ -18,9 +18,9 @@ import java.util.List;
 public interface TicketManagementService {
 
     Ticket updateTicket(Ticket ticket);
-    Ticket getTicketById(long id) throws TicketException;
+    Ticket getTicketById(final String  id) throws TicketException;
     List<Ticket> getTicketsByRaisedBy(User user);
-    List<Attachment> downloadTicketAttachment(final long ticketId) throws TicketException;
+    List<Attachment> downloadTicketAttachment(final String  ticketId) throws TicketException;
     List<TicketAdminPresentationDTO> getTicketsByDepartmentAndStatus(Department departmentAssigned, TicketStatus status);
     List<TicketAdminPresentationDTO> getTicketsByDepartment(Department departmentAssigned);
 }

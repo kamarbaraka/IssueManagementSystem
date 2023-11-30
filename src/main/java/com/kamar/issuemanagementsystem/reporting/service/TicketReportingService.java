@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface TicketReportingService {
 
-    List<Ticket> ticketsByStatus(TicketStatus status, UserDetails userDetails);
+    List<Ticket> ticketsByStatus(TicketStatus status);
     List<Ticket> userTicketsByStatus(User user, TicketStatus ticketStatus);
-    List<Ticket> getAllTickets(UserDetails authenticatedUser);
+    List<Ticket> getAllTickets();
 }

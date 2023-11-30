@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.authority.service;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.exception.AuthorityException;
 import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +13,10 @@ import java.util.List;
  * @author kamar baraka.*/
 
 @Service
-public record UserAuthorityManagementServiceServiceImpl(
-        UserAuthorityRepository userAuthorityRepository
-) implements UserAuthorityManagementService {
+@RequiredArgsConstructor
+public class UserAuthorityManagementServiceServiceImpl implements UserAuthorityManagementService {
+
+    private final UserAuthorityRepository userAuthorityRepository;
 
     @Override
     public UserAuthority createAuthority(String authority) throws AuthorityException {
@@ -54,6 +56,11 @@ public record UserAuthorityManagementServiceServiceImpl(
     public List<UserAuthority> getAllAuthorities() {
 
         /*get all authorities*/
-        return userAuthorityRepository.findAll();
+        try {
+            List<UserAuthority> allAuthorities = userAuthorityRepository.findAll();
+            return allAuthorities;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

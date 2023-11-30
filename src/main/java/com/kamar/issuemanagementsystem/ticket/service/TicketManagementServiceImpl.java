@@ -38,14 +38,13 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     private final TicketRepository ticketRepository;
     private final TicketMapper ticketMapper;
     private final DepartmentRepository departmentRepository;
-    private final UserAuthorityUtility userAuthorityUtility;
     private final UserUtilityService userUtilityService;
 
     @Override
     public Ticket updateTicket(Ticket ticket) {
 
         /*check if exists*/
-        Ticket savedTicket = ticketRepository.findById(ticket.getTicketId()).orElseThrow();
+        Ticket savedTicket = ticketRepository.findById(ticket.getTicketNumber()).orElseThrow();
         savedTicket.setAssignedTo(ticket.getAssignedTo());
         savedTicket.setPriority(ticket.getPriority());
         savedTicket.setDeadline(ticket.getDeadline());
@@ -54,9 +53,9 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     }
 
     @Override
-    public Ticket getTicketById(long id) throws TicketException {
+    public Ticket getTicketById(String  id) throws TicketException {
 
-        /*get the ticket by id*/
+        /*get the ticket by ticketNumber*/
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new TicketException("no such ticket"));
 
         /*get authenticated user*/
@@ -103,7 +102,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         return ticketRepository.findTicketsByRaisedBy(user).orElseThrow();
     }
 
-    public List<Attachment> downloadTicketAttachment(final long ticketId) throws TicketException{
+    public List<Attachment> downloadTicketAttachment(final String ticketId) throws TicketException{
 
         /*get the ticket*/
         Optional<Ticket> optSavedTicket = ticketRepository.findById(ticketId);

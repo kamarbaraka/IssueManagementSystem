@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,11 +45,11 @@ public class UserManagementController {
 
 
     @GetMapping
-    @Operation(tags = {"User Management", "User Reporting"}, summary = "get all users",
+    @Operation(tags = {"User Management", "User Reporting"}, summary = "get all users. {'ADMIN', 'OWNER'}",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
-    public ResponseEntity<List<EntityModel<DtoType>>> getAllUsers(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<List<EntityModel<DtoType>>> getAllUsers(){
 
         List<User> allUsers;
 
@@ -64,7 +65,7 @@ public class UserManagementController {
         }
 
         /*construct a response*/
-        List<EntityModel<DtoType>> usersDto = convertListToResponse(allUsers, userDetails);
+        List<EntityModel<DtoType>> usersDto = convertListToResponse(allUsers);
 
         /*return the response*/
         return ResponseEntity.ok(usersDto);
@@ -72,13 +73,14 @@ public class UserManagementController {
     }
 
     @GetMapping(value = {"user"})
-    @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get a user by username",
+    @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get a user by username.",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@RequestParam("username") String username,
-                                                                  @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<EntityModel<DtoType>> getUserByUsername(@RequestParam("username") String username){
 
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         /*get user by username*/
         User user;
         try {
@@ -115,12 +117,11 @@ public class UserManagementController {
     }
 
     @GetMapping(value = {"authority"})
-    @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get users by their authority",
+    @Operation(tags = {"User Management", "Ticket Assignment", "User Reporting"}, summary = "get users by their authority. {'ADMIN'}",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAuthority('ADMIN')")
     @CrossOrigin
-    public ResponseEntity<List<EntityModel<DtoType>>> getUsersByAuthority(@RequestParam("authority") String authority,
-                                                                          @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<List<EntityModel<DtoType>>> getUsersByAuthority(@RequestParam("authority") String authority){
 
         List<User> users;
 
@@ -136,13 +137,13 @@ public class UserManagementController {
         }
 
         /*construct a response*/
-        List<EntityModel<DtoType>> listOfUsers = convertListToResponse(users, userDetails);
+        List<EntityModel<DtoType>> listOfUsers = convertListToResponse(users);
 
         /*return the response*/
         return ResponseEntity.ok(listOfUsers);
     }
 
-    private List<EntityModel<DtoType>> convertListToResponse(List<User> userList, UserDetails userDetails){
+    private List<EntityModel<DtoType>> convertListToResponse(List<User> userList){
 
         return userList.stream().map(user -> {
 
@@ -152,7 +153,7 @@ public class UserManagementController {
             EntityModel<DtoType> response = EntityModel.of(userDto);
             /*add links*/
             Link userLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
-                            UserManagementController.class).getUserByUsername(user.getUsername(), userDetails))
+                            UserManagementController.class).getUserByUsername(user.getUsername()))
                     .withRel("user");
 
             response.add(userLink);
@@ -163,7 +164,7 @@ public class UserManagementController {
     }
 
     @PutMapping(value = {"elevate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    @Operation(tags = {"User Management", "Role Management"}, summary = "elevate a user authority",
+    @Operation(tags = {"User Management", "Role Management"}, summary = "elevate a user authority. {'ADMIN', 'OWNER'}",
     security = {@SecurityRequirement(name = "basicAuth")})
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
@@ -194,7 +195,7 @@ public class UserManagementController {
     }
 
     @GetMapping(value = {"downgrade"})
-    @Operation(tags = {"User Management", "Role Management"}, summary = "Api to remove a user's role.",
+    @Operation(tags = {"User Management", "Role Management"}, summary = "Api to remove a user's role. {'ADMIN', 'OWNER'}",
             security = {@SecurityRequirement(name = "basicAuth")}
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")

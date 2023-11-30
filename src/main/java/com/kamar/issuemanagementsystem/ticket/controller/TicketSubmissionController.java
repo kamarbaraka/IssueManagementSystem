@@ -12,8 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,18 +33,17 @@ public class TicketSubmissionController {
 
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    @Operation(tags = {"Ticket Submission"}, summary = "submit a ticket by id",
+    @Operation(tags = {"Ticket Submission"}, summary = "submit a ticket by ticketNumber. {'EMPLOYEE'}",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"EMPLOYEE"})})
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> submitATicket(@RequestParam("ticket_id") long ticketId,
-                                                              @AuthenticationPrincipal UserDetails authenticatedUser){
+    public ResponseEntity<EntityModel<DtoType>> submitATicket(@RequestParam("ticket_number") String ticketNumber){
 
         /*submit the ticket*/
         try {
-            ticketSubmissionService.submitTicket(ticketId, authenticatedUser);
+            ticketSubmissionService.submitTicket(ticketNumber);
         } catch (TicketSubmissionException | TicketException e) {
 
             /*log and compose a response*/

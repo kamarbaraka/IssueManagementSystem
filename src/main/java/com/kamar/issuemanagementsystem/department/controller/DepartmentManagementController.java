@@ -43,16 +43,16 @@ public class DepartmentManagementController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(tags = {"Department Creation", "Department Management"}, summary = "api to create a department",
+    @Operation(tags = {"Department Creation", "Department Management"}, summary = "api to create a department. {'ADMIN', 'OWNER'}",
             security = {@SecurityRequirement(name = "basicAuth")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "successfully created")
     })
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public ResponseEntity<EntityModel<DtoType>> createDepartment(@RequestParam("department_name")
                                                                      @Size(min = 2, max = 50, message = "department name too long")
                                                                      String departmentName,
@@ -85,7 +85,8 @@ public class DepartmentManagementController {
 
     @GetMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(
-            tags = {"Department Management", "Department Reporting"}, summary = "api to get department by name",
+            tags = {"Department Management", "Department Reporting"}, summary = "api to get department by name. " +
+            "{'ADMIN', 'OWNER', 'DEPARTMENT_ADMIN'}",
             security = {
                     @SecurityRequirement(name = "basicAuth", scopes = {"OWNER", "ADMIN", "DEPARTMENT_ADMIN"})}
     )
@@ -123,16 +124,16 @@ public class DepartmentManagementController {
     @PostMapping(value = {"add"}, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(
             tags = {"Department Management", "User Management"},
-            summary = "Api to add users to a department",
+            summary = "Api to add users to a department. {'ADMIN', 'DEPARTMENT_ADMIN'}",
             responses = {
                     @ApiResponse(responseCode = "200", description = "users have been successfully added to department"),
             },
             security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN","DEPARTMENT_ADMIN"})}
     )
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN')")
     @RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN')")
     @CrossOrigin
     public ResponseEntity<Void> addUsersToDepartment(@Validated @RequestParam("users") List<@Email String > users,
                                                        @Validated @RequestParam("department_name") String departmentName){
@@ -154,7 +155,7 @@ public class DepartmentManagementController {
     }
 
     @GetMapping(value = {"all"})
-    @Operation(tags = {"Department Management", "Department Reporting"}, summary = "Api to get all departments.",
+    @Operation(tags = {"Department Management", "Department Reporting"}, summary = "Api to get all departments. {'ADMIN', 'OWNER'}",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin

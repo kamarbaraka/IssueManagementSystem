@@ -12,6 +12,7 @@ import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +38,11 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
 
         /*compose the email*/
         String subject = "Ticket Review";
-        String message = "Dear "+ ticket.getRaisedBy().getUsername()+ ", your ticket \"#"+ ticket.getTicketId()+ " "+
+        String message = "Dear "+ ticket.getRaisedBy().getUsername()+ ", your ticket \""+ ticket.getTicketNumber()+ " "+
                 ticket.getTitle()+ "\", has been resolved. Please check if it is resolved to your satisfaction and provide the feedback.<br>"+
                 company.endTag();
 
-        String messageAdmin = ticket.getAssignedTo().getUsername() + " has submitted ticket \"#"+ ticket.getTicketId()+
+        String messageAdmin = ticket.getAssignedTo().getUsername() + " has submitted ticket \""+ ticket.getTicketNumber()+
                 " "+ ticket.getTitle()+ "\".<br>"+
                 company.endTag();
 
@@ -58,8 +59,10 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
     }
 
     @Override
-    public void submitTicket(final long ticketId, final @AuthenticationPrincipal UserDetails authenticatedUser)
+    public void submitTicket(final String ticketId)
             throws TicketSubmissionException, TicketException {
+
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(ticketId);

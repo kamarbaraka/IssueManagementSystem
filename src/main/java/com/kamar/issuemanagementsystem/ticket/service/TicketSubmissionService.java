@@ -11,6 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface TicketSubmissionService {
 
-    void submitTicket(final long ticketId, @AuthenticationPrincipal UserDetails authenticatedUser)
+    void submitTicket(final String ticketId)
             throws TicketSubmissionException, TicketException;
 }

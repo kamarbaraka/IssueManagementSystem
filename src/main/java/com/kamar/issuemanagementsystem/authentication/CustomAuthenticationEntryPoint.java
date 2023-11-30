@@ -21,7 +21,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException) throws IOException, ServletException {
 
         /*configure the response*/
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "bad credentials");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
 
     }
 }

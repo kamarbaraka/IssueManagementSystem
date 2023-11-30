@@ -48,30 +48,26 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private final ReferralRequestMapper referralRequestMapper;
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
-    private final UserAuthorityUtility userAuthorityUtility;
     private final UserUtilityService userUtilityService;
     private final DepartmentRepository departmentRepository;
 
     private void sendReferralRequest(final ReferralRequest referralRequest){
 
 
-        /*authenticated user*/
-        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         /*add links*/
         Link acceptRequest = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 ReferralRequestController.class).respondToReferralRequest(
-                        true, referralRequest.getRequestId(), authenticatedUser)).withRel("accept");
+                        true, referralRequest.getRequestId())).withRel("accept");
 
         Link rejectRequest = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(ReferralRequestController.class)
-                        .respondToReferralRequest(false, referralRequest.getRequestId(), authenticatedUser))
+                        .respondToReferralRequest(false, referralRequest.getRequestId()))
                 .withRel("reject");
 
         /*compose the email*/
         String subject = "Referral Request";
         String message = referralRequest.getFrom().getUsername()+ " has requested you to handle the ticket #" +
-                referralRequest.getRefferedTicket().getTicketId()+ " \""+ referralRequest.getRefferedTicket().getTitle()
+                referralRequest.getRefferedTicket().getTicketNumber()+ " \""+ referralRequest.getRefferedTicket().getTitle()
                 + "\" <br>"+
                 "<h4 style=\"color: green;\"><a href=\""+ acceptRequest.getHref()+ "\">Accept</a></h4> <br>"+
                 "<h4 style=\"color: red;\"><a href=\""+ rejectRequest.getHref()+ "\">Reject</a></h4> <br>"+
@@ -81,16 +77,16 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         emailService.sendEmail(message, subject, referralRequest.getTo().getUsername(), null);
     }
 
-    private void receiveAcceptedRequestNotification(Ticket ticket, UserDetails authenticatedUser){
+    private void receiveAcceptedRequestNotification(Ticket ticket){
 
         /*set the message and subject*/
         String subject = "Reassigned";
 
         Link ticketLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(TicketManagementController.class)
-                        .getTicketById(ticket.getTicketId(), authenticatedUser)).withRel("ticket");
+                        .getTicketById(ticket.getTicketNumber())).withRel("ticket");
 
-        String message = "The ticket #" + ticket.getTicketId() + " " + ticket.getTitle()
+        String message = "The ticket #" + ticket.getTicketNumber() + " " + ticket.getTitle()
                 + " is assigned to you upon accepting the referral request. Resolve it before "+
                 "<h4 style='color: red;'>" + ticket.getDeadline()+ "</h4> <br>"+
                 "<h4><a href=\""+ ticketLink.getHref()+ "\">Ticket</a></h4> <br>"+
@@ -111,7 +107,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         String subject = "Request Accepted";
 
         String message = referralRequest.getTo().getUsername() + " accepted your referral request for ticket \"#"
-                + referralRequest.getRefferedTicket().getTicketId() + " "
+                + referralRequest.getRefferedTicket().getTicketNumber() + " "
                 + referralRequest.getRefferedTicket().getTitle() + "\". <br>"+
                 company.endTag();
 
@@ -124,7 +120,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*set the email*/
         String subject = "Request Rejected";
         String message = referralRequest.getTo().getUsername() + " rejected your referral request for ticket \"#"
-                + referralRequest.getRefferedTicket().getTicketId() + " "
+                + referralRequest.getRefferedTicket().getTicketNumber() + " "
                 + referralRequest.getRefferedTicket().getTitle()+ "\". <br>"+
                 company.endTag();
 
@@ -206,8 +202,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
     @Override
     @Transactional
-    public void respondToReferralRequest(long referralRequestId, boolean response,
-                                         UserDetails authenticatedUser) throws ReferralRequestException {
+    public void respondToReferralRequest(long referralRequestId, boolean response) throws ReferralRequestException {
 
         /*get the referral request*/
         ReferralRequest referralRequest = referralRequestRepository.findById(referralRequestId).orElseThrow(
@@ -228,7 +223,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
         /*notify the referrer*/
         sendAcceptedRequestNotification(referralRequest);
-        receiveAcceptedRequestNotification(refferedTicket, authenticatedUser);
+        receiveAcceptedRequestNotification(refferedTicket);
     }
 
     @Override

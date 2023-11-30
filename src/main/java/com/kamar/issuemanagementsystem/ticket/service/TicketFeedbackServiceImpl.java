@@ -16,6 +16,7 @@ import com.kamar.issuemanagementsystem.ticket.exceptions.TicketFeedbackException
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
         /*compose the email*/
         String subject = "Submission Feedback";
-        String message = "Ticket \"#"+ ticket.getTicketId()+ " "+ ticket.getTitle()+ "\" needs more attention: <br>"+
+        String message = "Ticket \""+ ticket.getTicketNumber()+ " "+ ticket.getTitle()+ "\" needs more attention: <br>"+
                 "<div style='border-radius: 20px; background: grey;'>"+
                 "<p style='color: yellow;'>"+
                 userFeedbackDTO.feedback()+
@@ -60,7 +61,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
         /*compose the email*/
         String subject = "Congratulation!";
-        String message = "Congratulation!, you have managed to resolve ticket \"#"+ ticket.getTicketId()+
+        String message = "Congratulation!, you have managed to resolve ticket \""+ ticket.getTicketNumber()+
                 " "+ ticket.getTitle()+ "\". Your rating is "+ userFeedbackDTO.serviceRating()+ "<br>"+
                 company.endTag();
 
@@ -69,8 +70,11 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
     }
 
     @Override
-    public void sendFeedback(final TicketUserFeedbackDTO userFeedbackDTO, final long ticketId,
-                             UserDetails authenticatedUser) throws TicketFeedbackException, TicketException {
+    public void sendFeedback(final TicketUserFeedbackDTO userFeedbackDTO, final String  ticketId)
+            throws TicketFeedbackException, TicketException {
+
+        /*get authenticated user*/
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(ticketId);

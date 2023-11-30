@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TicketRepository extends JpaRepository<Ticket, Long> {
+public interface TicketRepository extends JpaRepository<Ticket, String> {
 
     Optional<List<Ticket>> findTicketsByTitle(String title);
     Optional<List<Ticket>> findTicketsByRaisedBy(User user);

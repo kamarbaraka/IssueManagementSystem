@@ -35,7 +35,7 @@ public class UserAnalysisController {
 
     @GetMapping(value = {"employeePerformance"})
     @Operation(tags = {"Employee Analysis", "User Analysis", "User Reporting"},
-            summary = "get the most performant employee",
+            summary = "get the most performant employee. {'ADMIN', 'OWNER'}",
     security = {@SecurityRequirement(name = "basicAuth")})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin

@@ -20,7 +20,7 @@ public interface ReferralRequestManagementService {
 
     ReferralRequestDTO referTicketTo(Ticket ticket, String to) throws ReferralRequestException;
 
-    void respondToReferralRequest(long referralRequestId, boolean response, UserDetails authenticatedUser)
+    void respondToReferralRequest(long referralRequestId, boolean response)
             throws ReferralRequestException;
 
     MembersDto refer() throws ReferralRequestException;

@@ -23,12 +23,10 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * the referral request controller.
@@ -47,7 +45,8 @@ public class ReferralRequestController {
     /**
      * respond to referral request*/
     @GetMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    @Operation(tags = { "Ticket Referral"}, summary = "respond to a referral", description = "accept or reject ticket referral.",
+    @Operation(tags = { "Ticket Referral"}, summary = "respond to a referral. {'EMPLOYEE'}",
+            description = "accept or reject ticket referral.",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"EMPLOYEE"})})
     @PreAuthorize("hasAuthority('EMPLOYEE')")
     @RequestBody(content = {
@@ -55,14 +54,11 @@ public class ReferralRequestController {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE)})
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> respondToReferralRequest(@RequestParam("accept") boolean accept,
-                                                                         @RequestParam("id") long id,
-                                                                         @AuthenticationPrincipal UserDetails authenticatedUser){
-        /*map to Referral request*/
-
+                                                                         @RequestParam("referral_id") long id){
 
         /*check weather accepted or rejected*/
         try {
-            referralRequestManagementService.respondToReferralRequest(id, accept, authenticatedUser);
+            referralRequestManagementService.respondToReferralRequest(id, accept);
         } catch (Exception e) {
 
             /*log and respond*/
@@ -90,14 +86,14 @@ public class ReferralRequestController {
     }
 
     /**
-     * get referral request by id.
+     * get referral request by ticketNumber.
      * @author kamar baraka.*/
     @GetMapping(value = {"byId"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(tags = {"Ticket Referral"},summary = "get referral",description = "get referral by id",
+    @Operation(tags = {"Ticket Referral"},summary = "get referral. {'EMPLOYEE'}",description = "get referral by ticketNumber",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"EMPLOYEE"})})
     @PreAuthorize("hasAuthority('EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@RequestParam("id") long id){
+    public ResponseEntity<EntityModel<DtoType>> getReferralRequestById(@RequestParam("referral_id") long id){
 
         ReferralRequest referral;
 
@@ -122,7 +118,8 @@ public class ReferralRequestController {
     }
 
     @PostMapping(value = {"refer"}, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    @Operation(tags = { "Ticket Referral"}, summary = "refer a ticket", description = "refer a ticket to another user",
+    @Operation(tags = { "Ticket Referral"}, summary = "refer a ticket. {\"ADMIN\", \"EMPLOYEE\", \"DEPARTMENT_ADMIN\"}",
+            description = "refer a ticket to another user",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "EMPLOYEE", "DEPARTMENT_ADMIN"})})
     @RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
@@ -130,7 +127,7 @@ public class ReferralRequestController {
     })
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN', 'EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@RequestParam("ticketId") long ticketId,
+    public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@RequestParam("ticket_number") String ticketNumber,
                                                                   @Validated @RequestParam("to") @Email String username){
 
         /*create a dto*/
@@ -140,7 +137,7 @@ public class ReferralRequestController {
         try
         {
             /*get the ticket*/
-            ticket = ticketManagementService.getTicketById(ticketId);
+            ticket = ticketManagementService.getTicketById(ticketNumber);
             /*refer*/
             referralRequestManagementService.referTicketTo(ticket, ticketReferralDTO.To());
         }catch (Exception e){

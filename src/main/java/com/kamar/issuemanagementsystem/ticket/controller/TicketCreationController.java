@@ -27,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,7 +58,8 @@ public class TicketCreationController {
     /**
      * create a {@link }*/
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    @Operation(tags = {"Ticket Creation"}, summary = "create a ticket", description = "use this api to raise a ticket",
+    @Operation(tags = {"Ticket Creation"}, summary = "create a ticket. {'USER', 'EMPLOYEE'}",
+            description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
@@ -65,11 +67,14 @@ public class TicketCreationController {
     })
     @PreAuthorize("hasAnyAuthority('USER', 'EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> createTicket(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<EntityModel<DtoType>> createTicket(
                                                              @RequestParam("department") String departmentToAssign,
                                                              @RequestParam("title") String title,
                                                              @RequestParam("description") String description,
                                                              @RequestBody List<MultipartFile> attachments){
+
+        /*get authenticated user*/
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : attachments;
 
@@ -96,14 +101,8 @@ public class TicketCreationController {
 
 
         /*construct a response*/
-        DtoType info = new InfoDTO("ticket successfully created");
+        DtoType info = new InfoDTO(savedTicket.getTicketNumber());
         EntityModel<DtoType> response = EntityModel.of(info);
-        /*create links*/
-        Link linkToTicket = WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(TicketManagementController.class).getTicketById(
-                        savedTicket.getTicketId(), userDetails)).withRel("ticket");
-
-        response.add(linkToTicket);
 
         /*return the response*/
         return ResponseEntity.ok(response);

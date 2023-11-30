@@ -2,12 +2,10 @@ package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.attachment.utils.AttachmentUtilityService;
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
-import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
@@ -32,23 +30,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * the ticket management controller.
@@ -62,9 +51,7 @@ public class TicketManagementController {
 
     private final TicketManagementService ticketManagementService;
     private final TicketMapper ticketMapper;
-    private final TicketUtilities ticketUtilities;
     private final DepartmentRepository departmentRepository;
-    private final UserAuthorityUtility userAuthorityUtility;
     private final AttachmentUtilityService attachmentUtilityService;
     private final UserUtilityService userUtilityService;
 
@@ -74,14 +61,13 @@ public class TicketManagementController {
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> getTicketById(@RequestParam("ticket_id") long id,
-                                                              @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<EntityModel<DtoType>> getTicketById(@RequestParam("ticket_number") String ticketNumber){
 
         Ticket ticket;
         try
         {
             /*get the ticket*/
-            ticket = ticketManagementService.getTicketById(id);
+            ticket = ticketManagementService.getTicketById(ticketNumber);
         }catch (Exception e){
 
             /*log and respond*/
@@ -95,10 +81,10 @@ public class TicketManagementController {
         EntityModel<DtoType> response = EntityModel.of(adminDto);
         /*add links*/
         Link attachmentLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TicketManagementController.class)
-                .downloadTicketAttachments(adminDto.id())).withRel("attachment");
+                .downloadTicketAttachments(adminDto.ticketNumber())).withRel("attachment");
 
-        Link referLink = WebMvcLinkBuilder.linkTo(TicketAssignmentController.class).slash("refer")
-                .slash(ticket.getTicketId()).withRel("refer");
+        Link referLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+                ReferralRequestController.class).refer()).withRel("refer");
 
         response.add(referLink);
         response.add(attachmentLink);
@@ -108,16 +94,16 @@ public class TicketManagementController {
     }
 
     @GetMapping(value = {"attachment"}, produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    @Operation(tags = {"Ticket Management"}, summary = "Api to download ticket attachment by ticket id",
+    @Operation(tags = {"Ticket Management"}, summary = "Api to download ticket attachment by ticket ticketNumber",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
-    public ResponseEntity<FileSystemResource> downloadTicketAttachments(@RequestParam("ticket_id") long id){
+    public ResponseEntity<FileSystemResource> downloadTicketAttachments(@RequestParam("ticket_number") String ticketNumber){
 
         List<Attachment> attachments;
         try {
             /*get the attachment*/
-            attachments = ticketManagementService.downloadTicketAttachment(id);
+            attachments = ticketManagementService.downloadTicketAttachment(ticketNumber);
         } catch (TicketException e) {
 
             /*log*/
@@ -193,7 +179,7 @@ public class TicketManagementController {
     }
 
     @GetMapping(value = {"getByDeptAndStatus"}, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    @Operation(tags = {"Ticket Management", "Department Management"}, summary = "Api to get tickets by status that belong to a department.",
+    @Operation(tags = {"Ticket Management", "Department Management"}, summary = "Api to get tickets by status that belong to a department. {'ADMIN', 'DEPARTMENT_ADMIN'}",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "DEPARTMENT_ADMIN"})})
     @RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
@@ -201,9 +187,11 @@ public class TicketManagementController {
     })
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN')")
     @CrossOrigin
-    public ResponseEntity<List<? extends DtoType>> getTicketsByDepartmentAndStatus(@AuthenticationPrincipal User authenticatedUser,
+    public ResponseEntity<List<? extends DtoType>> getTicketsByDepartmentAndStatus(
                                                                    @RequestParam("department") String department,
                                                                    @RequestParam("status") String status){
+        /*get the authenticated user*/
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try
         {
             /*get the authorities and status*/
@@ -221,7 +209,8 @@ public class TicketManagementController {
             }
 
             /*get the department*/
-            Department dept = departmentRepository.findDepartmentByMembersContaining(authenticatedUser).orElseThrow();
+            User user = (User) authenticatedUser;
+            Department dept = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow();
             /*get the tickets*/
             List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartmentAndStatus(
                     dept, ticketStatus);
@@ -244,9 +233,10 @@ public class TicketManagementController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN')")
     @CrossOrigin
     public ResponseEntity<List<? extends DtoType>> getTicketsByDepartment(
-            @AuthenticationPrincipal User authenticatedUser,
             @RequestParam("department") String department
     ){
+        /*get authenticated user*/
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         try
         {
@@ -263,7 +253,8 @@ public class TicketManagementController {
             }
 
             /*get the department*/
-            Department dept = departmentRepository.findDepartmentByMembersContaining(authenticatedUser).orElseThrow();
+            User user = (User) authenticatedUser;
+            Department dept = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow();
             /*get the tickets*/
             List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartment(
                     dept);

@@ -2,7 +2,6 @@ package com.kamar.issuemanagementsystem.external_resouces.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
-import com.sun.mail.smtp.SMTPTransport;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;

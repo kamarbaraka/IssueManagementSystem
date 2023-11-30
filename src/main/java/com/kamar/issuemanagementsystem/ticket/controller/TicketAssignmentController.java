@@ -53,18 +53,21 @@ public class TicketAssignmentController {
      * assign a ticket to user
      */
     @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket", description = "assign a ticket to a user.",
+    @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket. {'ADMIN', 'DEPARTMENT_ADMIN'}",
+            description = "assign a ticket to a user.",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN, DEPARTMENT_ADMIN"})})
     @RequestBody(content = {@Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@RequestParam("id") long id,
+    public ResponseEntity<EntityModel<DtoType>> assignATicketTo(@RequestParam("ticket_number") String ticketNumber,
                                                                 @Validated @RequestParam("to") @Email String username,
                                                                 @Validated @RequestParam("priority") String priority,
-                                                                @Validated @RequestParam("deadline") String deadline,
-                                                                @AuthenticationPrincipal UserDetails userDetails){
+                                                                @Validated @RequestParam("deadline") String deadline){
 
+        if (priority == null) {
+            priority = "medium";
+        }
         /*create a dto*/
         TicketAssignmentDTO ticketAssignmentDTO = new TicketAssignmentDTO(username, priority.toUpperCase(), deadline);
 
@@ -74,7 +77,7 @@ public class TicketAssignmentController {
         try
         {
             /*get the ticket*/
-            ticket = ticketManagementService.getTicketById(id);
+            ticket = ticketManagementService.getTicketById(ticketNumber);
             /*get the user to assign to*/
             userToAssign = userManagementService.getUserByUsername(ticketAssignmentDTO.assignTo());
         }catch (Exception e){
@@ -115,7 +118,7 @@ public class TicketAssignmentController {
         /*create links*/
         Link ticketLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(TicketManagementController.class)
-                        .getTicketById(ticket.getTicketId(), userDetails)).withRel("ticket");
+                        .getTicketById(ticket.getTicketNumber())).withRel("ticket");
 
         response.add(ticketLink);
 

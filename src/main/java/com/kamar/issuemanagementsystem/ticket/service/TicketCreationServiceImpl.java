@@ -37,26 +37,21 @@ public class TicketCreationServiceImpl implements TicketCreationService {
     private final TicketUtilities ticketUtilities;
     private final UserAuthorityUtility userAuthorityUtility;
 
-    private UserDetails getAuthenticatedUser(){
-
-        /*get the user from context*/
-        return ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-    }
-
     private void sendCreationNotification(Ticket ticket){
 
         /*the get ticket link*/
         String linkToTicket = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 TicketManagementController.class).getTicketById(
-                        ticket.getTicketId(), getAuthenticatedUser())).withRel("ticket").getHref();
+                        ticket.getTicketNumber())).withRel("ticket").getHref();
         /*the subject*/
         String subject = "Ticket Raised";
         /*construct the message for the admin*/
-        String message = ticket.getRaisedBy().getUsername() + " raised a ticket \""+ "#" + ticket.getTicketId()+
+        String message = "<div >"+ ticket.getRaisedBy().getUsername()+
+                " raised a ticket \"" + ticket.getTicketNumber()+
                 " "+ ticket.getTitle()+ "\" to <h3 style='color: blue;' >"+ ticket.getDepartmentAssigned().getDepartmentName()+
-                " </h3> department."+
+                " </h3> department. </div>"+
                 " <br> "+
-                " <h5><a href=\""+ linkToTicket+ "\" >Ticket</a></h5> <br>"+
+                " <h3><a href=\""+ linkToTicket+ "\" >Ticket</a></h3> <br>"+
                 "Thank you, <br>"+
                 company.endTag();
 
@@ -78,8 +73,9 @@ public class TicketCreationServiceImpl implements TicketCreationService {
 
         /*send notification to the raiser*/
         String raiserSubject = "Ticket Success";
-        String raiserMessage = "Dear "+ ticket.getRaisedBy().getUsername()+ ", thank you for raising your issue. <br>"+
-                "It will be handled within a week.<br>"+ company.endTag();
+        String raiserMessage = "<div > Dear "+ ticket.getRaisedBy().getUsername()+
+                ", thank you for raising your issue. <br>"+
+                "It will be handled within a week. </div><br>"+ company.endTag();
 
         emailService.sendEmail(raiserMessage, raiserSubject, ticket.getRaisedBy().getUsername(), null);
 

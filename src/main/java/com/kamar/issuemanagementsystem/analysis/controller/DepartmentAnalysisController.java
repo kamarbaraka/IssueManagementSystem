@@ -40,7 +40,7 @@ public class DepartmentAnalysisController {
     @GetMapping(value = {"mostPerformant"})
     @Operation(
             tags = {"Department Analysis", "Department Reporting"},
-            summary = "Api to get the most performant department",
+            summary = "Api to get the most performant department. {'ADMIN', 'OWNER'}",
             security = {@SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})}
     )
     @ApiResponses(
@@ -83,7 +83,7 @@ public class DepartmentAnalysisController {
     @GetMapping(value = {"bestPerformant"})
     @Operation(
             tags = {"Department Analysis", "Department Reporting"},
-            summary = "Api to get the best performant department",
+            summary = "Api to get the best performant department. {'ADMIN', 'OWNER'}",
             security = {
                     @SecurityRequirement(name = "basicAuth", scopes = {"ADMIN","OWNER"})
             }
@@ -127,7 +127,7 @@ public class DepartmentAnalysisController {
     @GetMapping(value = {"{department_name}/bestPerformant"})
     @Operation(
             tags = {"Department Analysis", "Department Reporting", "Employee Analysis", "User Analysis", "User Reporting"},
-            summary = "Api to get the best performant employee in a department",
+            summary = "Api to get the best performant employee in a department. {'ADMIN', 'OWNER'}",
             security = {
                     @SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})
             }
@@ -140,10 +140,9 @@ public class DepartmentAnalysisController {
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> bestEmployeeInDepartment(@PathVariable("department_name") String departmentName,
-                                                                         @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<EntityModel<DtoType>> bestEmployeeInDepartment(@PathVariable("department_name") String departmentName){
 
-        /*get department by the name*/
+        /*get department by the department name*/
         UserPresentationDTO bestEmployee;
         try {
             bestEmployee = departmentAnalysisService.getBestEmployeeInDepartment(departmentName);
@@ -157,7 +156,7 @@ public class DepartmentAnalysisController {
         /*compose*/
         Link userLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(UserManagementController.class)
-                        .getUserByUsername(bestEmployee.username(), userDetails)).withRel("user");
+                        .getUserByUsername(bestEmployee.username())).withRel("user");
 
         return ResponseEntity.ok(
                 EntityModel.of(
@@ -170,7 +169,7 @@ public class DepartmentAnalysisController {
     @GetMapping(value = {"{department_name}/mostPerformant"})
     @Operation(
             tags = {"Department Analysis", "Department Reporting", "Employee Analysis", "User Analysis", "User Reporting"},
-            summary = "Api to get the most performant employee in a department",
+            summary = "Api to get the most performant employee in a department. ['ADMIN', 'OWNER'}",
             security = {
                     @SecurityRequirement(name = "basicAuth", scopes = {"ADMIN", "OWNER"})
             }
@@ -183,10 +182,10 @@ public class DepartmentAnalysisController {
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> mostPerformantEmployeeInDepartment(@PathVariable("department_name") String departmentName,
-                                                                         @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<EntityModel<DtoType>> mostPerformantEmployeeInDepartment(@PathVariable("department_name")
+                                                                                       String departmentName){
 
-        /*get department by the name*/
+        /*get department by the department name*/
         UserPresentationDTO mostPerformantEmpl;
         try {
             mostPerformantEmpl = departmentAnalysisService.getMostPerformantEmployeeInDepartment(departmentName);
@@ -200,7 +199,7 @@ public class DepartmentAnalysisController {
         /*compose*/
         Link userLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(UserManagementController.class)
-                        .getUserByUsername(mostPerformantEmpl.username(), userDetails)).withRel("user");
+                        .getUserByUsername(mostPerformantEmpl.username())).withRel("user");
 
         return ResponseEntity.ok(
                 EntityModel.of(

@@ -47,10 +47,9 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
         /*set the subject and Message*/
         String subject = "Ticket assignment";
         Link ticketLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
-                TicketManagementController.class).getTicketById(ticket.getTicketId(),
-                getAuthenticatedUser())).withRel("the ticket");
+                TicketManagementController.class).getTicketById(ticket.getTicketNumber())).withRel("the ticket");
 
-        String message = "You have been assigned the ticket #" + ticket.getTicketId()+ " "+ ticket.getTitle() +
+        String message = "You have been assigned the ticket " + ticket.getTicketNumber()+ " "+ ticket.getTitle() +
                 ". Resolve it before "+ "<h4 style=\"color: red;\">"+ ticket.getDeadline()+ "</h4> <br>"+
                 "  <h4><a href=\""+ ticketLink.getHref()+ "\" >Ticket</a></h4> <br>"+
                 company.endTag();
@@ -63,7 +62,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
         /*compose and send notification to the raiser*/
         String raiserSubject = "Ticket handling";
-        String raiserMessage = "Dear "+ ticket.getRaisedBy().getUsername()+ ",Your ticket #" + ticket.getTicketId()
+        String raiserMessage = "Dear "+ ticket.getRaisedBy().getUsername()+ ",Your ticket " + ticket.getTicketNumber()
                 + " \"" + ticket.getTitle() + "\""+
                 " is being handled by the " + ticket.getDepartmentAssigned().getDepartmentName()+
                 " department.<br>"+

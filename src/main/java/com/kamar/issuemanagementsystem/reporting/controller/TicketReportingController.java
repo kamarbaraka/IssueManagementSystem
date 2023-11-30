@@ -22,7 +22,9 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +46,7 @@ public class TicketReportingController {
     private final UserAuthorityUtility userAuthorityUtility;
 
 
-    private List<EntityModel<DtoType>> convertToDto(List<Ticket> ticketList, UserDetails userDetails){
+    private List<EntityModel<DtoType>> convertToDto(List<Ticket> ticketList){
 
         /*map to dto*/
         return ticketList.stream().map(ticket -> {
@@ -55,7 +57,7 @@ public class TicketReportingController {
             /*add Links*/
             Link ticketLink = WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(TicketManagementController.class)
-                            .getTicketById(ticket.getTicketId(), userDetails)
+                            .getTicketById(ticket.getTicketNumber())
             ).withRel("ticket");
 
             response.add(ticketLink);
@@ -72,15 +74,14 @@ public class TicketReportingController {
     })
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
-    public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByStatus(@RequestParam("status") String status,
-                                                                         @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByStatus(@RequestParam("status") String status){
 
         List<Ticket> tickets;
 
         try
         {
             /*get tickets by status*/
-            tickets = ticketReportingService.ticketsByStatus(TicketStatus.valueOf(status.toUpperCase()), userDetails);
+            tickets = ticketReportingService.ticketsByStatus(TicketStatus.valueOf(status.toUpperCase()));
         }catch (Exception e){
 
             /*log and respond*/
@@ -89,7 +90,7 @@ public class TicketReportingController {
         }
 
         /*map the tickets to DTO*/
-        List<EntityModel<DtoType>> response = convertToDto(tickets, userDetails);
+        List<EntityModel<DtoType>> response = convertToDto(tickets);
 
         /*construct a response*/
         return ResponseEntity.ok(response);
@@ -100,7 +101,7 @@ public class TicketReportingController {
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
-    public ResponseEntity<List<EntityModel<DtoType>>> getAllTickets(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<List<EntityModel<DtoType>>> getAllTickets(){
 
 
         List<Ticket> allTickets;
@@ -108,7 +109,7 @@ public class TicketReportingController {
         try
         {
             /*get all tickets*/
-            allTickets = ticketReportingService.getAllTickets(userDetails);
+            allTickets = ticketReportingService.getAllTickets();
         }catch (Exception e){
 
             /*log and respond*/
@@ -117,7 +118,7 @@ public class TicketReportingController {
         }
 
         /*map to dto*/
-        List<EntityModel<DtoType>> response = convertToDto(allTickets, userDetails);
+        List<EntityModel<DtoType>> response = convertToDto(allTickets);
         /*return the response*/
         return ResponseEntity.ok(response);
     }
@@ -130,9 +131,9 @@ public class TicketReportingController {
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
     public ResponseEntity<List<EntityModel<DtoType>>> getTicketsByUserAndStatus(@RequestParam("username") String username,
-                                                                                @RequestParam("status") String status,
-                                                                                @AuthenticationPrincipal
-                                                                                    UserDetails userDetails){
+                                                                                @RequestParam("status") String status){
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         User currentUser;
         List<Ticket> tickets;
@@ -157,7 +158,7 @@ public class TicketReportingController {
 
 
         /*map the tickets*/
-        List<EntityModel<DtoType>> response = convertToDto(tickets, userDetails);
+        List<EntityModel<DtoType>> response = convertToDto(tickets);
         /*return the response*/
         return ResponseEntity.ok(response);
 

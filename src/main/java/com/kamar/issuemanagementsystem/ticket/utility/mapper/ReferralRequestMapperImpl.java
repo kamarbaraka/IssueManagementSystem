@@ -15,7 +15,7 @@ public class ReferralRequestMapperImpl implements ReferralRequestMapper{
 
         /*create an instance*/
         return new ReferralRequestDTO(
-                "#" + referralRequest.getRefferedTicket().getTicketId() + " " + referralRequest.getRefferedTicket().getTitle(),
+                referralRequest.getRefferedTicket().getTicketNumber() + " " + referralRequest.getRefferedTicket().getTitle(),
                 referralRequest.getTo().getUsername(),
                 referralRequest.getFrom().getUsername(),
                 referralRequest.isAccepted(),

@@ -12,6 +12,7 @@ import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +36,9 @@ public class TicketReportingServiceImpl implements TicketReportingService {
     private final UserRepository userRepository;
 
     @Override
-    public List<Ticket> ticketsByStatus(TicketStatus status, UserDetails authenticatedUser) {
+    public List<Ticket> ticketsByStatus(TicketStatus status) {
 
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         /*get tickets by status*/
         List<Ticket> ticketsByStatus = ticketRepository.findTicketsByStatusOrderByCreatedOn(status).orElseThrow();
 
@@ -60,7 +62,9 @@ public class TicketReportingServiceImpl implements TicketReportingService {
     }
 
     @Override
-    public List<Ticket> getAllTickets(UserDetails authenticatedUser) {
+    public List<Ticket> getAllTickets() {
+
+        UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /*get all tickets*/
         List<Ticket> allTickets = ticketRepository.findAll();

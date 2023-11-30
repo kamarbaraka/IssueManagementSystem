@@ -9,6 +9,7 @@ import com.kamar.issuemanagementsystem.user.service.UserRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
@@ -36,7 +37,8 @@ public class UserRegistrationController {
      * register a user*/
     @PostMapping(value = {"register"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    @Operation(tags = {"User Registration"}, summary = "register a user", description = "an api to register users",
+    @Operation(tags = {"User Registration"}, summary = "register a user. {'ADMIN', 'OWNER'}",
+            description = "an api to register users.",
     security = {@SecurityRequirement(name = "basicAuth")})
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
@@ -73,18 +75,19 @@ public class UserRegistrationController {
      * activate a user*/
     @PostMapping(value = {"activate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE,
     MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(tags = {"User Activation"}, summary = "activate a user", description = "api to activate a",
+    @Operation(tags = {"User Activation"}, summary = "activate a user. {'ADMIN', 'OWNER'}", description = "api to activate a",
     security = {@SecurityRequirement(name = "basicAuth")})
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
             @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     })
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> activateUser(@RequestParam(name = "username") String username,
-                                                             @RequestBody ActivationSuccessDTO activationDTO){
-        UserActivationDTO activationReq = new UserActivationDTO(username, activationDTO.message());
+    public ResponseEntity<EntityModel<DtoType>> activateUser(@Validated @RequestParam(name = "username") @Email String username,
+                                                             @RequestParam("activation_token") String activationToken){
+
+        UserActivationDTO activationReq = new UserActivationDTO(username, activationToken);
         /*activate the user*/
         try {
             userRegistrationService.activateUser(activationReq);
@@ -96,10 +99,6 @@ public class UserRegistrationController {
             DtoType message = new ActivationSuccessDTO("invalid token");
             /*construct response*/
             EntityModel<DtoType> response = EntityModel.of(message);
-            /*create link*/
-            Link selfLink = WebMvcLinkBuilder.linkTo(UserRegistrationController.class).slash("activate")
-                    .slash(username).withSelfRel();
-            response.add(selfLink);
             /*return*/
             return ResponseEntity.badRequest().body(response);
         }

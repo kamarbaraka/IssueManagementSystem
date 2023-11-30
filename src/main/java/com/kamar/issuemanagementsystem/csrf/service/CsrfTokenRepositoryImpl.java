@@ -61,7 +61,7 @@ public record CsrfTokenRepositoryImpl(
     @Override
     public CsrfToken loadToken(HttpServletRequest request) {
 
-        /*get the app id*/
+        /*get the app ticketNumber*/
         String appId = request.getHeader("X-APP_ID");
 
         /*check if token exists*/
