@@ -61,6 +61,7 @@ public class TicketMapperImpl implements TicketMapper {
 
         /*get attachments*/
         /*check if ticket has attachment and create a download link if present*/
+        boolean hasAttachments = !ticket.getAttachments().isEmpty();
 
         if (ticket.getDeadline() == null){
             return new TicketAdminPresentationDTO(
@@ -72,7 +73,9 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getRaisedBy().getUsername(),
                 ticket.getDepartmentAssigned().getDepartmentName(),
                 "not assigned yet",
-                "not assigned yet");
+                "not assigned yet",
+                    hasAttachments
+                    );
         }
 
         /*map the dto*/
@@ -85,7 +88,8 @@ public class TicketMapperImpl implements TicketMapper {
                 ticket.getRaisedBy().getUsername(),
                 ticket.getDepartmentAssigned().getDepartmentName(),
                 ticket.getAssignedTo().getUsername(),
-                ticket.getDeadline().toString()
+                ticket.getDeadline().toString(),
+                hasAttachments
         );
 
     }

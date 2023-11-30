@@ -12,8 +12,9 @@ import java.time.LocalDate;
  * @author kamar baraka.*/
 
 public record ReferralRequestDTO(
-        String referredTicket,
 
+        long referralId,
+        String referredTicket,
         @Email
         String to,
         @Email

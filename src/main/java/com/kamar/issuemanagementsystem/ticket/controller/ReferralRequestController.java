@@ -2,11 +2,14 @@ package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.MembersDto;
+import com.kamar.issuemanagementsystem.ticket.data.dto.ReferralRequestDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketReferralDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.ReferralRequestException;
 import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestManagementService;
+import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestReportService;
+import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestReportServiceImpl;
 import com.kamar.issuemanagementsystem.ticket.service.TicketManagementService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
@@ -14,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,6 +32,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * the referral request controller.
  * @author kamar baraka.*/
@@ -41,6 +47,7 @@ public class ReferralRequestController {
     private final ReferralRequestManagementService referralRequestManagementService;
     private final ReferralRequestMapper referralRequestMapper;
     private final TicketManagementService ticketManagementService;
+    private final ReferralRequestReportService requestReportService;
 
     /**
      * respond to referral request*/
@@ -139,20 +146,20 @@ public class ReferralRequestController {
             /*get the ticket*/
             ticket = ticketManagementService.getTicketById(ticketNumber);
             /*refer*/
-            referralRequestManagementService.referTicketTo(ticket, ticketReferralDTO.To());
+            ReferralRequestDTO referralRequestDTO = referralRequestManagementService.referTicketTo(ticket, ticketReferralDTO.To());
+
+            /*construct a response*/
+            EntityModel<DtoType> response = EntityModel.of(referralRequestDTO);
+
+            /*return response*/
+            return ResponseEntity.ok(response);
+
         }catch (Exception e){
 
             /*log and respond*/
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
-
-        /*construct a response*/
-        DtoType infoDTO = new InfoDTO("referral request successfully sent");
-        EntityModel<DtoType> response = EntityModel.of(infoDTO);
-
-        /*return response*/
-        return ResponseEntity.ok(response);
 
     }
 
@@ -175,5 +182,75 @@ public class ReferralRequestController {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping(value = {"to"})
+    @Operation(
+            tags = {"Ticket Referral"},
+            summary = "Api to get referrals to a user. {'ADMIN', 'EMPLOYEE'}",
+            security = {@SecurityRequirement(name = "basicAuth")}
+    )
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
+    public ResponseEntity<List<ReferralRequest>> getReferralRequestsTo(@RequestParam("to") @Validated @Email String to){
+
+        /*get the referral requests*/
+        List<ReferralRequest> referralRequests = requestReportService.getReferralRequestsTo(to);
+
+        /*construct a response*/
+        return ResponseEntity.ok(referralRequests);
+    }
+
+    @GetMapping(value = {"from"})
+    @Operation(
+            tags = {"Ticket Referral"},
+            summary = "Api to get referrals from user. {'ADMIN', 'EMPLOYEE'}",
+            security = {@SecurityRequirement(name = "basicAuth")}
+    )
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
+    public ResponseEntity<List<ReferralRequest>> getReferralsFrom(@RequestParam("from") @Validated @Email String from){
+
+        /*get the referrals*/
+        List<ReferralRequest> referralRequests = requestReportService.getReferralRequestsFrom(from);
+
+        /*respond*/
+        return ResponseEntity.ok(referralRequests);
+    }
+
+    @GetMapping(value = {"accepted"})
+    @Operation(
+            tags = {"Ticket Referral"},
+            summary = "Api to get accepted requests from user. {'ADMIN', 'EMPLOYEE'}",
+            security = {@SecurityRequirement(name = "basicAuth")}
+    )
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
+    public ResponseEntity<List<ReferralRequest>> getAcceptedRequestsFrom(@RequestParam("from") @Validated @Email
+                                                                         String from){
+
+        /*get the accepted referrals*/
+        List<ReferralRequest> acceptedRequests = requestReportService.getAcceptedRequestsFrom(from);
+
+        /*respond*/
+        return ResponseEntity.ok(acceptedRequests);
+    }
+
+    @GetMapping(value = {"rejected"})
+    @Operation(
+            tags = {"Ticket Referral"},
+            summary = "Api to get rejected referrals from user. {'ADMIN', 'EMPLOYEE'}",
+            security = {@SecurityRequirement(name = "basicAuth")}
+    )
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    @CrossOrigin
+    public ResponseEntity<List<ReferralRequest>> getRejectedRequestsFrom(@RequestParam("from") @Validated @Email
+                                                                         String from){
+
+        /*get the rejected requests*/
+        List<ReferralRequest> rejectedRequests = requestReportService.getRejectedRequestsFrom(from);
+
+        /*respond*/
+        return ResponseEntity.ok(rejectedRequests);
     }
 }
