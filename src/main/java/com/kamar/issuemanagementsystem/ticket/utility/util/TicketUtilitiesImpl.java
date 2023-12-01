@@ -28,7 +28,7 @@ public record TicketUtilitiesImpl() implements TicketUtilities{
             attachments = existingAttachments.parallelStream()
                     .map(attachment -> {
 
-                        /*convert to attachment resource dto*/
+                        /*convert to attachments resource dto*/
                         return new AttachmentResourceDto(attachment.getFilename(), new ByteArrayResource(
                                 convertBlobToBytes(attachment.getContent())
                         ));

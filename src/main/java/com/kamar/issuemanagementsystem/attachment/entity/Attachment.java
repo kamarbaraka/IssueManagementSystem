@@ -7,7 +7,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
 
 /**
- * the attachment entity.
+ * the attachments entity.
  * @author kamar baraka.*/
 
 @Entity(name = "attachments")

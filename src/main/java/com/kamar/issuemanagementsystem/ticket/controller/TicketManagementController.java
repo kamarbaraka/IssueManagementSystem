@@ -81,7 +81,7 @@ public class TicketManagementController {
         EntityModel<DtoType> response = EntityModel.of(adminDto);
         /*add links*/
         Link attachmentLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TicketManagementController.class)
-                .downloadTicketAttachments(adminDto.ticketNumber())).withRel("attachment");
+                .downloadTicketAttachments(adminDto.ticketNumber())).withRel("attachments");
 
         Link referLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 ReferralRequestController.class).refer()).withRel("refer");
@@ -94,7 +94,7 @@ public class TicketManagementController {
     }
 
     @GetMapping(value = {"attachment"}, produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
-    @Operation(tags = {"Ticket Management"}, summary = "Api to download ticket attachment by ticket ticketNumber",
+    @Operation(tags = {"Ticket Management"}, summary = "Api to download ticket attachments by ticket ticketNumber",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"AUTHENTICATED"})})
     @PreAuthorize("isAuthenticated()")
     @CrossOrigin
@@ -102,7 +102,7 @@ public class TicketManagementController {
 
         List<Attachment> attachments;
         try {
-            /*get the attachment*/
+            /*get the attachments*/
             attachments = ticketManagementService.downloadTicketAttachment(ticketNumber);
         } catch (TicketException e) {
 
@@ -119,7 +119,7 @@ public class TicketManagementController {
 
             Attachment attachment = attachments.get(0);
 
-            /*convert the attachment to file*/
+            /*convert the attachments to file*/
             File attachmentFile = null;
             try {
                 attachmentFile = attachmentUtilityService.convertAttachmentToFile(attachment);

@@ -5,7 +5,7 @@ import org.springframework.core.io.ByteArrayResource;
 
 
 /**
- * the dto to hold email attachment details.
+ * the dto to hold email attachments details.
  * @author kamar baraka.*/
 
 public record AttachmentResourceDto(

@@ -12,10 +12,6 @@ import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Blob;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,11 +39,11 @@ public class TicketMapperImpl implements TicketMapper {
         ticket.setDepartmentAssigned(department);
 
         /*check for attachments*/
-        if (!ticketCreationDTO.attachment().isEmpty()) {
+        if (!ticketCreationDTO.attachments().isEmpty()) {
 
             /*enumerate the attachments*/
-            List<Attachment> attachments = ticketCreationDTO.attachment().parallelStream()
-                    .map(AttachmentDTO::new).map(attachmentMapper::dtoToAttachment).toList();
+            List<Attachment> attachments = ticketCreationDTO.attachments().parallelStream()
+                    .map(attachmentMapper::dtoToAttachment).toList();
 
             /*add attachments to ticket*/
             ticket.getAttachments().addAll(attachments);
@@ -60,7 +56,7 @@ public class TicketMapperImpl implements TicketMapper {
     public TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket) {
 
         /*get attachments*/
-        /*check if ticket has attachment and create a download link if present*/
+        /*check if ticket has attachments and create a download link if present*/
         boolean hasAttachments = !ticket.getAttachments().isEmpty();
 
         if (ticket.getDeadline() == null){

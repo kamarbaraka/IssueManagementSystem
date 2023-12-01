@@ -11,7 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * implementation of the attachment utility contract.
+ * implementation of the attachments utility contract.
  * @author kamar baraka.*/
 
 @Service
@@ -24,9 +24,9 @@ public class AttachmentUtilityServiceImpl implements AttachmentUtilityService {
     public File convertAttachmentToFile(Attachment attachment) throws IOException {
 
         /*create a temporary file*/
-        File attachmentFile = File.createTempFile("attachment", attachment.getFilename());
+        File attachmentFile = File.createTempFile("attachments", attachment.getFilename());
 
-        /*get the attachment content*/
+        /*get the attachments content*/
         byte[] content = ticketUtilities.convertBlobToBytes(attachment.getContent());
 
         /*write the content to file*/

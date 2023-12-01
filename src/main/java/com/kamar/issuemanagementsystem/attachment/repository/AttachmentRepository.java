@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * the attachment repository.
+ * the attachments repository.
  * @author kamar baraka.*/
 
 @Repository

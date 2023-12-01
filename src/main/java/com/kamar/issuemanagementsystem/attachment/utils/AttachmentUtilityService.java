@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * the attachment utility contract.
+ * the attachments utility contract.
  * @author kamar baraka.*/
 
 public interface AttachmentUtilityService {

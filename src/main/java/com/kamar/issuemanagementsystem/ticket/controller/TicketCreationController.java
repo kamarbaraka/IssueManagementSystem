@@ -37,7 +37,10 @@ import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequ
 import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,13 +60,14 @@ public class TicketCreationController {
 
     /**
      * create a {@link }*/
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket. {'USER', 'EMPLOYEE'}",
             description = "use this api to raise a ticket",
     security = {@SecurityRequirement(name = "basicAuth")})
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = {
             @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
-            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE),
+            @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     })
     @PreAuthorize("hasAnyAuthority('USER', 'EMPLOYEE')")
     @CrossOrigin
@@ -71,12 +75,15 @@ public class TicketCreationController {
                                                              @RequestParam("department") String departmentToAssign,
                                                              @RequestParam("title") String title,
                                                              @RequestParam("description") String description,
-                                                             @RequestBody List<MultipartFile> attachments){
+                                                             @RequestBody AttachmentDTO[] attachments){
+
+        byte[] bytes = new byte[1024];
+
 
         /*get authenticated user*/
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : attachments;
+        List<AttachmentDTO> requestAttachments = attachments == null ? new ArrayList<>() : Arrays.asList(attachments);
 
         TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, requestAttachments);
         Ticket savedTicket;

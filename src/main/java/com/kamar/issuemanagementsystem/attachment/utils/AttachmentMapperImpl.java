@@ -11,7 +11,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 
 /**
- * implementation of the attachment mapper.
+ * implementation of the attachments mapper.
  * @author kamar baraka.*/
 
 @Service
@@ -21,18 +21,12 @@ public record AttachmentMapperImpl() implements AttachmentMapper{
     public Attachment dtoToAttachment(AttachmentDTO attachmentDTO)  {
 
         /*get the filename*/
-        String filename = attachmentDTO.attachment().getOriginalFilename();
+        String filename = attachmentDTO.originalFilename();
         /*get content-type*/
-        String contentType = attachmentDTO.attachment().getContentType();
+        String contentType = attachmentDTO.contentType();
         /*get the content*/
-        byte[] content = new byte[0];
-        try {
-            content = attachmentDTO.attachment().getBytes();
-        } catch (IOException e) {
-            /*log*/
-            log.error(e.getMessage());
+        byte[] content = attachmentDTO.content();
 
-        }
         Blob blobContent;
         try {
             blobContent = new SerialBlob(content);
@@ -40,7 +34,7 @@ public record AttachmentMapperImpl() implements AttachmentMapper{
             throw new RuntimeException(e);
         }
 
-        /*set the attachment*/
+        /*set the attachments*/
         Attachment attachment = new Attachment();
         attachment.setFilename(filename);
         attachment.setContentType(contentType);

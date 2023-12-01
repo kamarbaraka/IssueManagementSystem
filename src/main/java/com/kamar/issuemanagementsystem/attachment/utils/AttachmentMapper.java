@@ -6,7 +6,7 @@ import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import java.io.IOException;
 
 /**
- * the attachment mapper contract.
+ * the attachments mapper contract.
  * @author kamar baraka.*/
 
 
