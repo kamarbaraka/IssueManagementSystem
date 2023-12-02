@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.ticket.data.dto;
 import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,6 +22,6 @@ public record TicketCreationDTO(
 
         String departmentToAssign,
 
-        List<@Size(max = (10 * 1024 * 1024)) AttachmentDTO> attachments
+        List<@Size(max = (10 * 1024 * 1024)) MultipartFile> attachments
 ) implements DtoType {
 }

@@ -1,9 +1,8 @@
 package com.kamar.issuemanagementsystem.attachment.utils;
 
-import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
-
-import java.io.IOException;
+import com.kamar.issuemanagementsystem.attachment.exception.AttachmentException;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * the attachments mapper contract.
@@ -12,5 +11,5 @@ import java.io.IOException;
 
 public interface AttachmentMapper {
 
-    Attachment dtoToAttachment(AttachmentDTO attachmentDTO) ;
+    Attachment multipartToAttachment(MultipartFile multipartFile) throws AttachmentException;
 }

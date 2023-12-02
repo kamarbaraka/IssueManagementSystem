@@ -75,15 +75,12 @@ public class TicketCreationController {
                                                              @RequestParam("department") String departmentToAssign,
                                                              @RequestParam("title") String title,
                                                              @RequestParam("description") String description,
-                                                             @RequestBody AttachmentDTO[] attachments){
-
-        byte[] bytes = new byte[1024];
-
+                                                             @RequestBody MultipartFile[] attachments){
 
         /*get authenticated user*/
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<AttachmentDTO> requestAttachments = attachments == null ? new ArrayList<>() : Arrays.asList(attachments);
+        List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : Arrays.asList(attachments);
 
         TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, requestAttachments);
         Ticket savedTicket;

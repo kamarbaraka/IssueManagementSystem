@@ -1,7 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.utility.mapper;
 
-import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
+import com.kamar.issuemanagementsystem.attachment.exception.AttachmentException;
 import com.kamar.issuemanagementsystem.attachment.utils.AttachmentMapper;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
@@ -43,7 +43,13 @@ public class TicketMapperImpl implements TicketMapper {
 
             /*enumerate the attachments*/
             List<Attachment> attachments = ticketCreationDTO.attachments().parallelStream()
-                    .map(attachmentMapper::dtoToAttachment).toList();
+                    .map(multipartFile -> {
+                        try {
+                            return attachmentMapper.multipartToAttachment(multipartFile);
+                        } catch (AttachmentException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).toList();
 
             /*add attachments to ticket*/
             ticket.getAttachments().addAll(attachments);
