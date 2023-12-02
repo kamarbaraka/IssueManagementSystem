@@ -1,6 +1,5 @@
 package com.kamar.issuemanagementsystem.reporting.service;
 
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
@@ -11,13 +10,11 @@ import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,7 +27,6 @@ import java.util.List;
 public class TicketReportingServiceImpl implements TicketReportingService {
 
     private final TicketRepository ticketRepository;
-    private final UserAuthorityUtility userAuthorityUtility;
     private final UserUtilityService userUtilityService;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
@@ -40,13 +36,13 @@ public class TicketReportingServiceImpl implements TicketReportingService {
 
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         /*get tickets by status*/
-        List<Ticket> ticketsByStatus = ticketRepository.findTicketsByStatusOrderByCreatedOn(status).orElseThrow();
+        List<Ticket> ticketsByStatus = ticketRepository.findTicketsByStatusOrderByCreatedOnAsc(status);
 
         /*filter for employee*/
         if (userUtilityService.hasAuthority(authenticatedUser, "employee")) {
 
             /*filter the result*/
-            return ticketsByStatus.parallelStream().filter(
+            return ticketsByStatus.stream().filter(
                     ticket -> ticket.getAssignedTo().getUsername().equals(authenticatedUser.getUsername())
             ).toList();
         }
@@ -58,7 +54,7 @@ public class TicketReportingServiceImpl implements TicketReportingService {
     public List<Ticket> userTicketsByStatus(User user, TicketStatus ticketStatus) {
 
         /*get tickets*/
-        return ticketRepository.findTicketsByAssignedToAndStatus(user, ticketStatus).orElseThrow();
+        return ticketRepository.findTicketsByAssignedToAndStatusOrderByCreatedOnAsc(user, ticketStatus);
     }
 
     @Override
@@ -82,7 +78,7 @@ public class TicketReportingServiceImpl implements TicketReportingService {
         if (userUtilityService.hasAuthority(authenticatedUser, "employee")) {
 
             /*filter the tickets*/
-            return allTickets.parallelStream().filter(
+            return allTickets.stream().filter(
                     ticket -> ticket.getAssignedTo().getUsername().equals(authenticatedUser.getUsername()) ||
                             ticket.getRaisedBy().getUsername().equals(authenticatedUser.getUsername())
             ).toList();
@@ -92,7 +88,7 @@ public class TicketReportingServiceImpl implements TicketReportingService {
         if (userUtilityService.hasAuthority(authenticatedUser, "user")) {
 
             /*filter*/
-            return allTickets.parallelStream().filter(
+            return allTickets.stream().filter(
                     ticket -> ticket.getRaisedBy().getUsername().equals(authenticatedUser.getUsername())
             ).toList();
         }

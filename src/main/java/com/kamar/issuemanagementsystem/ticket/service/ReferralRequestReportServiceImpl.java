@@ -28,7 +28,7 @@ public class ReferralRequestReportServiceImpl implements ReferralRequestReportSe
         /*get the user requested*/
         User user = userManagementService.getUserByUsername(to);
         /*get the referrals*/
-        return referralRequestRepository.findReferralRequestByToOrderByRequestedOn(user).orElseThrow();
+        return referralRequestRepository.findReferralRequestsByToOrderByRequestedOn(user);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ReferralRequestReportServiceImpl implements ReferralRequestReportSe
         /*get the user who requested*/
         User user = userManagementService.getUserByUsername(from);
         /*get the referrals*/
-        return referralRequestRepository.findReferralRequestByFromOrderByRequestedOn(user).orElseThrow();
+        return referralRequestRepository.findReferralRequestsByFromOrderByRequestedOn(user);
     }
 
     @Override
@@ -46,8 +46,7 @@ public class ReferralRequestReportServiceImpl implements ReferralRequestReportSe
         /*get the user who requested*/
         User user = userManagementService.getUserByUsername(from);
         /*get the rejected referrals*/
-        return referralRequestRepository.findReferralRequestByFromAndAcceptedOrderByRequestedOn(user, false)
-                .orElseThrow();
+        return referralRequestRepository.findReferralRequestsByFromAndAcceptedOrderByRequestedOn(user, false);
     }
 
     @Override
@@ -56,7 +55,6 @@ public class ReferralRequestReportServiceImpl implements ReferralRequestReportSe
         /*get the user*/
         User user = userManagementService.getUserByUsername(from);
         /*get the referrals*/
-        return referralRequestRepository.findReferralRequestByToAndAcceptedOrderByRequestedOn(user, true)
-                .orElseThrow();
+        return referralRequestRepository.findReferralRequestsByToAndAcceptedOrderByRequestedOn(user, true);
     }
 }

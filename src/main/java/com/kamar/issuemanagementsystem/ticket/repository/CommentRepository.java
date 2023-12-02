@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * the comment repository.
@@ -16,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Optional<List<Comment>> findCommentsByCommentedToOrderByCommentedOn(Ticket ticket);
+    List<Comment> findCommentsByCommentedToOrderByCommentedOnAsc(Ticket ticket);
 
-    Optional<List<Comment>> findCommentsByCommentedByOrderByCommentedOn(User user);
+    List<Comment> findCommentsByCommentedByOrderByCommentedOnAsc(User user);
 }

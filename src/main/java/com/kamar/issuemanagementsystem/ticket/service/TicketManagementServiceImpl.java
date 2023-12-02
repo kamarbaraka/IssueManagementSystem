@@ -1,7 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
-import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
@@ -13,13 +12,10 @@ import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,7 +95,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     public List<Ticket> getTicketsByRaisedBy(User user) {
 
         /*get tickets*/
-        return ticketRepository.findTicketsByRaisedBy(user).orElseThrow();
+        return ticketRepository.findTicketsByRaisedByOrderByCreatedOnAsc(user);
     }
 
     public List<Attachment> downloadTicketAttachment(final String ticketId) throws TicketException{
@@ -121,7 +117,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
 
 
         /*get the tickets*/
-        List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedAndStatus(departmentAssigned, status);
+        List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedAndStatusOrderByCreatedOnAsc(departmentAssigned, status);
         /*map to dto*/
         return departmentTickets.parallelStream().map(ticketMapper::entityToDTOAdmin).toList();
     }
@@ -130,7 +126,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     public List<TicketAdminPresentationDTO> getTicketsByDepartment(Department departmentAssigned) {
 
         /*get the tickets*/
-        List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssigned(departmentAssigned);
+        List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedOrderByCreatedOnAsc(departmentAssigned);
         /*map to dto*/
         return departmentTickets.parallelStream().map(ticketMapper::entityToDTOAdmin).toList();
     }

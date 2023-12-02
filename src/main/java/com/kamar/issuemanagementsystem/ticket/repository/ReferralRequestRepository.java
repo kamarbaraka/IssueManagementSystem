@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * the referral request repository.
@@ -15,10 +14,10 @@ import java.util.Optional;
 @Repository
 public interface ReferralRequestRepository extends JpaRepository<ReferralRequest, Long> {
 
-    Optional<List<ReferralRequest>> findReferralRequestByToOrderByRequestedOn(User to);
+    List<ReferralRequest> findReferralRequestsByToOrderByRequestedOn(User to);
 
-    Optional<List<ReferralRequest>> findReferralRequestByFromOrderByRequestedOn(User from);
+    List<ReferralRequest> findReferralRequestsByFromOrderByRequestedOn(User from);
 
-    Optional<List<ReferralRequest>> findReferralRequestByToAndAcceptedOrderByRequestedOn(User to, boolean accepted);
-    Optional<List<ReferralRequest>> findReferralRequestByFromAndAcceptedOrderByRequestedOn(User from, boolean accepted);
+    List<ReferralRequest> findReferralRequestsByToAndAcceptedOrderByRequestedOn(User to, boolean accepted);
+    List<ReferralRequest> findReferralRequestsByFromAndAcceptedOrderByRequestedOn(User from, boolean accepted);
 }

@@ -14,13 +14,13 @@ import java.util.Optional;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, String> {
 
-    Optional<List<Ticket>> findTicketsByTitle(String title);
-    Optional<List<Ticket>> findTicketsByRaisedBy(User user);
-    Optional<List<Ticket>> findTicketsByAssignedToOrderByDeadlineDesc(User user);
-    Optional<List<Ticket>> findTicketsByStatusOrderByDeadline(TicketStatus status);
-    Optional<List<Ticket>> findTicketsByStatusOrderByCreatedOn(TicketStatus status);
-    List<Ticket> findTicketsByDepartmentAssignedAndStatus(Department departmentAssigned, TicketStatus status);
-    List<Ticket> findTicketsByDepartmentAssigned(Department departmentAssigned);
-    Optional<List<Ticket>> findTicketsByAssignedToAndStatus(User assignedTo, TicketStatus status);
-    Optional<List<Ticket>> findTicketsByPriorityAndStatus(TicketPriority priority, TicketStatus status);
+    List<Ticket> findTicketsByTitle(String title);
+    List<Ticket> findTicketsByRaisedByOrderByCreatedOnAsc(User user);
+    List<Ticket> findTicketsByAssignedToOrderByDeadlineDesc(User user);
+    List<Ticket> findTicketsByStatusOrderByDeadline(TicketStatus status);
+    List<Ticket> findTicketsByStatusOrderByCreatedOnAsc(TicketStatus status);
+    List<Ticket> findTicketsByDepartmentAssignedAndStatusOrderByCreatedOnAsc(Department departmentAssigned, TicketStatus status);
+    List<Ticket> findTicketsByDepartmentAssignedOrderByCreatedOnAsc(Department departmentAssigned);
+    List<Ticket> findTicketsByAssignedToAndStatusOrderByCreatedOnAsc(User assignedTo, TicketStatus status);
+    List<Ticket> findTicketsByPriorityAndStatus(TicketPriority priority, TicketStatus status);
 }
