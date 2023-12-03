@@ -3,6 +3,8 @@ package com.kamar.issuemanagementsystem.csrf.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * the csrf protection token entity.
  * @author kamar baraka.*/
@@ -12,11 +14,7 @@ import lombok.Data;
 public class AppCsrfToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false, name = "ticketNumber")
-    private long id;
-
-    @Column(nullable = false, name = "app_id")
+    @Column(nullable = false, name = "app_id", unique = true)
     private String appId;
 
     @Column(nullable = false, name = "token")
@@ -24,4 +22,5 @@ public class AppCsrfToken {
 
     @Column(name = "expired")
     private boolean expired;
+
 }

@@ -2,6 +2,7 @@ package com.kamar.issuemanagementsystem.cors;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -16,7 +17,7 @@ import java.util.List;
 public record AppCorsConfigurationSourceImpl() implements CorsConfigurationSource {
 
     @Override
-    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+    public CorsConfiguration getCorsConfiguration(@NonNull HttpServletRequest request) {
 
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("localhost"));
