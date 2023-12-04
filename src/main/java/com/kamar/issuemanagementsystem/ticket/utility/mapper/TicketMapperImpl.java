@@ -42,7 +42,7 @@ public class TicketMapperImpl implements TicketMapper {
         if (!ticketCreationDTO.attachments().isEmpty()) {
 
             /*enumerate the attachments*/
-            List<Attachment> attachments = ticketCreationDTO.attachments().parallelStream()
+            List<Attachment> attachments = ticketCreationDTO.attachments().stream()
                     .map(multipartFile -> {
                         try {
                             return attachmentMapper.multipartToAttachment(multipartFile);

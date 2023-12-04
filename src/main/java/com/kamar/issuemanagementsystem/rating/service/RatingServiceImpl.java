@@ -56,7 +56,7 @@ public class RatingServiceImpl implements RatingService {
 
         /*set the rating*/
         department.getPerformanceRating().setNumberOfMembers(members.size());
-        department.getPerformanceRating().setTotalMemberRating(members.parallelStream().map(
+        department.getPerformanceRating().setTotalMemberRating(members.stream().map(
                 user -> user.getUserRating().getRate()
         ).reduce(Integer::sum).orElseThrow(
                 () -> new RatingException("error rating department")

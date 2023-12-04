@@ -119,7 +119,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         /*get the tickets*/
         List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedAndStatusOrderByCreatedOnAsc(departmentAssigned, status);
         /*map to dto*/
-        return departmentTickets.parallelStream().map(ticketMapper::entityToDTOAdmin).toList();
+        return departmentTickets.stream().map(ticketMapper::entityToDTOAdmin).toList();
     }
 
     @Override
@@ -128,6 +128,6 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         /*get the tickets*/
         List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedOrderByCreatedOnAsc(departmentAssigned);
         /*map to dto*/
-        return departmentTickets.parallelStream().map(ticketMapper::entityToDTOAdmin).toList();
+        return departmentTickets.stream().map(ticketMapper::entityToDTOAdmin).toList();
     }
 }

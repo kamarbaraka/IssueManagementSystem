@@ -57,8 +57,7 @@ public class UserAuthorityManagementServiceServiceImpl implements UserAuthorityM
 
         /*get all authorities*/
         try {
-            List<UserAuthority> allAuthorities = userAuthorityRepository.findAll();
-            return allAuthorities;
+            return userAuthorityRepository.findAll();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

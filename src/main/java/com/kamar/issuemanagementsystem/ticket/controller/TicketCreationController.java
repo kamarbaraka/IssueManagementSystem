@@ -59,7 +59,6 @@ public class TicketCreationController {
                                                              @RequestParam("department") String departmentToAssign,
                                                              @RequestParam("title") String title,
                                                              @RequestParam("description") String description,
-                                                             @RequestParam("attachment") @Nullable MultipartFile attachment,
                                                              @RequestBody MultipartFile[] attachments){
 
         /*get authenticated user*/
@@ -67,19 +66,8 @@ public class TicketCreationController {
 
         TicketCreationDTO ticketCreationDTO;
 
-        if (attachment != null) {
-
-            List<MultipartFile> blobs = new ArrayList<>();
-            blobs.add(attachment);
-
-            ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, blobs);
-
-        }else {
-
-            List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : Arrays.asList(attachments);
-            ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, requestAttachments);
-
-        }
+        List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : Arrays.asList(attachments);
+        ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, requestAttachments);
 
         Ticket savedTicket;
 

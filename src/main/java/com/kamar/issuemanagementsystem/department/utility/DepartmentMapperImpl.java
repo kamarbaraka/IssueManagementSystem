@@ -52,7 +52,7 @@ public class DepartmentMapperImpl implements DepartmentMapper {
                 department.getDepartmentEmail(),
                 department.getHeadOfDepartment().getUsername(),
                 department.getPerformanceRating().getRating(),
-                department.getMembers().parallelStream().map(User::getUsername).toList()
+                department.getMembers().stream().map(User::getUsername).toList()
         );
     }
 }

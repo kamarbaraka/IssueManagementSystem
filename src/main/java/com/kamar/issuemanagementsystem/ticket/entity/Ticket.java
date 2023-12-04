@@ -4,19 +4,20 @@ import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.ticket.data.TicketPriority;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
+import com.kamar.issuemanagementsystem.ticket.generator.TicketNumberGenerator;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
+import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Parameter;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
 /**
  * ticket entity.
@@ -27,15 +28,14 @@ import java.util.Random;
 @Data
 public class Ticket implements Serializable {
 
-    @Transient
-    private final Random random = new Random();
-
     @Id
-    /*@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ticketId;*/
-
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TicketNumberGenerator")
+    @GenericGenerator(
+            name = "TicketNumberGenerator",
+            type = TicketNumberGenerator.class
+    )
     @Column(name = "ticket_number", nullable = false, updatable = false, unique = true)
-    private final String ticketNumber = "#T"+ random.nextLong(100000, 999999)+ "ims";
+    private String ticketNumber;
 
     @Size(max = 50, message = "title too long")
     @Column(nullable = false)

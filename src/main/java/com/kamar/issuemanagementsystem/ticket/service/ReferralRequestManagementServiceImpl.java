@@ -154,11 +154,6 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*get the authenticated user*/
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        /*check if the ticket is linked to a referral request*/
-        referralRequestRepository.findReferralRequestsByRefferedTicket(ticket).ifPresent(
-                referralRequest -> referralRequestRepository.deleteById(referralRequest.getRequestId())
-        );
-
         /*get data*/
         User fromUser = ticket.getAssignedTo();
         User toUser = userRepository.findUserByUsername(to).orElseThrow(
@@ -191,6 +186,11 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 throw new ReferralRequestException("you dont own the resource");
             }
         }
+
+        /*check if the ticket is linked to a referral request*/
+        referralRequestRepository.findReferralRequestsByRefferedTicket(ticket).ifPresent(
+                referralRequest -> referralRequestRepository.deleteById(referralRequest.getRequestId())
+        );
 
         /*construct a referral request*/
         ReferralRequest referralRequest = new ReferralRequest();
@@ -226,6 +226,9 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         Ticket refferedTicket = referralRequest.getRefferedTicket();
         refferedTicket.setAssignedTo(referralRequest.getTo());
         ticketRepository.save(refferedTicket);
+
+        /*delete the referral request*/
+        referralRequestRepository.deleteById(referralRequest.getRequestId());
 
         /*notify the referrer*/
         sendAcceptedRequestNotification(referralRequest);

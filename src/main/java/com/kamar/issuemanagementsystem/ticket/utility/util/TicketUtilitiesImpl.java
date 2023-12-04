@@ -25,7 +25,7 @@ public record TicketUtilitiesImpl() implements TicketUtilities{
         if (!existingAttachments.isEmpty()) {
 
             /*convert all attachments to bytes[] the to byte array resource */
-            attachments = existingAttachments.parallelStream()
+            attachments = existingAttachments.stream()
                     .map(attachment -> {
 
                         /*convert to attachments resource dto*/

@@ -63,7 +63,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
 
         if (!admins.isEmpty()) {
 
-            admins.parallelStream().forEach(admin -> emailService.sendEmail(
+            admins.forEach(admin -> emailService.sendEmail(
                     message, subject, admin.getUsername(), attachments
             ));
         }

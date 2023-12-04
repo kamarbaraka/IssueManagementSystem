@@ -34,7 +34,7 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
         /*get the best performant department*/
         List<Department> allDepartments = departmentRepository.findAll();
 
-        return allDepartments.parallelStream().reduce(
+        return allDepartments.stream().reduce(
                         (department, department2) ->
                                 department2.getPerformanceRating().getRating() > department.getPerformanceRating().getRating()
                                         ? department2 : department)
