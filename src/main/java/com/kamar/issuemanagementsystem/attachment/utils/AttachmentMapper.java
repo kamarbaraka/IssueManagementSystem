@@ -4,6 +4,8 @@ import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.attachment.exception.AttachmentException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Blob;
+
 /**
  * the attachments mapper contract.
  * @author kamar baraka.*/

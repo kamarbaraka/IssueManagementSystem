@@ -153,6 +153,12 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
         /*get the authenticated user*/
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        /*check if the ticket is linked to a referral request*/
+        referralRequestRepository.findReferralRequestsByRefferedTicket(ticket).ifPresent(
+                referralRequest -> referralRequestRepository.deleteById(referralRequest.getRequestId())
+        );
+
         /*get data*/
         User fromUser = ticket.getAssignedTo();
         User toUser = userRepository.findUserByUsername(to).orElseThrow(

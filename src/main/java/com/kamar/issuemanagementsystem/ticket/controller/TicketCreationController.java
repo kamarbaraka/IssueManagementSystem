@@ -1,44 +1,28 @@
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
-import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
-import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
-import com.kamar.issuemanagementsystem.attachment.utils.AttachmentMapperImpl;
-import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.service.TicketCreationService;
-import com.kamar.issuemanagementsystem.ticket.service.TicketManagementService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
-import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
-import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,14 +59,28 @@ public class TicketCreationController {
                                                              @RequestParam("department") String departmentToAssign,
                                                              @RequestParam("title") String title,
                                                              @RequestParam("description") String description,
+                                                             @RequestParam("attachment") @Nullable MultipartFile attachment,
                                                              @RequestBody MultipartFile[] attachments){
 
         /*get authenticated user*/
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : Arrays.asList(attachments);
+        TicketCreationDTO ticketCreationDTO;
 
-        TicketCreationDTO ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, requestAttachments);
+        if (attachment != null) {
+
+            List<MultipartFile> blobs = new ArrayList<>();
+            blobs.add(attachment);
+
+            ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, blobs);
+
+        }else {
+
+            List<MultipartFile> requestAttachments = attachments == null ? new ArrayList<>() : Arrays.asList(attachments);
+            ticketCreationDTO = new TicketCreationDTO(title, description, departmentToAssign, requestAttachments);
+
+        }
+
         Ticket savedTicket;
 
         try

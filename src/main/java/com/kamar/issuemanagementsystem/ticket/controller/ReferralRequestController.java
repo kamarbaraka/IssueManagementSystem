@@ -9,7 +9,6 @@ import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.ReferralRequestException;
 import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestManagementService;
 import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestReportService;
-import com.kamar.issuemanagementsystem.ticket.service.ReferralRequestReportServiceImpl;
 import com.kamar.issuemanagementsystem.ticket.service.TicketManagementService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
 import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
@@ -17,7 +16,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,8 +25,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -192,13 +188,16 @@ public class ReferralRequestController {
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<List<ReferralRequest>> getReferralRequestsTo(@RequestParam("to") @Validated @Email String to){
+    public ResponseEntity<List<ReferralRequestDTO>> getReferralRequestsTo(@RequestParam("to") @Validated @Email String to){
 
         /*get the referral requests*/
         List<ReferralRequest> referralRequests = requestReportService.getReferralRequestsTo(to);
 
+        /*map to dto*/
+        List<ReferralRequestDTO> requestDTOS = referralRequests.stream().map(referralRequestMapper::entityToDTO).toList();
+
         /*construct a response*/
-        return ResponseEntity.ok(referralRequests);
+        return ResponseEntity.ok(requestDTOS);
     }
 
     @GetMapping(value = {"from"})
@@ -209,13 +208,16 @@ public class ReferralRequestController {
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<List<ReferralRequest>> getReferralsFrom(@RequestParam("from") @Validated @Email String from){
+    public ResponseEntity<List<ReferralRequestDTO>> getReferralsFrom(@RequestParam("from") @Validated @Email String from){
 
         /*get the referrals*/
         List<ReferralRequest> referralRequests = requestReportService.getReferralRequestsFrom(from);
 
-        /*respond*/
-        return ResponseEntity.ok(referralRequests);
+        /*map to dto*/
+        List<ReferralRequestDTO> requestDTOS = referralRequests.stream().map(referralRequestMapper::entityToDTO).toList();
+
+        /*construct a response*/
+        return ResponseEntity.ok(requestDTOS);
     }
 
     @GetMapping(value = {"accepted"})
@@ -226,14 +228,17 @@ public class ReferralRequestController {
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<List<ReferralRequest>> getAcceptedRequestsFrom(@RequestParam("from") @Validated @Email
+    public ResponseEntity<List<ReferralRequestDTO>> getAcceptedRequestsFrom(@RequestParam("from") @Validated @Email
                                                                          String from){
 
         /*get the accepted referrals*/
         List<ReferralRequest> acceptedRequests = requestReportService.getAcceptedRequestsFrom(from);
 
-        /*respond*/
-        return ResponseEntity.ok(acceptedRequests);
+        /*map to dto*/
+        List<ReferralRequestDTO> requestDTOS = acceptedRequests.stream().map(referralRequestMapper::entityToDTO).toList();
+
+        /*construct a response*/
+        return ResponseEntity.ok(requestDTOS);
     }
 
     @GetMapping(value = {"rejected"})
@@ -244,13 +249,16 @@ public class ReferralRequestController {
     )
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<List<ReferralRequest>> getRejectedRequestsFrom(@RequestParam("from") @Validated @Email
+    public ResponseEntity<List<ReferralRequestDTO>> getRejectedRequestsFrom(@RequestParam("from") @Validated @Email
                                                                          String from){
 
         /*get the rejected requests*/
         List<ReferralRequest> rejectedRequests = requestReportService.getRejectedRequestsFrom(from);
 
-        /*respond*/
-        return ResponseEntity.ok(rejectedRequests);
+        /*map to dto*/
+        List<ReferralRequestDTO> requestDTOS = rejectedRequests.stream().map(referralRequestMapper::entityToDTO).toList();
+
+        /*construct a response*/
+        return ResponseEntity.ok(requestDTOS);
     }
 }

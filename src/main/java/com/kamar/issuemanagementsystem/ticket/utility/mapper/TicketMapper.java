@@ -4,8 +4,6 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDT
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 
-import java.sql.Blob;
-
 /**
  * the ticket mapper.
  * @author kamar baraka.*/

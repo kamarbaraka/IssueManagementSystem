@@ -13,6 +13,7 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketUserFeedbackDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketFeedbackException;
+import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestRepository;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
     private final DepartmentRepository departmentRepository;
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
+    private final ReferralRequestRepository referralRequestRepository;
 
     private void unsatisfiedNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
@@ -94,6 +96,12 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
             return;
 
         }
+
+        /*check if the ticket is linked to a referral request*/
+        referralRequestRepository.findReferralRequestsByRefferedTicket(ticket).ifPresentOrElse(
+                referralRequest -> {referralRequestRepository.deleteById(referralRequest.getRequestId());},
+                () -> {}
+        );
 
         /*update the status and rating*/
         ticket.setStatus(TicketStatus.CLOSED);

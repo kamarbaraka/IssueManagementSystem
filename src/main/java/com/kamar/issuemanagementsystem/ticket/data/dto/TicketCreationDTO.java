@@ -23,5 +23,6 @@ public record TicketCreationDTO(
         String departmentToAssign,
 
         List<@Size(max = (10 * 1024 * 1024)) MultipartFile> attachments
+
 ) implements DtoType {
 }

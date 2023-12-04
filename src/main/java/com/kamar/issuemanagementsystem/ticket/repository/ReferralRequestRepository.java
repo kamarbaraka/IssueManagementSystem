@@ -1,11 +1,13 @@
 package com.kamar.issuemanagementsystem.ticket.repository;
 
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
+import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * the referral request repository.
@@ -20,4 +22,6 @@ public interface ReferralRequestRepository extends JpaRepository<ReferralRequest
 
     List<ReferralRequest> findReferralRequestsByToAndAcceptedOrderByRequestedOn(User to, boolean accepted);
     List<ReferralRequest> findReferralRequestsByFromAndAcceptedOrderByRequestedOn(User from, boolean accepted);
+
+    Optional<ReferralRequest> findReferralRequestsByRefferedTicket(Ticket referredTicket);
 }
