@@ -22,5 +22,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     List<User> findUserByAuthoritiesContaining(UserAuthority authority);
     boolean existsByUsername(String username);
 
+
 }
 

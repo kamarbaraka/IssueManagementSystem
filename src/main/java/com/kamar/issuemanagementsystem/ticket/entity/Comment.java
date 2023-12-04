@@ -23,13 +23,9 @@ public class Comment implements Serializable {
     @Column(nullable = false)
     private String theComment;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "commented_to")
+    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, targetEntity = Ticket.class)
+    @PrimaryKeyJoinColumn(name = "ticket_number")
     private Ticket commentedTo;
-
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "commented_by")
-    private User commentedBy;
 
     @Column(nullable = false, updatable = false)
     private final LocalDate commentedOn = LocalDate.now();

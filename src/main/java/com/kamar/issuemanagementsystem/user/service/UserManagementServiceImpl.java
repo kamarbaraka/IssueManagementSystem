@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.user.service;
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
+import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.exceptions.UserException;
@@ -28,7 +29,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final CompanyProperties companyProperties;
-    private final UserAuthorityRepository userAuthorityRepository;
+    private final UserAuthorityUtility userAuthorityUtility;
 
     private void elevationNotification(String username, UserAuthority authority){
 
@@ -57,14 +58,34 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void elevate(String username, UserAuthority authority) {
-        
-        userRepository.findUserByUsername(username).ifPresent(user -> {
-            /*add the authority*/
-            user.getAuthorities().add(authority);
-            /*update*/
-            userRepository.save(user);
-        });
+    public void elevate(String username, UserAuthority authority) throws UserException {
+
+        /*check if user is present*/
+        User user = userRepository.findUserByUsername(username).orElseThrow(
+                () -> new UserException("no user to elevate."));
+
+        /*check if user already has the authority to elevate*/
+        List<UserAuthority> authorities = user.getAuthorities();
+        if (authorities.contains(authority)) {
+            /*throw and return*/
+            throw new UserException("user already has the authority");
+        }
+
+        /*filter for employee*/
+        if (!authority.equals(userAuthorityUtility.getFor("user"))) {
+
+            /*check if the user is a user*/
+            UserAuthority userAuthority = userAuthorityUtility.getFor("user");
+            if (authorities.contains(userAuthority)) {
+                /*remove the user authority*/
+                user.getAuthorities().remove(userAuthority);
+            }
+        }
+
+        /*elevate user*/
+        user.getAuthorities().add(authority);
+        /*update*/
+        userRepository.save(user);
 
         /*notify*/
         elevationNotification(username, authority);
@@ -75,23 +96,29 @@ public class UserManagementServiceImpl implements UserManagementService {
     public void downgrade(String username, String authority) throws UserException {
 
 
-        Optional<User> userByUsername = userRepository.findUserByUsername(username);
+        /*check if the user exists*/
+        User user = userRepository.findUserByUsername(username).orElseThrow(
+                () -> new UserException("no user to downgrade.")
+        );
 
-        if (userByUsername.isPresent()) {
-            User user = userByUsername.get();
+        /*check if the user has the authority to downgrade*/
+        UserAuthority theAuthority = userAuthorityUtility.getFor(authority);
+        List<UserAuthority> authorities = user.getAuthorities();
 
-            /*check if authority exists*/
-            UserAuthority userAuthority = userAuthorityRepository.findById(authority.toUpperCase()).orElseThrow(
-                    () -> new UserException("no such authority"));
+        if (!authorities.contains(theAuthority)) {
+            /*throw*/
+            throw new UserException("no authority to downgrade");
+        }
 
-            /*check if the user contains the authority*/
-            Collection<UserAuthority> authorities = user.getAuthorities();
-            if (authorities.contains(userAuthority)) {
-                /*update the authorities*/
-                user.getAuthorities().remove(userAuthority);
-                userRepository.save(user);
-            }else throw new UserException("user doesn't have the authority");
-        }else throw new UserException("no such user");
+        /*check if user will have an authority after downgrade*/
+        if (authorities.size() == 1) {
+            /*throw*/
+            throw new UserException("can't downgrade the user");
+        }
+
+        /*downgrade the user*/
+        user.getAuthorities().remove(theAuthority);
+        userRepository.save(user);
 
     }
 

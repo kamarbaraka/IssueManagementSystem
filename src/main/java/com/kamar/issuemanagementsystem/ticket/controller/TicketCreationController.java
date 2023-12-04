@@ -59,7 +59,7 @@ public class TicketCreationController {
                                                              @RequestParam("department") String departmentToAssign,
                                                              @RequestParam("title") String title,
                                                              @RequestParam("description") String description,
-                                                             @RequestBody MultipartFile[] attachments){
+                                                             @RequestParam("attachments") MultipartFile[] attachments){
 
         /*get authenticated user*/
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

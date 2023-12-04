@@ -7,12 +7,16 @@ import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
+import com.kamar.issuemanagementsystem.ticket.entity.Comment;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
+import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
+import com.kamar.issuemanagementsystem.ticket.repository.CommentRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * implementation of the ticket mapper.
@@ -23,7 +27,7 @@ import java.util.List;
 public class TicketMapperImpl implements TicketMapper {
 
     private final AttachmentMapper attachmentMapper;
-    private final TicketUtilities ticketUtilities;
+    private final CommentRepository commentRepository;
     private final DepartmentRepository departmentRepository;
 
     @Override
@@ -59,7 +63,7 @@ public class TicketMapperImpl implements TicketMapper {
     }
 
     @Override
-    public TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket) {
+    public TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket)  {
 
         /*get attachments*/
         /*check if ticket has attachments and create a download link if present*/
@@ -70,6 +74,7 @@ public class TicketMapperImpl implements TicketMapper {
                     ticket.getTicketNumber(),
                 ticket.getTitle(),
                 ticket.getDescription(),
+                "pending...",
                 ticket.getPriority().toString(),
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
@@ -80,11 +85,33 @@ public class TicketMapperImpl implements TicketMapper {
                     );
         }
 
+        Optional<Comment> commentOpt = commentRepository.findCommentByCommentedToOrderByCommentedOnAsc(ticket);
+
+        if (commentOpt.isEmpty()) {
+
+            /*map the dto*/
+            return new TicketAdminPresentationDTO(
+                    ticket.getTicketNumber(),
+                    ticket.getTitle(),
+                    ticket.getDescription(),
+                    "pending...",
+                    ticket.getPriority().toString(),
+                    ticket.getStatus().toString(),
+                    ticket.getRaisedBy().getUsername(),
+                    ticket.getDepartmentAssigned().getDepartmentName(),
+                    ticket.getAssignedTo().getUsername(),
+                    ticket.getDeadline().toString(),
+                    hasAttachments
+            );
+        }
+
+        Comment comment = commentOpt.get();
         /*map the dto*/
         return new TicketAdminPresentationDTO(
                 ticket.getTicketNumber(),
                 ticket.getTitle(),
                 ticket.getDescription(),
+                comment.getTheComment(),
                 ticket.getPriority().toString(),
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),

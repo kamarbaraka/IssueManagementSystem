@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -39,11 +41,12 @@ public class TicketSubmissionController {
     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)})
     @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
     @CrossOrigin
-    public ResponseEntity<EntityModel<DtoType>> submitATicket(@RequestParam("ticket_number") String ticketNumber){
+    public ResponseEntity<EntityModel<DtoType>> submitATicket(@Validated @RequestParam("ticket_number") @Nonnull String ticketNumber,
+                                                              @Validated @RequestParam("solution") @Nonnull String solution){
 
         /*submit the ticket*/
         try {
-            ticketSubmissionService.submitTicket(ticketNumber);
+            ticketSubmissionService.submitTicket(ticketNumber, solution);
         } catch (TicketSubmissionException | TicketException e) {
 
             /*log and compose a response*/

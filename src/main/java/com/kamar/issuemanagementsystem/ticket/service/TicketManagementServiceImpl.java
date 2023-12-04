@@ -108,6 +108,13 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         }
 
         Ticket ticket = optSavedTicket.get();
+
+        /*check if the ticket has attachments*/
+        if (ticket.getAttachments().isEmpty()) {
+            /*throw*/
+            throw new TicketException("ticket has no attachments to download");
+        }
+
         Collection<Attachment> attachments = ticket.getAttachments();
         return new ArrayList<>(attachments);
     }

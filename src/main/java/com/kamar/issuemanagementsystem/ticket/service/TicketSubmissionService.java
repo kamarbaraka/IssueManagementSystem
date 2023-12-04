@@ -11,6 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface TicketSubmissionService {
 
-    void submitTicket(final String ticketId)
+    void submitTicket(final String ticketId, String solution)
             throws TicketSubmissionException, TicketException;
 }

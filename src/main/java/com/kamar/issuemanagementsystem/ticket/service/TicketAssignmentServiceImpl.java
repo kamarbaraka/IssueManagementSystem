@@ -7,6 +7,7 @@ import com.kamar.issuemanagementsystem.department.repository.DepartmentRepositor
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
+import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
@@ -82,6 +83,12 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
         if (!userManagementService.checkUserByUsernameAndAuthority(
                 ticket.getAssignedTo().getUsername(), userAuthorityUtility.getFor("employee")))
             throw new OperationNotSupportedException();
+
+        /*check if the ticket is open or assigned*/
+        if (ticket.getStatus().equals(TicketStatus.SUBMITTED) || ticket.getStatus().equals(TicketStatus.CLOSED)) {
+            /*throw*/
+            throw new OperationNotSupportedException("the ticket is already submitted or closed");
+        }
 
         /*assign the ticket*/
         Ticket updatedTicket = ticketManagementService.updateTicket(ticket);

@@ -13,6 +13,7 @@ public record TicketAdminPresentationDTO(
         String ticketNumber,
         String title,
         String description,
+        String solution,
         String priority,
         String status,
         String raisedBy,

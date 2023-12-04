@@ -10,6 +10,7 @@ import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResource
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.controller.ReferralRequestController;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
+import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.data.dto.MembersDto;
 import com.kamar.issuemanagementsystem.ticket.data.dto.ReferralRequestDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
@@ -185,6 +186,12 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
             if (!ticket.getDepartmentAssigned().equals(authenticatedUserDept)) {
                 throw new ReferralRequestException("you dont own the resource");
             }
+        }
+
+        /*check if the ticket is assigned to be eligible for referral*/
+        if (!ticket.getStatus().equals(TicketStatus.ASSIGNED)) {
+            /*throw*/
+            throw new ReferralRequestException("ticket is not assigned for it to be referred.");
         }
 
         /*check if the ticket is linked to a referral request*/

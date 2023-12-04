@@ -177,7 +177,7 @@ public class UserManagementController {
         try {
             userManagementService.elevate(username,
                     userAuthorityUtility.getFor(authority));
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | UserException e) {
 
             /*log the exception*/
             log.warn(e.getMessage());

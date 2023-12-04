@@ -81,6 +81,12 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
         /*get the ticket*/
         Ticket ticket = ticketManagementService.getTicketById(ticketId);
 
+        /*check if ticket is submitted to send feedback*/
+        if (!ticket.getStatus().equals(TicketStatus.SUBMITTED)) {
+            /*throw*/
+            throw new TicketFeedbackException("the ticket is not submitted yet");
+        }
+
         /*check for identity*/
         if (!ticket.getRaisedBy().getUsername().equals(authenticatedUser.getUsername()))
             throw new TicketFeedbackException("you dont own the ticket");

@@ -3,6 +3,7 @@ package com.kamar.issuemanagementsystem.ticket.utility.mapper;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
+import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 
 /**
  * the ticket mapper.
@@ -11,6 +12,6 @@ import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 public interface TicketMapper {
 
     Ticket dtoToEntity(TicketCreationDTO ticketCreationDTO);
-    TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket);
+    TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket) ;
 
 }

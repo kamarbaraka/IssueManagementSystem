@@ -79,7 +79,9 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
                 () -> new DepartmentException("no such department"));
 
         addUserToDepartmentDTO.username().stream().map(userRepository::findUserByUsername)
-                .map(Optional::orElseThrow).forEach(user -> department.getMembers().add(user));
+                .map(Optional::orElseThrow)
+                .filter(user -> departmentRepository.findDepartmentByMembersContaining(user).isEmpty())
+                .forEach(user -> department.getMembers().add(user));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")

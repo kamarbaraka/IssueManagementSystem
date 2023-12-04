@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
                 @Tag(name = "User Activation", description = "Apis to activate a user"),
                 @Tag(name = "User Management", description = "Apis to manage a user"),
                 @Tag(name = "User Analysis", description = "Apis for user analysis"),
+                @Tag(name = "User Reporting", description = "Apis for generating user reports"),
                 @Tag(name = "Department Creation", description = "Apis for creation of department"),
                 @Tag(name = "Department Management", description = "Apis for department management"),
                 @Tag(name = "Department Analysis", description = "Apis for department analysis"),
