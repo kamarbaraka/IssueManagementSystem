@@ -17,15 +17,21 @@ public class Comment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
-    private long id;
+    @Column(name = "comment_id",nullable = false)
+    private long commentId;
 
     @Column(nullable = false)
     private String theComment;
 
-    @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, targetEntity = Ticket.class)
-    @PrimaryKeyJoinColumn(name = "ticket_number")
-    private Ticket commentedTo;
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Ticket commentFor;
+
+    @ManyToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "commented_by", nullable = false)
+    private User commentedBy;
+
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private User commentedTo;
 
     @Column(nullable = false, updatable = false)
     private final LocalDate commentedOn = LocalDate.now();

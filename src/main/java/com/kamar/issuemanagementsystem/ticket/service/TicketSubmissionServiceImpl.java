@@ -6,10 +6,12 @@ import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Comment;
+import com.kamar.issuemanagementsystem.ticket.entity.Solution;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionException;
 import com.kamar.issuemanagementsystem.ticket.repository.CommentRepository;
+import com.kamar.issuemanagementsystem.ticket.repository.SolutionRepository;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.service.UserManagementService;
@@ -31,11 +33,10 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
 
     private final EmailService emailService;
     private final TicketManagementService ticketManagementService;
-    private final TicketRepository ticketRepository;
     private final UserManagementService userManagementService;
     private final  CompanyProperties company;
     private final UserAuthorityUtility userAuthorityUtility;
-    private final CommentRepository commentRepository;
+    private final SolutionRepository solutionRepository;
 
 
     private void submitTicketNotification(final Ticket ticket, final String solution){
@@ -67,13 +68,13 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
     }
 
     @Override
-    public void submitTicket(final String ticketId, final String solution)
+    public void submitTicket(final String ticketNumber, final String solution)
             throws TicketSubmissionException, TicketException {
 
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /*get the ticket*/
-        Ticket ticket = ticketManagementService.getTicketById(ticketId);
+        Ticket ticket = ticketManagementService.getTicketById(ticketNumber);
 
         /*check if ticket has already been submitted*/
         if (ticket.getStatus().equals(TicketStatus.SUBMITTED)) {
@@ -85,17 +86,17 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
         if (!authenticatedUser.getUsername().equals(ticket.getAssignedTo().getUsername()))
             throw new TicketSubmissionException("you are not permitted to submit this ticket");
 
-        /*create a new comment*/
-        Comment comment = new Comment();
-        comment.setTheComment(solution);
-        comment.setCommentedTo(ticket);
-
-        /*persist the comment*/
-        commentRepository.saveAndFlush(comment);
+        /*create a new solution*/
+        Solution ticketSolution = new Solution();
+        ticketSolution.setTicketNumber(ticketNumber);
+        ticketSolution.setSolutionTo(ticket);
+        ticketSolution.setTheSolution(solution);
 
         /*update the status*/
         ticket.setStatus(TicketStatus.SUBMITTED);
-        ticketRepository.save(ticket);
+
+        /*persist the solution and update teh ticket */
+        solutionRepository.save(ticketSolution);
         /*notify*/
         this.submitTicketNotification(ticket, solution);
     }

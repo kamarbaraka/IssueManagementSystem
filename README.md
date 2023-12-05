@@ -1,13 +1,23 @@
  # major changes
+ 
+- added an Api to get employees currently not in a department.
+- changed the feedback api to accept an attachment.
+- changed the ticket submission Api to require a written solution for the ticket.
+- changed the ticket referral Api to require a reason for referring the ticket.
+
+# Fixes
+
+- Fixed an issue where the ticket solution is not reelecting when getting the ticket.
+- Fixed an issue where an employee can be assigned a ticket more than once.
+- Fixed an issue where an employee can refer a ticket to himself.
+
+# Improvements
 
 - Optimized the ticket assignment process and Api.
 - Improved the service logging.
-- Optimized the ticket feedback process and Api.
-- added an Api to get employees currently not in a department.
-- changed the feedback api to accept an attachment.
 - Optimized the sorting.
-- changed the ticket submission Api to require a written solution for the ticket.
-- changed the ticket referral Api to require a reason for referring the ticket.
+- Optimized the ticket feedback process and Api.
+- Made a ticket solution an independent entity.
 
 # Requirements
 

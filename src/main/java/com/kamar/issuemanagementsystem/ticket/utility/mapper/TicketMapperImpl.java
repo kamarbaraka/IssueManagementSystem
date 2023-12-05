@@ -8,9 +8,11 @@ import com.kamar.issuemanagementsystem.department.repository.DepartmentRepositor
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Comment;
+import com.kamar.issuemanagementsystem.ticket.entity.Solution;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.repository.CommentRepository;
+import com.kamar.issuemanagementsystem.ticket.repository.SolutionRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ import java.util.Optional;
 public class TicketMapperImpl implements TicketMapper {
 
     private final AttachmentMapper attachmentMapper;
-    private final CommentRepository commentRepository;
+    private final SolutionRepository solutionRepository;
     private final DepartmentRepository departmentRepository;
 
     @Override
@@ -85,9 +87,9 @@ public class TicketMapperImpl implements TicketMapper {
                     );
         }
 
-        Optional<Comment> commentOpt = commentRepository.findCommentByCommentedToOrderByCommentedOnAsc(ticket);
+        Optional<Solution> optSolution = solutionRepository.findById(ticket.getTicketNumber());
 
-        if (commentOpt.isEmpty()) {
+        if (optSolution.isEmpty()) {
 
             /*map the dto*/
             return new TicketAdminPresentationDTO(
@@ -105,13 +107,13 @@ public class TicketMapperImpl implements TicketMapper {
             );
         }
 
-        Comment comment = commentOpt.get();
+        Solution solution = optSolution.get();
         /*map the dto*/
         return new TicketAdminPresentationDTO(
                 ticket.getTicketNumber(),
                 ticket.getTitle(),
                 ticket.getDescription(),
-                comment.getTheComment(),
+                solution.getTheSolution(),
                 ticket.getPriority().toString(),
                 ticket.getStatus().toString(),
                 ticket.getRaisedBy().getUsername(),
