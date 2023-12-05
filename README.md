@@ -9,6 +9,11 @@
 - changed the ticket submission Api to require a written solution for the ticket.
 - changed the ticket referral Api to require a reason for referring the ticket.
 
+# Requirements
+
+- Java 21
+- MySQL 8
+
 # Run
 To run the application, execute the command;
 
