@@ -1,5 +1,8 @@
  # major changes
 
+- Optimized the ticket assignment process and Api.
+- Improved the service logging.
+- Optimized the ticket feedback process and Api.
 - added an Api to get employees currently not in a department.
 - changed the feedback api to accept an attachment.
 - Optimized the sorting.

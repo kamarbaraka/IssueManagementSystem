@@ -1,5 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
+import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAssignmentDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 
@@ -11,6 +12,6 @@ import javax.naming.OperationNotSupportedException;
 
 public interface TicketAssignmentService {
 
-    void assignTo(Ticket ticket) throws OperationNotSupportedException;
+    void assignTo(TicketAssignmentDTO assignmentDTO) throws OperationNotSupportedException;
 
 }

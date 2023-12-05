@@ -42,12 +42,12 @@ public class TicketFeedbackController {
 
     private final TicketFeedbackService ticketFeedbackService;
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(tags = {"Ticket Feedback", "Ticket Submission"}, summary = "send a feedback on a ticket. {'USER', 'EMPLOYEE'}",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"USER"})})
     @PreAuthorize("hasAnyAuthority('USER', 'EMPLOYEE')")
     @RequestBody(content = {
-            @Content(mediaType = MediaType.APPLICATION_FORM_URLENCODED_VALUE),
+            @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE),
             @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
     })
     @CrossOrigin

@@ -203,6 +203,12 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 referralRequest -> referralRequestRepository.deleteById(referralRequest.getRequestId())
         );
 
+        /*check that the employee is not referring to himself*/
+        if (authenticatedUser.getUsername().equals(requestDTO.to())) {
+            /*throw*/
+            throw new ReferralRequestException("you can't refer the ticket to yourself");
+        }
+
         /*construct a referral request*/
         ReferralRequest referralRequest = new ReferralRequest();
         referralRequest.setRefferedTicket(ticket);

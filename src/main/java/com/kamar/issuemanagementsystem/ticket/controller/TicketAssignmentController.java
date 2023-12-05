@@ -69,40 +69,12 @@ public class TicketAssignmentController {
             priority = "medium";
         }
         /*create a dto*/
-        TicketAssignmentDTO ticketAssignmentDTO = new TicketAssignmentDTO(username, priority.toUpperCase(), deadline);
-
-        Ticket ticket;
-        User userToAssign;
-
-        try
-        {
-            /*get the ticket*/
-            ticket = ticketManagementService.getTicketById(ticketNumber);
-            /*get the user to assign to*/
-            userToAssign = userManagementService.getUserByUsername(ticketAssignmentDTO.assignTo());
-        }catch (Exception e){
-
-            /*log and respond*/
-            log.error(e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
-
-        /*set the ticket*/
-        /*deadline*/
-        ticket.setAssignedTo(userToAssign);
-        /*priority*/
-        ticket.setPriority(TicketPriority.valueOf(ticketAssignmentDTO.priority()));
-        /*deadline*/
-        LocalDate deadlineDate = LocalDate.parse(ticketAssignmentDTO.deadline(),
-                DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-        ticket.setDeadline(deadlineDate);
-        /*status*/
-        ticket.setStatus(TicketStatus.ASSIGNED);
+        TicketAssignmentDTO ticketAssignmentDTO = new TicketAssignmentDTO(ticketNumber, username,
+                priority.toUpperCase(), deadline);
 
         /*assign ticket*/
         try {
-            ticketAssignmentService.assignTo(ticket);
+            ticketAssignmentService.assignTo(ticketAssignmentDTO);
         } catch (OperationNotSupportedException e) {
 
             /*log and respond*/
@@ -111,14 +83,14 @@ public class TicketAssignmentController {
         }
 
         /*construct a response*/
-        DtoType infoDTO = new InfoDTO("ticket successfully assigned to " + userToAssign.getUsername());
+        DtoType infoDTO = new InfoDTO("ticket successfully assigned to " + username);
 
         EntityModel<DtoType> response = EntityModel.of(infoDTO);
 
         /*create links*/
         Link ticketLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(TicketManagementController.class)
-                        .getTicketById(ticket.getTicketNumber())).withRel("ticket");
+                        .getTicketById(ticketNumber)).withRel("ticket");
 
         response.add(ticketLink);
 

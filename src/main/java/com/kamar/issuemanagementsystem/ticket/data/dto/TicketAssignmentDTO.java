@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 public record TicketAssignmentDTO(
 
+        String ticketNumber,
         String assignTo,
         String priority,
         String deadline
