@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.stylesheets.LinkStyle;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * the ticket feedback controller.
@@ -45,17 +52,34 @@ public class TicketFeedbackController {
     })
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> sendFeedback(@RequestParam("ticket_number") String ticketNumber,
-                                                             @Validated @RequestParam("feedback") String feedback,
+                                                             @RequestParam(value = "feedback", required = false)
+                                                             String feedback,
                                                              @Validated @RequestParam("satisfied") boolean satisfied,
-                                                             @Validated @RequestParam("rating") @Max(value = 5, message = "max rating is 5")
-                                                             @Min(value = 0) int rating){
+                                                             @Validated @RequestParam(value = "rating")
+                                                                 @Max(value = 5, message = "max rating is 5")
+                                                             @Min(value = 0) int rating,
+                                                             @Validated
+                                                             @org.springframework.web.bind.annotation.RequestBody(required = false)
+                                                                     @Nullable
+                                                             List<MultipartFile> attachments){
+
+        /*check if attachments is null*/
+        if (attachments == null) {
+            attachments = new ArrayList<>();
+        }
 
         /*create a dto*/
-        TicketUserFeedbackDTO userFeedbackDTO = new TicketUserFeedbackDTO(feedback, satisfied, rating);
+        TicketUserFeedbackDTO userFeedbackDTO = new TicketUserFeedbackDTO(
+                ticketNumber,
+                feedback,
+                satisfied,
+                rating,
+                attachments
+        );
 
         /*send the feedback*/
         try {
-            ticketFeedbackService.sendFeedback(userFeedbackDTO, ticketNumber);
+            ticketFeedbackService.sendFeedback(userFeedbackDTO);
         } catch (TicketFeedbackException | TicketException e) {
 
             /*log and return response*/

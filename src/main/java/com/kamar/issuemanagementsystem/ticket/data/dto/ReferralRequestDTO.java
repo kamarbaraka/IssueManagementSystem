@@ -17,6 +17,7 @@ public record ReferralRequestDTO(
         String referredTicket,
         @Email
         String to,
+        String reason,
         @Email
         String from,
         boolean accepted,

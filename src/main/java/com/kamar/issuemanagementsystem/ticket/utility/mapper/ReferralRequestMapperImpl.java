@@ -18,6 +18,7 @@ public class ReferralRequestMapperImpl implements ReferralRequestMapper{
                 referralRequest.getRequestId(),
                 referralRequest.getRefferedTicket().getTicketNumber(),
                 referralRequest.getTo().getUsername(),
+                referralRequest.getReason(),
                 referralRequest.getFrom().getUsername(),
                 referralRequest.isAccepted(),
                 referralRequest.getRequestedOn()

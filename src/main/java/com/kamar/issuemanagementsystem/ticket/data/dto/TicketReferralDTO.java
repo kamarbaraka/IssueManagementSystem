@@ -11,7 +11,9 @@ import java.io.Serializable;
  * @author kamar baraka.*/
 
 public record TicketReferralDTO(
+        String ticketToRefer,
         @Email
-        String To
+        String to,
+        String reason
 ) implements DtoType, Serializable {
 }

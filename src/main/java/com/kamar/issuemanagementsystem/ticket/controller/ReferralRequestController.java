@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -42,7 +43,6 @@ public class ReferralRequestController {
 
     private final ReferralRequestManagementService referralRequestManagementService;
     private final ReferralRequestMapper referralRequestMapper;
-    private final TicketManagementService ticketManagementService;
     private final ReferralRequestReportService requestReportService;
 
     /**
@@ -131,18 +131,15 @@ public class ReferralRequestController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'DEPARTMENT_ADMIN', 'EMPLOYEE')")
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> referTicketToUser(@RequestParam("ticket_number") String ticketNumber,
-                                                                  @Validated @RequestParam("to") @Email String username){
+                                                                  @Validated @RequestParam("to") @Email String username,
+                                                                  @RequestParam(value = "reason") String reason ){
 
         /*create a dto*/
-        TicketReferralDTO ticketReferralDTO = new TicketReferralDTO(username);
-
-        Ticket ticket;
+        TicketReferralDTO ticketReferralDTO = new TicketReferralDTO(ticketNumber, username, reason);
         try
         {
-            /*get the ticket*/
-            ticket = ticketManagementService.getTicketById(ticketNumber);
             /*refer*/
-            ReferralRequestDTO referralRequestDTO = referralRequestManagementService.referTicketTo(ticket, ticketReferralDTO.To());
+            ReferralRequestDTO referralRequestDTO = referralRequestManagementService.referTicketTo(ticketReferralDTO);
 
             /*construct a response*/
             EntityModel<DtoType> response = EntityModel.of(referralRequestDTO);

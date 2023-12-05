@@ -24,6 +24,9 @@ public class ReferralRequest implements Serializable {
     @JoinColumn(name = "reffered_ticket", nullable = false)
     private Ticket refferedTicket;
 
+    @Column(name = "reason")
+    private String reason = "";
+
     @ManyToOne( cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "request_from", nullable = false)
     private User from;

@@ -1,6 +1,9 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
+import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
+import com.kamar.issuemanagementsystem.attachment.exception.AttachmentException;
+import com.kamar.issuemanagementsystem.attachment.utils.AttachmentMapper;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
@@ -17,10 +20,12 @@ import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestReposito
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,6 +35,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 @Transactional
 public class TicketFeedbackServiceImpl implements TicketFeedbackService {
 
@@ -41,6 +47,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
     private final ReferralRequestRepository referralRequestRepository;
+    private final AttachmentMapper attachmentMapper;
 
     private void unsatisfiedNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
@@ -53,11 +60,17 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
                 "</p><div><br>"+
                 "Please resolve it in due time.<br>"+ company.endTag();
 
+        /*compose the email for the user*/
+        String userSubject = "Feedback";
+        String userMessage = "Thank you for submitting your feedback. We well get back to you soon.<br>"+
+                company.endTag();
+
         /*get attachments*/
         List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
 
         /*send the email*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), attachments);
+        emailService.sendEmail(userMessage, userSubject, ticket.getRaisedBy().getUsername(), null);
     }
     private void satisfactionNotification(final TicketUserFeedbackDTO userFeedbackDTO, final Ticket ticket){
 
@@ -67,19 +80,25 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
                 " "+ ticket.getTitle()+ "\". Your rating is "+ userFeedbackDTO.serviceRating()+ "<br>"+
                 company.endTag();
 
+        /*compose the email for the user*/
+        String userSubject = "Feedback";
+        String userMessage = "Thank you for submitting your feedback. We are glad to be of help to you 😊.<br>"+
+                company.endTag();
+
         /*send the email*/
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), null);
+        emailService.sendEmail(userMessage, userSubject, ticket.getRaisedBy().getUsername(), null);
     }
 
     @Override
-    public void sendFeedback(final TicketUserFeedbackDTO userFeedbackDTO, final String  ticketId)
+    public void sendFeedback( TicketUserFeedbackDTO feedbackDTO)
             throws TicketFeedbackException, TicketException {
 
         /*get authenticated user*/
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /*get the ticket*/
-        Ticket ticket = ticketManagementService.getTicketById(ticketId);
+        Ticket ticket = ticketManagementService.getTicketById(feedbackDTO.ticketNumber());
 
         /*check if ticket is submitted to send feedback*/
         if (!ticket.getStatus().equals(TicketStatus.SUBMITTED)) {
@@ -92,11 +111,28 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
             throw new TicketFeedbackException("you dont own the ticket");
 
         /*check for satisfaction*/
-        if (!userFeedbackDTO.satisfied()){
+        if (!feedbackDTO.satisfied()){
             /*notify the assignee*/
-            unsatisfiedNotification(userFeedbackDTO, ticket);
+            unsatisfiedNotification(feedbackDTO, ticket);
             /*update the status*/
             ticket.setStatus(TicketStatus.ASSIGNED);
+
+            /*create the attachments*/
+            List<MultipartFile> multipartFiles = feedbackDTO.attachments();
+            /*check if there are attachments*/
+            if (!multipartFiles.isEmpty()) {
+                List<Attachment> attachments = multipartFiles.stream().map(multipartFile -> {
+                    try {
+                        return attachmentMapper.multipartToAttachment(multipartFile);
+                    } catch (AttachmentException e) {
+                        /*log*/
+                        log.warn(e.getMessage());
+                    }
+                    return null;
+                }).toList();
+                /*add the attachments to the ticket*/
+                ticket.getAttachments().addAll(attachments);
+            }
             ticketRepository.save(ticket);
 
             return;
@@ -115,7 +151,7 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
             /*rate the user*/
             ratingService.rateUser(new UserRatingDTO(
                     ticket.getAssignedTo().getUsername(),
-                    userFeedbackDTO.serviceRating()));
+                    feedbackDTO.serviceRating()));
             /*rate the department*/
             Department department = departmentRepository.findDepartmentByMembersContaining(ticket.getAssignedTo()).orElseThrow(
                     () -> new TicketFeedbackException("no department to rate")
@@ -127,6 +163,6 @@ public class TicketFeedbackServiceImpl implements TicketFeedbackService {
         ticketRepository.save(ticket);
 
         /*notify*/
-        satisfactionNotification(userFeedbackDTO, ticket);
+        satisfactionNotification(feedbackDTO, ticket);
     }
 }

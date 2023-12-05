@@ -13,6 +13,7 @@ import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementControl
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.data.dto.MembersDto;
 import com.kamar.issuemanagementsystem.ticket.data.dto.ReferralRequestDTO;
+import com.kamar.issuemanagementsystem.ticket.data.dto.TicketReferralDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.ReferralRequestException;
@@ -149,16 +150,19 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     }
 
     @Override
-    public ReferralRequestDTO referTicketTo(Ticket ticket, String to)
+    public ReferralRequestDTO referTicketTo(TicketReferralDTO requestDTO)
             throws ReferralRequestException {
 
         /*get the authenticated user*/
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /*get data*/
+        Ticket ticket = ticketRepository.findById(requestDTO.ticketToRefer()).orElseThrow(
+                () -> new ReferralRequestException("no such ticket to refer.")
+        );
         User fromUser = ticket.getAssignedTo();
-        User toUser = userRepository.findUserByUsername(to).orElseThrow(
-                () -> new ReferralRequestException(" employee to refer to not found")
+        User toUser = userRepository.findUserByUsername(requestDTO.to()).orElseThrow(
+                () -> new ReferralRequestException("no such employee to refer to")
         );
         Department toUserDepartment = departmentRepository.findDepartmentByMembersContaining(toUser).orElseThrow(
                 () -> new ReferralRequestException("user doesn't belong to a department."));
@@ -204,6 +208,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         referralRequest.setRefferedTicket(ticket);
         referralRequest.setFrom(fromUser);
         referralRequest.setTo(toUser);
+        referralRequest.setReason(requestDTO.reason());
 
         /*send a referral request*/
         ReferralRequest aReferralRequest = createAReferralRequest(referralRequest);
