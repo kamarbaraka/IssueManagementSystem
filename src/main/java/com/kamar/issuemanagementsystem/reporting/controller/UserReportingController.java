@@ -26,6 +26,14 @@ public class UserReportingController {
     private final UserReportingService userReportingService;
 
 
+    /**
+     * Returns an array of usernames for employees who are not assigned to a department.
+     *
+     * This method retrieves the employees who are not assigned to a department from the UserReportingService.
+     * It then maps the usernames of these employees to an array of strings. The array of usernames is returned in a ResponseEntity object.
+     *
+     * @return a ResponseEntity object containing an array of Strings representing the usernames of employees not in a department
+     */
     @GetMapping(value = {"api/v1/users/report/nonDeptEmps"})
     @Operation(
             tags = {"User Reporting"},
