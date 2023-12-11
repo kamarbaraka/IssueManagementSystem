@@ -44,10 +44,7 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
         /*compose the email*/
         String subject = "Ticket Review";
         String message = "Dear "+ ticket.getRaisedBy().getUsername()+ ", your ticket \""+ ticket.getTicketNumber()+ " "+
-                ticket.getTitle()+ "\", has been resolved with the solution <br>"+
-                "<div style='background-color: grey; border-radius: 5px'>"+
-                solution
-                +".</div><br>"+
+                ticket.getTitle()+ "\", has been resolved. <br>"+
                 "Please check if it is resolved to your satisfaction and provide the feedback.<br>"+
                 company.endTag();
 

@@ -48,7 +48,7 @@ public class Ticket implements Serializable {
     @JoinColumn(name = "attachments")
     private final Collection<Attachment> attachments = new ArrayList<>();
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "department_assigned")
     private Department departmentAssigned;
 
@@ -58,14 +58,15 @@ public class Ticket implements Serializable {
     @Enumerated(EnumType.STRING)
     private TicketStatus status = TicketStatus.OPEN;
 
-    @ManyToOne( cascade = CascadeType.ALL)
+    @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "assigned_to")
     private User assignedTo ;
 
     @FutureOrPresent(message = "deadline must be in the future.")
     private LocalDate deadline;
 
-    @ManyToOne( cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            optional = false)
     @JoinColumn(name = "raised_by")
     private User raisedBy;
 

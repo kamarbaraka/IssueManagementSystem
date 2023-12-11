@@ -20,18 +20,21 @@ public class ReferralRequest implements Serializable {
     @Column(nullable = false, updatable = false)
     private long requestId;
 
-    @ManyToOne( cascade = {CascadeType.ALL}, optional = false)
+    @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            optional = false)
     @JoinColumn(name = "reffered_ticket", nullable = false)
     private Ticket refferedTicket;
 
     @Column(name = "reason")
     private String reason = "";
 
-    @ManyToOne( cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            optional = false)
     @JoinColumn(name = "request_from", nullable = false)
     private User from;
 
-    @ManyToOne( cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            optional = false)
     @JoinColumn(name = "request_to", nullable = false)
     private User to;
 

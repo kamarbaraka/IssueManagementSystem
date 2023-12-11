@@ -25,6 +25,7 @@ import com.kamar.issuemanagementsystem.user.entity.User;
 import com.kamar.issuemanagementsystem.user.repository.UserRepository;
 import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +41,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 @Transactional
 public class ReferralRequestManagementServiceImpl implements ReferralRequestManagementService {
 
@@ -225,32 +227,49 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     }
 
     @Override
-    @Transactional
     public void respondToReferralRequest(long referralRequestId, boolean response) throws ReferralRequestException {
+
+        /*get the employee*/
+        String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User loggedInUser = userRepository.findUserByUsername(loggedInUsername).orElseThrow(
+                () -> new ReferralRequestException("oops! user dont exist")
+        );
 
         /*get the referral request*/
         ReferralRequest referralRequest = referralRequestRepository.findById(referralRequestId).orElseThrow(
                 () -> new ReferralRequestException("referral req not found")
         );
 
-        if (!response){
+        /*check if the referral request belongs to the user*/
+        if (!referralRequest.getTo().equals(loggedInUser)) {
 
-            /*notify the referrer*/
-            referralRequestRepository.deleteById(referralRequest.getRequestId());
-            sendRejectedRequestNotification(referralRequest);
+            /*throw*/
+            throw new ReferralRequestException("you don't own the req");
         }
 
-        /*get the referred ticket and update the assignment*/
-        Ticket refferedTicket = referralRequest.getRefferedTicket();
-        refferedTicket.setAssignedTo(referralRequest.getTo());
-        ticketRepository.save(refferedTicket);
 
-        /*delete the referral request*/
-        referralRequestRepository.deleteById(referralRequest.getRequestId());
+        if (response){
+
+            /*get the referred ticket and update the assignment*/
+            Ticket refferedTicket = referralRequest.getRefferedTicket();
+            refferedTicket.setAssignedTo(referralRequest.getTo());
+
+            ticketRepository.save(refferedTicket);
+
+            /*delete the referral request*/
+            referralRequestRepository.deleteById(referralRequest.getRequestId());
+
+            /*notify the referrer*/
+            sendAcceptedRequestNotification(referralRequest);
+            receiveAcceptedRequestNotification(refferedTicket);
+
+            return;
+        }
 
         /*notify the referrer*/
-        sendAcceptedRequestNotification(referralRequest);
-        receiveAcceptedRequestNotification(refferedTicket);
+        referralRequestRepository.deleteById(referralRequest.getRequestId());
+        sendRejectedRequestNotification(referralRequest);
+
     }
 
     @Override

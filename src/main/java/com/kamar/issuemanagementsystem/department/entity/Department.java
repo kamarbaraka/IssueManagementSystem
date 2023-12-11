@@ -28,12 +28,12 @@ public class Department implements Serializable {
     @Column(name = "department_email", nullable = false)
     private String departmentEmail;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false,
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
             orphanRemoval = true)
     @JoinColumn(name = "hod")
     private User headOfDepartment;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "department")
     private final Collection< User > members = new ArrayList<>();
 
