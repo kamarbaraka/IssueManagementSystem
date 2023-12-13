@@ -11,10 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  *  the user entity.
@@ -33,7 +30,10 @@ public class User implements Serializable, UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private String activationToken = UUID.randomUUID().toString();
+    @Transient
+    private final Random random = new Random();
+
+    private String activationToken = Integer.toString(random.nextInt(1000, 9999));
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_authorities",joinColumns = {@JoinColumn(name = "user")},

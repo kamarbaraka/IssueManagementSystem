@@ -27,4 +27,5 @@
 # Run
 To run the application, execute the command;
 
-`java -jar <jar filename> --spring.mail.username=<your email server username> --spring.mail.password=<your mail server password> --spring.datasource.url=<your database url> --spring.datasource.pusername=<your database username> --spring.datasource.password=<your database password>`
+`java -jar <jar filename> --spring.mail.username=<your email server username> --spring.mail.password=<your mail server password> --spring.datasource.url=<your database url> --spring.datasource.username=<your database username> --spring.datasource.password=<your database password> --app.company.name=<your company name> --app.company.end-tag=<custom end word to be placed after an email> --app.init.db
+-username=<your database username> --app.init.db-password=<your database password>`

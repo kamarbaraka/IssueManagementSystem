@@ -17,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.util.UUID;
+
 /**
  * code to initialize the application.
  * @author kamar baraka.*/
@@ -42,6 +45,7 @@ public class AppInitConfig {
             if (userRepository.existsByUsername(username)) {
                 return ;
             }
+
 
             /*create ticket id generator*/
             Sequences sequences = new Sequences();

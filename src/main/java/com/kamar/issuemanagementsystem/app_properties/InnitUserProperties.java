@@ -15,6 +15,9 @@ public record InnitUserProperties(
         String password,
         String departmentName,
         @Email
-        String departmentEmail
+        String departmentEmail,
+        String dbUsername,
+        String dbPassword,
+        String dbUrl
 ) {
 }
