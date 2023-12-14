@@ -39,4 +39,4 @@ To run the application, create a configuration file with the following required 
 
 then execute the command;
 
-`java -jar (jar filename) --spring.config.name=(name of your configuration file) --spring.config.location(path to your configuration file)`
+`java -jar (jar filename) -Dspring.profiles.active=prod --spring.config.name=(name of your configuration file) --spring.config.location(path to your configuration file)`
