@@ -1,6 +1,7 @@
  # major changes
  
 - added an Api to get employees currently not in a department.
+- automatic database initialization.
 - changed the feedback api to accept an attachment.
 - changed the ticket submission Api to require a written solution for the ticket.
 - changed the ticket referral Api to require a reason for referring the ticket.
@@ -25,7 +26,15 @@
 - MySQL 8
 
 # Run
-To run the application, execute the command;
+To run the application, create a configuration file with the following required properties and provide their values;
+- spring.mail.username=(the username of your mail server)
+- spring.mail.password=(password of your mail server)
+- app.company.name=(name of your company)
+- app.company.end-tag=(end statement of all the emails)
+- app.init.db-url=(url of your mysql database)
+- app.ini.db-username=(username of your MySql database)
+- app.ini.db-password=(password of your MySql database)
 
-`java -jar <jar filename> --spring.mail.username=<your email server username> --spring.mail.password=<your mail server password> --spring.datasource.url=<your database url> --spring.datasource.username=<your database username> --spring.datasource.password=<your database password> --app.company.name=<your company name> --app.company.end-tag=<custom end word to be placed after an email> --app.init.db
--username=<your database username> --app.init.db-password=<your database password>`
+then execute the command;
+
+`java -jar (jar filename) --spring.config.name=(name of your configuration file) --spring.config.location(path to your configuration file)`
