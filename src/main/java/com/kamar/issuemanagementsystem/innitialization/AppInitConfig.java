@@ -17,9 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
-import java.util.UUID;
-
 /**
  * code to initialize the application.
  * @author kamar baraka.*/
@@ -51,7 +48,7 @@ public class AppInitConfig {
             Sequences sequences = new Sequences();
             sequenceRepository.save(sequences);
 
-            /*create a roles*/
+            /*create  roles*/
             UserAuthority ownerAuthority = userAuthorityManagementService.createAuthority("owner");
             userAuthorityManagementService.createAuthority("user");
             userAuthorityManagementService.createAuthority("admin");
