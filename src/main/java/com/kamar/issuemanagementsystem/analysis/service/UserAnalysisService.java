@@ -1,7 +1,7 @@
 package com.kamar.issuemanagementsystem.analysis.service;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
-import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
+import com.kamar.issuemanagementsystem.user_management.data.dto.UserPresentationDTO;
 
 /**
  * the user analysis service.

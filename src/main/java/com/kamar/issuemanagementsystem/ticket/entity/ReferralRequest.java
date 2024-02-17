@@ -1,6 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.entity;
 
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -31,12 +31,12 @@ public class ReferralRequest implements Serializable {
     @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
             optional = false)
     @JoinColumn(name = "request_from", nullable = false)
-    private User from;
+    private UserEntity from;
 
     @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
             optional = false)
     @JoinColumn(name = "request_to", nullable = false)
-    private User to;
+    private UserEntity to;
 
     private boolean accepted = false;
 

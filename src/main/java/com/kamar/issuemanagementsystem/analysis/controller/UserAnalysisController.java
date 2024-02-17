@@ -1,18 +1,15 @@
 package com.kamar.issuemanagementsystem.analysis.controller;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
-import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
-import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.UserPresentationDTO;
 import com.kamar.issuemanagementsystem.analysis.service.UserAnalysisService;
-import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
+import com.kamar.issuemanagementsystem.user_management.utility.mappers.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;

@@ -6,12 +6,11 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.service.TicketCreationService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
-import com.kamar.issuemanagementsystem.user.service.UserManagementService;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.EntityModel;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

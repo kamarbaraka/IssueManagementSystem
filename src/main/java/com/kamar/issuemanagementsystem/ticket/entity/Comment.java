@@ -1,6 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.entity;
 
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,10 +28,10 @@ public class Comment implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "commented_by", nullable = false)
-    private User commentedBy;
+    private UserEntity commentedBy;
 
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    private User commentedTo;
+    private UserEntity commentedTo;
 
     @Column(nullable = false, updatable = false)
     private final LocalDate commentedOn = LocalDate.now();

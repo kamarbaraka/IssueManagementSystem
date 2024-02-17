@@ -1,11 +1,7 @@
 package com.kamar.issuemanagementsystem.rating.entity;
 
-import com.kamar.issuemanagementsystem.user.entity.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.Data;
-import org.hibernate.annotations.Formula;
 
 import java.io.Serializable;
 

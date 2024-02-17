@@ -1,10 +1,5 @@
 package com.kamar.issuemanagementsystem.rating.data.dto;
 
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import java.io.Serializable;
-
 /**
  * the department rating dto.
  * @author kamar baraka.*/

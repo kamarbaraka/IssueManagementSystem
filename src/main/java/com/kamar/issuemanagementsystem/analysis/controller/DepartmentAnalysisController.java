@@ -4,11 +4,9 @@ import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
 import com.kamar.issuemanagementsystem.analysis.service.DepartmentAnalysisService;
 import com.kamar.issuemanagementsystem.department.controller.DepartmentManagementController;
 import com.kamar.issuemanagementsystem.department.data.DepartmentDto;
-import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
-import com.kamar.issuemanagementsystem.user.controller.UserManagementController;
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
-import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
-import com.kamar.issuemanagementsystem.user.service.UserManagementServiceImpl;
+import com.kamar.issuemanagementsystem.user_management.controller.UserManagementController;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.UserPresentationDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,8 +18,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**

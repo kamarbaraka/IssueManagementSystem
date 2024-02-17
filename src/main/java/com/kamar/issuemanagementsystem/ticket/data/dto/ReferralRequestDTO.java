@@ -1,8 +1,7 @@
 package com.kamar.issuemanagementsystem.ticket.data.dto;
 
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 
 import java.io.Serializable;
 import java.time.LocalDate;

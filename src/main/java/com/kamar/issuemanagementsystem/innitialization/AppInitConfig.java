@@ -5,12 +5,10 @@ import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.service.UserAuthorityManagementService;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
-import com.kamar.issuemanagementsystem.rating.repository.DepartmentPerformanceRatingRepository;
-import com.kamar.issuemanagementsystem.rating.repository.UserRatingRepository;
 import com.kamar.issuemanagementsystem.ticket.entity.Sequences;
 import com.kamar.issuemanagementsystem.ticket.repository.SequenceRepository;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.repository.UserRepository;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +25,7 @@ public class AppInitConfig {
 
     @Bean
     public InitializingBean initializingBean(
-            final UserRepository userRepository,
+            final UserEntityRepository userEntityRepository,
             final PasswordEncoder passwordEncoder,
             final DepartmentRepository departmentRepository,
             final InnitUserProperties innitUserProperties,
@@ -39,7 +37,7 @@ public class AppInitConfig {
 
             /*check if innit user exists*/
             String username = innitUserProperties.username();
-            if (userRepository.existsByUsername(username)) {
+            if (userEntityRepository.existsByUsername(username)) {
                 return ;
             }
 
@@ -57,21 +55,21 @@ public class AppInitConfig {
 
 
             /*create a user*/
-            User user = new User();
-            user.setUsername(username);
-            user.setPassword(passwordEncoder.encode(innitUserProperties.password()));
-            user.getAuthorities().add(ownerAuthority);
-            user.setEnabled(true);
+            UserEntity userEntity = new UserEntity();
+            userEntity.setUsername(username);
+            userEntity.setPassword(passwordEncoder.encode(innitUserProperties.password()));
+            userEntity.getAuthorities().add(ownerAuthority);
+            userEntity.setEnabled(true);
 
             /*persist the rating and user*/
-            userRepository.save(user);
+            userEntityRepository.save(userEntity);
 
             /*create a department*/
             Department department = new Department();
             department.setDepartmentName(innitUserProperties.departmentName());
             department.setDepartmentEmail(innitUserProperties.departmentEmail());
-            department.setHeadOfDepartment(user);
-            department.getMembers().add(user);
+            department.setHeadOfDepartment(userEntity);
+            department.getMembers().add(userEntity);
 
             /*persist the rating and department*/
             departmentRepository.save(department);

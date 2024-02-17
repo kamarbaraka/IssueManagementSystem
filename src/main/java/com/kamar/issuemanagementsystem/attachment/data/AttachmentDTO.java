@@ -1,10 +1,8 @@
 package com.kamar.issuemanagementsystem.attachment.data;
 
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * the attachments DTO.

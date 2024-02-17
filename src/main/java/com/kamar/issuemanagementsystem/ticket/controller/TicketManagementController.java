@@ -2,7 +2,6 @@ package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import com.kamar.issuemanagementsystem.attachment.utils.AttachmentUtilityService;
-import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
@@ -11,10 +10,9 @@ import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.service.TicketManagementService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
-import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.utility.util.UserUtilityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -30,7 +28,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -209,8 +206,8 @@ public class TicketManagementController {
             }
 
             /*get the department*/
-            User user = (User) authenticatedUser;
-            Department dept = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow();
+            UserEntity userEntity = (UserEntity) authenticatedUser;
+            Department dept = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
             /*get the tickets*/
             List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartmentAndStatus(
                     dept, ticketStatus);
@@ -253,8 +250,8 @@ public class TicketManagementController {
             }
 
             /*get the department*/
-            User user = (User) authenticatedUser;
-            Department dept = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow();
+            UserEntity userEntity = (UserEntity) authenticatedUser;
+            Department dept = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
             /*get the tickets*/
             List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartment(
                     dept);

@@ -1,6 +1,6 @@
 package com.kamar.issuemanagementsystem.rating.data.dto;
 
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
 
 /**
  * the rating dto contract.

@@ -2,7 +2,7 @@ package com.kamar.issuemanagementsystem.department.data.projection;
 
 import com.kamar.issuemanagementsystem.department.data.DepartmentDtoType;
 import com.kamar.issuemanagementsystem.rating.entity.UserRating;
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 
 /**
  * the projection for department dto.
@@ -11,7 +11,7 @@ import com.kamar.issuemanagementsystem.user.entity.User;
 public interface DepartmentDtoProjection extends DepartmentDtoType {
 
     String getDepartmentName();
-    User getHeadOfDepartment();
+    UserEntity getHeadOfDepartment();
 
     UserRating getRating();
 

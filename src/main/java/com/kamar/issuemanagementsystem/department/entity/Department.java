@@ -1,7 +1,7 @@
 package com.kamar.issuemanagementsystem.department.entity;
 
 import com.kamar.issuemanagementsystem.rating.entity.DepartmentPerformanceRating;
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -31,11 +31,11 @@ public class Department implements Serializable {
     @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
             orphanRemoval = true)
     @JoinColumn(name = "hod")
-    private User headOfDepartment;
+    private UserEntity headOfDepartment;
 
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "department")
-    private final Collection< User > members = new ArrayList<>();
+    private final Collection<UserEntity> members = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
     @JoinColumn(name = "rating")

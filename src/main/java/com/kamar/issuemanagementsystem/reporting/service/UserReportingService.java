@@ -1,6 +1,6 @@
 package com.kamar.issuemanagementsystem.reporting.service;
 
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface UserReportingService {
 
-    List<User> getEmployeesNotInDept();
+    List<UserEntity> getEmployeesNotInDept();
 }

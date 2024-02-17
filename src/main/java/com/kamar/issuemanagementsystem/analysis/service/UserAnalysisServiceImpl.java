@@ -1,12 +1,11 @@
 package com.kamar.issuemanagementsystem.analysis.service;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
-import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.repository.UserRepository;
-import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
+import com.kamar.issuemanagementsystem.user_management.data.dto.UserPresentationDTO;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
+import com.kamar.issuemanagementsystem.user_management.utility.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ import java.util.List;
 @Transactional
 public class UserAnalysisServiceImpl implements UserAnalysisService {
 
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
     private final UserMapper userMapper;
     private final UserAuthorityUtility userAuthorityUtility;
 
@@ -32,7 +31,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO bestPerformantEmployee() throws AnalysisException{
 
         /*get users by authority */
-        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
+        List<UserEntity> usersByAuthority = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
 
         /*check if the list is empty*/
         if (usersByAuthority.isEmpty()) {
@@ -40,7 +39,7 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
         }
 
         /*get the most performant*/
-        User mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
+        UserEntity mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
                         (user, user2) -> user2.getUserRating().getRate() > user.getUserRating().getRate() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("error occurred"));
 
@@ -53,9 +52,9 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO mostPerformantEmployee() throws AnalysisException {
 
         /*get the most performant employee*/
-        List<User> usersByAuthority = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
+        List<UserEntity> usersByAuthority = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
         /*get the most performant*/
-        User mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
+        UserEntity mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
                 (user, user2) -> user2.getUserRating().getTotalRates() > user.getUserRating().getTotalRates() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("error occurred!, try again"));
 
@@ -68,13 +67,13 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     public UserPresentationDTO leastPerformantEmployee() throws AnalysisException{
 
         /*get the least performant*/
-        List<User> usersBAuthorities = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
+        List<UserEntity> usersBAuthorities = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
 
         /*assert the list is not empty*/
         assert !usersBAuthorities.isEmpty();
 
         /*get the list performant*/
-        User leastPerformantEmployee = usersBAuthorities.parallelStream().reduce(
+        UserEntity leastPerformantEmployee = usersBAuthorities.parallelStream().reduce(
                         (user, user2) -> user2.getUserRating().getRate() < user.getUserRating().getRate() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("an error occurred"));
 

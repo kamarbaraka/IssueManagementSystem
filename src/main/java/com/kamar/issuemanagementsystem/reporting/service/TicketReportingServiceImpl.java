@@ -1,14 +1,13 @@
 package com.kamar.issuemanagementsystem.reporting.service;
 
-import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.repository.UserRepository;
-import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
+import com.kamar.issuemanagementsystem.user_management.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +28,7 @@ public class TicketReportingServiceImpl implements TicketReportingService {
     private final TicketRepository ticketRepository;
     private final UserUtilityService userUtilityService;
     private final DepartmentRepository departmentRepository;
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
 
     @Override
     public List<Ticket> ticketsByStatus(TicketStatus status) {
@@ -51,10 +50,10 @@ public class TicketReportingServiceImpl implements TicketReportingService {
     }
 
     @Override
-    public List<Ticket> userTicketsByStatus(User user, TicketStatus ticketStatus) {
+    public List<Ticket> userTicketsByStatus(UserEntity userEntity, TicketStatus ticketStatus) {
 
         /*get tickets*/
-        return ticketRepository.findTicketsByAssignedToAndStatusOrderByCreatedOnAsc(user, ticketStatus);
+        return ticketRepository.findTicketsByAssignedToAndStatusOrderByCreatedOnAsc(userEntity, ticketStatus);
     }
 
     @Override
@@ -68,8 +67,8 @@ public class TicketReportingServiceImpl implements TicketReportingService {
         /*filter for department admin*/
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
             /*get the user and department*/
-            User user = userRepository.findUserByUsername(authenticatedUser.getUsername()).orElseThrow();
-            Department department = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow();
+            UserEntity userEntity = userEntityRepository.findUserByUsername(authenticatedUser.getUsername()).orElseThrow();
+            Department department = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
 
             return allTickets.stream().filter(ticket -> ticket.getDepartmentAssigned().equals(department)).toList();
         }

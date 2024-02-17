@@ -1,7 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
@@ -9,12 +8,10 @@ import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementControl
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.repository.UserRepository;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +29,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
 
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
     private final UserAuthorityUtility userAuthorityUtility;
@@ -59,7 +56,7 @@ public class TicketCreationServiceImpl implements TicketCreationService {
         List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
 
         /*get all admins and send the admin notification email*/
-        List<User> admins = userRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("admin"));
+        List<UserEntity> admins = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("admin"));
 
         if (!admins.isEmpty()) {
 

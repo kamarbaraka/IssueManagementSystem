@@ -1,15 +1,14 @@
 package com.kamar.issuemanagementsystem.reporting.controller;
 
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.ticket.controller.TicketManagementController;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.reporting.service.TicketReportingService;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.service.UserManagementService;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -22,8 +21,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -135,20 +132,20 @@ public class TicketReportingController {
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        User currentUser;
+        UserEntity currentUserEntity;
         List<Ticket> tickets;
 
         try
         {
             /*get user*/
-            currentUser = userManagementService.getUserByUsername(userDetails.getUsername());
+            currentUserEntity = userManagementService.getUserByUsername(userDetails.getUsername());
             /*get the tickets*/
             if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("admin"))) {
-                User user = userManagementService.getUserByUsername(username);
-                tickets = ticketReportingService.userTicketsByStatus(user, TicketStatus.valueOf(status.toUpperCase()));
+                UserEntity userEntity = userManagementService.getUserByUsername(username);
+                tickets = ticketReportingService.userTicketsByStatus(userEntity, TicketStatus.valueOf(status.toUpperCase()));
             }
             else
-                tickets = ticketReportingService.userTicketsByStatus(currentUser, TicketStatus.valueOf(status.toUpperCase()));
+                tickets = ticketReportingService.userTicketsByStatus(currentUserEntity, TicketStatus.valueOf(status.toUpperCase()));
         }catch (Exception e){
 
             /*log and respond*/

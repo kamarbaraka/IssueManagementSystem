@@ -9,8 +9,8 @@ import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.TicketMapper;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,7 +58,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         /*get the user*/
-        User user = (User) authenticatedUser;
+        UserEntity userEntity = (UserEntity) authenticatedUser;
 
         /*filter the ticket for user*/
         if (userUtilityService.hasAuthority(authenticatedUser, "user")) {
@@ -80,7 +80,7 @@ public class TicketManagementServiceImpl implements TicketManagementService {
         /*filter for department admin*/
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
             /*check if the ticket belongs to his department*/
-            Department department = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow(
+            Department department = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow(
                     () -> new TicketException("user doesn't belong to a department"));
             if (ticket.getDepartmentAssigned().equals(department)) {
                 return ticket;
@@ -92,10 +92,10 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     }
 
     @Override
-    public List<Ticket> getTicketsByRaisedBy(User user) {
+    public List<Ticket> getTicketsByRaisedBy(UserEntity userEntity) {
 
         /*get tickets*/
-        return ticketRepository.findTicketsByRaisedByOrderByCreatedOnAsc(user);
+        return ticketRepository.findTicketsByRaisedByOrderByCreatedOnAsc(userEntity);
     }
 
     public List<Attachment> downloadTicketAttachment(final String ticketId) throws TicketException{

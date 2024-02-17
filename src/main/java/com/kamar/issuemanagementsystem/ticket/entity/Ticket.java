@@ -5,14 +5,13 @@ import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.ticket.data.TicketPriority;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.generator.TicketNumberGenerator;
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.*;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -60,7 +59,7 @@ public class Ticket implements Serializable {
 
     @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "assigned_to")
-    private User assignedTo ;
+    private UserEntity assignedTo ;
 
     @FutureOrPresent(message = "deadline must be in the future.")
     private LocalDate deadline;
@@ -68,7 +67,7 @@ public class Ticket implements Serializable {
     @ManyToOne( cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
             optional = false)
     @JoinColumn(name = "raised_by")
-    private User raisedBy;
+    private UserEntity raisedBy;
 
     @Column(nullable = false, updatable = false)
     private final LocalDate createdOn = LocalDate.now();

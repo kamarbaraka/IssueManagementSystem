@@ -1,6 +1,5 @@
 package com.kamar.issuemanagementsystem.department.controller;
 
-import com.google.api.client.auth.openidconnect.IdToken;
 import com.kamar.issuemanagementsystem.department.data.AddUserToDepartmentDTO;
 import com.kamar.issuemanagementsystem.department.data.DepartmentCreationDto;
 import com.kamar.issuemanagementsystem.department.data.DepartmentDto;
@@ -8,14 +7,13 @@ import com.kamar.issuemanagementsystem.department.data.DepartmentDtoType;
 import com.kamar.issuemanagementsystem.department.exception.DepartmentException;
 import com.kamar.issuemanagementsystem.department.service.DepartmentManagementService;
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;

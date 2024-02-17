@@ -1,7 +1,7 @@
 package com.kamar.issuemanagementsystem.reporting.controller;
 
 import com.kamar.issuemanagementsystem.reporting.service.UserReportingService;
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +45,9 @@ public class UserReportingController {
     public ResponseEntity<String[]> getEmployeesNotInDept(){
 
         /*get the employees not in department*/
-        List<User> employeesNotInDept = userReportingService.getEmployeesNotInDept();
+        List<UserEntity> employeesNotInDept = userReportingService.getEmployeesNotInDept();
         /*get the usernames*/
-        String[] arrayOfEmployees = employeesNotInDept.stream().map(User::getUsername).toList().toArray(new String[0]);
+        String[] arrayOfEmployees = employeesNotInDept.stream().map(UserEntity::getUsername).toList().toArray(new String[0]);
         /*return*/
         return ResponseEntity.ok(arrayOfEmployees);
 

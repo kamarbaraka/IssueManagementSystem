@@ -2,8 +2,8 @@ package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
 import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestRepository;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.service.UserManagementService;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,35 +26,35 @@ public class ReferralRequestReportServiceImpl implements ReferralRequestReportSe
     public List<ReferralRequest> getReferralRequestsTo(final String to) {
 
         /*get the user requested*/
-        User user = userManagementService.getUserByUsername(to);
+        UserEntity userEntity = userManagementService.getUserByUsername(to);
         /*get the referrals*/
-        return referralRequestRepository.findReferralRequestsByToOrderByRequestedOn(user);
+        return referralRequestRepository.findReferralRequestsByToOrderByRequestedOn(userEntity);
     }
 
     @Override
     public List<ReferralRequest> getReferralRequestsFrom(final String from) {
 
         /*get the user who requested*/
-        User user = userManagementService.getUserByUsername(from);
+        UserEntity userEntity = userManagementService.getUserByUsername(from);
         /*get the referrals*/
-        return referralRequestRepository.findReferralRequestsByFromOrderByRequestedOn(user);
+        return referralRequestRepository.findReferralRequestsByFromOrderByRequestedOn(userEntity);
     }
 
     @Override
     public List<ReferralRequest> getRejectedRequestsFrom(final String from) {
 
         /*get the user who requested*/
-        User user = userManagementService.getUserByUsername(from);
+        UserEntity userEntity = userManagementService.getUserByUsername(from);
         /*get the rejected referrals*/
-        return referralRequestRepository.findReferralRequestsByFromAndAcceptedOrderByRequestedOn(user, false);
+        return referralRequestRepository.findReferralRequestsByFromAndAcceptedOrderByRequestedOn(userEntity, false);
     }
 
     @Override
     public List<ReferralRequest> getAcceptedRequestsFrom(String from) {
 
         /*get the user*/
-        User user = userManagementService.getUserByUsername(from);
+        UserEntity userEntity = userManagementService.getUserByUsername(from);
         /*get the referrals*/
-        return referralRequestRepository.findReferralRequestsByToAndAcceptedOrderByRequestedOn(user, true);
+        return referralRequestRepository.findReferralRequestsByToAndAcceptedOrderByRequestedOn(userEntity, true);
     }
 }

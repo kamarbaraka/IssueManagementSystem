@@ -1,22 +1,16 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.external_resouces.service.EmailService;
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
-import com.kamar.issuemanagementsystem.ticket.entity.Comment;
 import com.kamar.issuemanagementsystem.ticket.entity.Solution;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionException;
-import com.kamar.issuemanagementsystem.ticket.repository.CommentRepository;
 import com.kamar.issuemanagementsystem.ticket.repository.SolutionRepository;
-import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.service.UserManagementService;
+import com.kamar.issuemanagementsystem.user_management.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

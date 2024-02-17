@@ -1,6 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.entity;
 
-import com.kamar.issuemanagementsystem.user.entity.User;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,7 +29,7 @@ public class Reply implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.ALL}, optional = false)
     @JoinColumn(name = "replied_by")
-    private User repliedBy;
+    private UserEntity repliedBy;
 
     @Column(nullable = false, updatable = false)
     private final LocalDate repliedOn = LocalDate.now();

@@ -1,9 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
-import com.kamar.issuemanagementsystem.authority.repository.UserAuthorityRepository;
-import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.external_resouces.data.AttachmentResourceDto;
@@ -21,9 +18,9 @@ import com.kamar.issuemanagementsystem.ticket.repository.ReferralRequestReposito
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.mapper.ReferralRequestMapper;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.repository.UserRepository;
-import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
+import com.kamar.issuemanagementsystem.user_management.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.hateoas.Link;
@@ -47,7 +44,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
     private final ReferralRequestRepository referralRequestRepository;
     private final EmailService emailService;
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
     private final TicketRepository ticketRepository;
     private final ReferralRequestMapper referralRequestMapper;
     private final CompanyProperties company;
@@ -162,11 +159,11 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         Ticket ticket = ticketRepository.findById(requestDTO.ticketToRefer()).orElseThrow(
                 () -> new ReferralRequestException("no such ticket to refer.")
         );
-        User fromUser = ticket.getAssignedTo();
-        User toUser = userRepository.findUserByUsername(requestDTO.to()).orElseThrow(
+        UserEntity fromUserEntity = ticket.getAssignedTo();
+        UserEntity toUserEntity = userEntityRepository.findUserByUsername(requestDTO.to()).orElseThrow(
                 () -> new ReferralRequestException("no such employee to refer to")
         );
-        Department toUserDepartment = departmentRepository.findDepartmentByMembersContaining(toUser).orElseThrow(
+        Department toUserDepartment = departmentRepository.findDepartmentByMembersContaining(toUserEntity).orElseThrow(
                 () -> new ReferralRequestException("user doesn't belong to a department."));
 
         /*filter for employee */
@@ -186,8 +183,8 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
 
             /*check if the ticket belongs to his department*/
-            User user = (User) authenticatedUser;
-            Department authenticatedUserDept = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow(
+            UserEntity userEntity = (UserEntity) authenticatedUser;
+            Department authenticatedUserDept = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow(
                     () -> new ReferralRequestException("you dont belong to a department."));
             if (!ticket.getDepartmentAssigned().equals(authenticatedUserDept)) {
                 throw new ReferralRequestException("you dont own the resource");
@@ -214,8 +211,8 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         /*construct a referral request*/
         ReferralRequest referralRequest = new ReferralRequest();
         referralRequest.setRefferedTicket(ticket);
-        referralRequest.setFrom(fromUser);
-        referralRequest.setTo(toUser);
+        referralRequest.setFrom(fromUserEntity);
+        referralRequest.setTo(toUserEntity);
         referralRequest.setReason(requestDTO.reason());
 
         /*send a referral request*/
@@ -231,7 +228,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
         /*get the employee*/
         String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User loggedInUser = userRepository.findUserByUsername(loggedInUsername).orElseThrow(
+        UserEntity loggedInUserEntity = userEntityRepository.findUserByUsername(loggedInUsername).orElseThrow(
                 () -> new ReferralRequestException("oops! user dont exist")
         );
 
@@ -241,7 +238,7 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         );
 
         /*check if the referral request belongs to the user*/
-        if (!referralRequest.getTo().equals(loggedInUser)) {
+        if (!referralRequest.getTo().equals(loggedInUserEntity)) {
 
             /*throw*/
             throw new ReferralRequestException("you don't own the req");
@@ -277,13 +274,13 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
         /*get authenticated user*/
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) userDetails;
+        UserEntity userEntity = (UserEntity) userDetails;
 
         /*get department*/
-        Department department = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow(
+        Department department = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow(
                 () -> new ReferralRequestException("user doesn't belong to a department"));
 
-        List<String> members = department.getMembers().stream().map(User::getUsername).toList();
+        List<String> members = department.getMembers().stream().map(UserEntity::getUsername).toList();
 
         return new MembersDto(department.getDepartmentName(), members);
     }

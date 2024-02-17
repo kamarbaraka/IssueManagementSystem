@@ -1,6 +1,6 @@
 package com.kamar.issuemanagementsystem.external_resouces.data;
 
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
 import org.springframework.core.io.ByteArrayResource;
 
 

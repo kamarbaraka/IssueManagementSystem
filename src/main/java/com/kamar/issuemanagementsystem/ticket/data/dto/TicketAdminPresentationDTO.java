@@ -1,6 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.data.dto;
 
-import com.kamar.issuemanagementsystem.user.data.dto.DtoType;
+import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
 
 import java.io.Serializable;
 

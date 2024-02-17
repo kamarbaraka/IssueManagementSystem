@@ -1,8 +1,8 @@
 package com.kamar.issuemanagementsystem.authentication.controller;
 
-import com.kamar.issuemanagementsystem.user.data.dto.UserPresentationDTO;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.utility.mappers.UserMapper;
+import com.kamar.issuemanagementsystem.user_management.data.dto.UserPresentationDTO;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.utility.mappers.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +36,9 @@ public class LoginController {
     public ResponseEntity<UserPresentationDTO> login(@AuthenticationPrincipal UserDetails userDetails){
 
         /*get the user*/
-        User user = (User) userDetails;
+        UserEntity userEntity = (UserEntity) userDetails;
         /*convert to dto*/
-        UserPresentationDTO userPresentationDTO = userMapper.userToPresentationDTO(user);
+        UserPresentationDTO userPresentationDTO = userMapper.userToPresentationDTO(userEntity);
 
         /*return details of user*/
         return ResponseEntity.ok(userPresentationDTO);

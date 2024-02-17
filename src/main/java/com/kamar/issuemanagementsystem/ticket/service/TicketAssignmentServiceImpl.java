@@ -1,7 +1,6 @@
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
 import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
@@ -14,9 +13,9 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAssignmentDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.repository.TicketRepository;
 import com.kamar.issuemanagementsystem.ticket.utility.util.TicketUtilities;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.repository.UserRepository;
-import com.kamar.issuemanagementsystem.user.service.UserManagementService;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
+import com.kamar.issuemanagementsystem.user_management.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -46,7 +45,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     private final CompanyProperties company;
     private final TicketUtilities ticketUtilities;
     private final TicketRepository ticketRepository;
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
     private final DepartmentRepository departmentRepository;
 
 
@@ -92,7 +91,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
 
 
         /*check that the user to assign exists*/
-        User userToAssign = userRepository.findUserByUsername(assignmentDTO.assignTo()).orElseThrow(
+        UserEntity userEntityToAssign = userEntityRepository.findUserByUsername(assignmentDTO.assignTo()).orElseThrow(
                 () -> new OperationNotSupportedException("no such user to assign")
         );
 
@@ -113,14 +112,14 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
         }
 
         /*check that the user does not assign to the same person*/
-        if (userToAssign.equals(ticket.getAssignedTo())) {
+        if (userEntityToAssign.equals(ticket.getAssignedTo())) {
             /*throw*/
             throw new OperationNotSupportedException("you cant assign to the same person");
         }
 
         /*confirm that the ticket belongs to the same department as the user to assign*/
         Department ticketDepartment = ticket.getDepartmentAssigned();
-        Department userToAssignDept = departmentRepository.findDepartmentByMembersContaining(userToAssign).orElseThrow(
+        Department userToAssignDept = departmentRepository.findDepartmentByMembersContaining(userEntityToAssign).orElseThrow(
                 () -> new OperationNotSupportedException("user to assign does not belong to a department")
         );
 
@@ -139,7 +138,7 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
         }
 
         /*set the ticket*/
-        ticket.setAssignedTo(userToAssign);
+        ticket.setAssignedTo(userEntityToAssign);
         ticket.setPriority(priority);
         ticket.setDeadline(deadline);
 

@@ -2,8 +2,7 @@ package com.kamar.issuemanagementsystem.reporting.service;
 
 import com.kamar.issuemanagementsystem.ticket.data.TicketStatus;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 
 import java.util.List;
 
@@ -14,6 +13,6 @@ import java.util.List;
 public interface TicketReportingService {
 
     List<Ticket> ticketsByStatus(TicketStatus status);
-    List<Ticket> userTicketsByStatus(User user, TicketStatus ticketStatus);
+    List<Ticket> userTicketsByStatus(UserEntity userEntity, TicketStatus ticketStatus);
     List<Ticket> getAllTickets();
 }

@@ -1,13 +1,8 @@
 package com.kamar.issuemanagementsystem.authority.entity;
 
-import com.kamar.issuemanagementsystem.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * the user authority entity.

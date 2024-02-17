@@ -8,9 +8,9 @@ import com.kamar.issuemanagementsystem.department.entity.Department;
 import com.kamar.issuemanagementsystem.department.exception.DepartmentException;
 import com.kamar.issuemanagementsystem.department.repository.DepartmentRepository;
 import com.kamar.issuemanagementsystem.department.utility.DepartmentMapper;
-import com.kamar.issuemanagementsystem.user.entity.User;
-import com.kamar.issuemanagementsystem.user.repository.UserRepository;
-import com.kamar.issuemanagementsystem.user.utility.util.UserUtilityService;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
+import com.kamar.issuemanagementsystem.user_management.utility.util.UserUtilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
 
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
     private final UserUtilityService userUtilityService;
 
     @Override
@@ -52,7 +51,7 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     public DepartmentDtoType getDepartmentByName(String name) throws DepartmentException {
 
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findUserByUsername(authenticatedUser.getUsername()).orElseThrow();
+        UserEntity userEntity = userEntityRepository.findUserByUsername(authenticatedUser.getUsername()).orElseThrow();
 
         /*get the department by name*/
         Department department = departmentRepository.findDepartmentByDepartmentName(name).orElseThrow(
@@ -61,7 +60,7 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
 
         /*filter for department admin*/
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
-            Department userDepartment = departmentRepository.findDepartmentByMembersContaining(user).orElseThrow();
+            Department userDepartment = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
             return department.equals(userDepartment)? departmentMapper.mapToDto(department) : null;
         }
 
@@ -78,7 +77,7 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
         ).orElseThrow(
                 () -> new DepartmentException("no such department"));
 
-        addUserToDepartmentDTO.username().stream().map(userRepository::findUserByUsername)
+        addUserToDepartmentDTO.username().stream().map(userEntityRepository::findUserByUsername)
                 .map(Optional::orElseThrow)
                 .filter(user -> departmentRepository.findDepartmentByMembersContaining(user).isEmpty())
                 .forEach(user -> department.getMembers().add(user));
