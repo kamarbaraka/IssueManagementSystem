@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.department.entity;
 
 import com.kamar.issuemanagementsystem.rating.entity.DepartmentPerformanceRating;
@@ -11,9 +12,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+*/
 /**
  * the department entity.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Entity(name = "departments")
 @Data
@@ -42,3 +45,4 @@ public class Department implements Serializable {
     private final DepartmentPerformanceRating performanceRating = new DepartmentPerformanceRating();
 
 }
+*/

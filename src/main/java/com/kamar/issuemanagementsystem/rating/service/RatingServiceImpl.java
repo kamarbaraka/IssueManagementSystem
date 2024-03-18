@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.rating.service;
 
 import com.kamar.issuemanagementsystem.department.entity.Department;
@@ -13,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
+*/
 /**
  * implementation of the rating service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +31,15 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public void rateUser(UserRatingDTO userRatingDTO) throws RatingException {
 
-        /*get the user to rate*/
+        */
+/*get the user to rate*//*
+
         UserEntity userEntity = userEntityRepository.findUserByUsername(userRatingDTO.username()).orElseThrow(
                 () -> new RatingException("no such user to rate"));
 
-        /*get the rating and update it*/
+        */
+/*get the rating and update it*//*
+
         UserRating userRating = userEntity.getUserRating();
         userRating.setNumberOfRatings(userRating.getNumberOfRatings() + 1);
         userRating.setTotalRates(userRating.getTotalRates() + userRatingDTO.Rating());
@@ -40,7 +47,9 @@ public class RatingServiceImpl implements RatingService {
                 ((int) (userRating.getTotalRates() / userRating.getNumberOfRatings()))
         );
 
-        /*apply rating to the user*/
+        */
+/*apply rating to the user*//*
+
         userEntityRepository.save(userEntity);
 
     }
@@ -48,10 +57,14 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public void rateDepartment(Department department) throws RatingException {
 
-        /*get the members*/
+        */
+/*get the members*//*
+
         Collection<UserEntity> members = department.getMembers();
 
-        /*set the rating*/
+        */
+/*set the rating*//*
+
         department.getPerformanceRating().setNumberOfMembers(members.size());
         department.getPerformanceRating().setTotalMemberRating(members.stream().map(
                 user -> user.getUserRating().getRate()
@@ -59,8 +72,11 @@ public class RatingServiceImpl implements RatingService {
                 () -> new RatingException("error rating department")
         ));
 
-        /*update the rating*/
+        */
+/*update the rating*//*
+
         departmentRepository.save(department);
 
     }
 }
+*/

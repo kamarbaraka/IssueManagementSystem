@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.rating.entity;
 
 import jakarta.persistence.*;
@@ -5,9 +6,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+*/
 /**
  * the rating entity.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Entity(name = "ratings")
 @Data
@@ -29,3 +32,4 @@ public class UserRating implements Serializable {
     private int rate = 0;
 
 }
+*/

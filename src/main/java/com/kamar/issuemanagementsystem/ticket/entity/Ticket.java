@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.entity;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
@@ -18,9 +19,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
+*/
 /**
  * ticket entity.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 
 @Entity(name = "tickets")
@@ -72,3 +75,4 @@ public class Ticket implements Serializable {
     @Column(nullable = false, updatable = false)
     private final LocalDate createdOn = LocalDate.now();
 }
+*/

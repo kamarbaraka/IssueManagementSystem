@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.analysis.service;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
@@ -14,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+*/
 /**
  * implementation of the department analysis service contract.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +34,9 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public DepartmentDto getBestPerformantDepartment() throws AnalysisException {
 
-        /*get the best performant department*/
+        */
+/*get the best performant department*//*
+
         List<Department> allDepartments = departmentRepository.findAll();
 
         return allDepartments.stream().reduce(
@@ -46,10 +51,14 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public DepartmentDto getMostPerformantDepartment() throws AnalysisException {
 
-        /*get all departments*/
+        */
+/*get all departments*//*
+
         List<Department> allDepartments = departmentRepository.findAll();
 
-        /*get the most performant*/
+        */
+/*get the most performant*//*
+
         return allDepartments.parallelStream().reduce((department, department2) ->
                         department2.getPerformanceRating().getTotalMemberRating() > department.getPerformanceRating().
                                 getTotalMemberRating() ? department2 : department)
@@ -61,9 +70,13 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public UserPresentationDTO getMostPerformantEmployeeInDepartment(String departmentName) throws AnalysisException {
 
-        /*get the department by name*/
+        */
+/*get the department by name*//*
+
         Department department = departmentRepository.findById(departmentName).orElseThrow();
-        /*get the users*/
+        */
+/*get the users*//*
+
         return department.getMembers().parallelStream().reduce((member, member2) ->
                 member2.getUserRating().getTotalRates() > member.getUserRating().getTotalRates() ? member2 : member).map(
                 userMapper::userToPresentationDTO
@@ -74,9 +87,13 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public UserPresentationDTO getBestEmployeeInDepartment(String departmentName) throws AnalysisException {
 
-        /*get the department*/
+        */
+/*get the department*//*
+
         Department department = departmentRepository.findById(departmentName).orElseThrow();
-        /*get the best user*/
+        */
+/*get the best user*//*
+
         return department.getMembers().parallelStream().reduce((member, member2) ->
                         member2.getUserRating().getRate() > member.getUserRating().getRate() ? member2 : member)
                 .map(userMapper::userToPresentationDTO).orElseThrow(
@@ -84,3 +101,4 @@ public class DepartmentAnalysisServiceImpl implements DepartmentAnalysisService 
                 );
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
@@ -28,9 +29,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+*/
 /**
  * the referral request controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -42,8 +45,10 @@ public class ReferralRequestController {
     private final ReferralRequestMapper referralRequestMapper;
     private final ReferralRequestReportService requestReportService;
 
-    /**
-     * respond to referral request*/
+    */
+/**
+     * respond to referral request*//*
+
     @GetMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = { "Ticket Referral"}, summary = "respond to a referral. {'EMPLOYEE'}",
             description = "accept or reject ticket referral.",
@@ -56,38 +61,54 @@ public class ReferralRequestController {
     public ResponseEntity<EntityModel<DtoType>> respondToReferralRequest(@RequestParam("accept") boolean accept,
                                                                          @RequestParam("referral_id") long id){
 
-        /*check weather accepted or rejected*/
+        */
+/*check weather accepted or rejected*//*
+
         try {
             referralRequestManagementService.respondToReferralRequest(id, accept);
         } catch (Exception e) {
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
         if (!accept) {
-            /*construct info*/
+            */
+/*construct info*//*
+
             EntityModel<DtoType> response = EntityModel.of(new InfoDTO("rejected referral request"));
-            /*return the response*/
+            */
+/*return the response*//*
+
             return ResponseEntity.ok(response);
         }
 
 
-        /*construct response*/
+        */
+/*construct response*//*
+
         EntityModel<DtoType> response = EntityModel.of(new InfoDTO("request referral accepted"));
-        /*add link*/
+        */
+/*add link*//*
+
         Link referralLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 ReferralRequestController.class).getReferralRequestById(id)).withRel("referral");
 
         response.add(referralLink);
-        /*return response*/
+        */
+/*return response*//*
+
         return ResponseEntity.ok(response);
     }
 
-    /**
+    */
+/**
      * get referral request by ticketNumber.
-     * @author kamar baraka.*/
+     * @author kamar baraka.*//*
+
     @GetMapping(value = {"byId"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Referral"},summary = "get referral. {'EMPLOYEE'}",description = "get referral by ticketNumber",
     security = {@SecurityRequirement(name = "basicAuth", scopes = {"EMPLOYEE"})})
@@ -99,20 +120,30 @@ public class ReferralRequestController {
 
         try
         {
-            /*get referral*/
+            */
+/*get referral*//*
+
             referral = referralRequestManagementService.getReferralRequestById(id);
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*map to DTO*/
+        */
+/*map to DTO*//*
+
         DtoType referralDto = referralRequestMapper.entityToDTO(referral);
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         EntityModel<DtoType> response = EntityModel.of(referralDto);
-        /*return the response*/
+        */
+/*return the response*//*
+
         return ResponseEntity.ok(response);
 
     }
@@ -131,22 +162,32 @@ public class ReferralRequestController {
                                                                   @Validated @RequestParam("to") @Email String username,
                                                                   @RequestParam(value = "reason") String reason ){
 
-        /*create a dto*/
+        */
+/*create a dto*//*
+
         TicketReferralDTO ticketReferralDTO = new TicketReferralDTO(ticketNumber, username, reason);
         try
         {
-            /*refer*/
+            */
+/*refer*//*
+
             ReferralRequestDTO referralRequestDTO = referralRequestManagementService.referTicketTo(ticketReferralDTO);
 
-            /*construct a response*/
+            */
+/*construct a response*//*
+
             EntityModel<DtoType> response = EntityModel.of(referralRequestDTO);
 
-            /*return response*/
+            */
+/*return response*//*
+
             return ResponseEntity.ok(response);
 
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -163,12 +204,16 @@ public class ReferralRequestController {
     @CrossOrigin
     public ResponseEntity<MembersDto> refer(){
 
-        /*get members*/
+        */
+/*get members*//*
+
         try {
             MembersDto membersDto = referralRequestManagementService.refer();
             return ResponseEntity.ok(membersDto);
         } catch (ReferralRequestException e) {
-            /*log*/
+            */
+/*log*//*
+
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -184,13 +229,19 @@ public class ReferralRequestController {
     @CrossOrigin
     public ResponseEntity<List<ReferralRequestDTO>> getReferralRequestsTo(@RequestParam("to") @Validated @Email String to){
 
-        /*get the referral requests*/
+        */
+/*get the referral requests*//*
+
         List<ReferralRequest> referralRequests = requestReportService.getReferralRequestsTo(to);
 
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         List<ReferralRequestDTO> requestDTOS = referralRequests.stream().map(referralRequestMapper::entityToDTO).toList();
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         return ResponseEntity.ok(requestDTOS);
     }
 
@@ -204,13 +255,19 @@ public class ReferralRequestController {
     @CrossOrigin
     public ResponseEntity<List<ReferralRequestDTO>> getReferralsFrom(@RequestParam("from") @Validated @Email String from){
 
-        /*get the referrals*/
+        */
+/*get the referrals*//*
+
         List<ReferralRequest> referralRequests = requestReportService.getReferralRequestsFrom(from);
 
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         List<ReferralRequestDTO> requestDTOS = referralRequests.stream().map(referralRequestMapper::entityToDTO).toList();
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         return ResponseEntity.ok(requestDTOS);
     }
 
@@ -225,13 +282,19 @@ public class ReferralRequestController {
     public ResponseEntity<List<ReferralRequestDTO>> getAcceptedRequestsFrom(@RequestParam("from") @Validated @Email
                                                                          String from){
 
-        /*get the accepted referrals*/
+        */
+/*get the accepted referrals*//*
+
         List<ReferralRequest> acceptedRequests = requestReportService.getAcceptedRequestsFrom(from);
 
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         List<ReferralRequestDTO> requestDTOS = acceptedRequests.stream().map(referralRequestMapper::entityToDTO).toList();
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         return ResponseEntity.ok(requestDTOS);
     }
 
@@ -246,13 +309,20 @@ public class ReferralRequestController {
     public ResponseEntity<List<ReferralRequestDTO>> getRejectedRequestsFrom(@RequestParam("from") @Validated @Email
                                                                          String from){
 
-        /*get the rejected requests*/
+        */
+/*get the rejected requests*//*
+
         List<ReferralRequest> rejectedRequests = requestReportService.getRejectedRequestsFrom(from);
 
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         List<ReferralRequestDTO> requestDTOS = rejectedRequests.stream().map(referralRequestMapper::entityToDTO).toList();
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         return ResponseEntity.ok(requestDTOS);
     }
 }
+*/

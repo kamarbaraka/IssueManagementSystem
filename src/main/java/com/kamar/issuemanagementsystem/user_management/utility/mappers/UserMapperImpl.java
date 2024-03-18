@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.user_management.utility.mappers;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
@@ -8,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+*/
 /**
  * the user mapper implementation.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 public class UserMapperImpl implements UserMapper {
@@ -26,10 +29,14 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public UserPresentationDTO userToPresentationDTO(UserEntity userEntity) {
 
-        /*map the authorities*/
+        */
+/*map the authorities*//*
+
         List<String> authorities = userEntity.getAuthorities().stream().map(UserAuthority::getAuthority).toList();
 
-        /*map user to presentation DTO*/
+        */
+/*map user to presentation DTO*//*
+
         return new UserPresentationDTO(
                 userEntity.getUsername(),
                 authorities,
@@ -37,3 +44,4 @@ public class UserMapperImpl implements UserMapper {
         );
     }
 }
+*/

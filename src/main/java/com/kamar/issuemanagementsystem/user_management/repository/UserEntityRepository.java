@@ -1,6 +1,5 @@
 package com.kamar.issuemanagementsystem.user_management.repository;
 
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -21,8 +20,6 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, String> 
     /*find a user by email*/
     Optional<UserEntity> findUserByUsername(String username);
     void deleteUserByUsername(String username);
-    Optional<UserEntity> findUserByUsernameAndAuthoritiesContaining(String username, UserAuthority authority);
-    List<UserEntity> findUserByAuthoritiesContaining(UserAuthority authority);
     boolean existsByUsername(String username);
 
 

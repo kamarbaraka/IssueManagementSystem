@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
@@ -29,9 +30,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+*/
 /**
  * implementation of the ticket assignment service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +58,9 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     }
     private void sendNotification(Ticket ticket){
 
-        /*set the subject and Message*/
+        */
+/*set the subject and Message*//*
+
         String subject = "Ticket assignment";
         Link ticketLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 TicketManagementController.class).getTicketById(ticket.getTicketNumber())).withRel("the ticket");
@@ -65,13 +70,19 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
                 "  <h4><a href=\""+ ticketLink.getHref()+ "\" >Ticket</a></h4> <br>"+
                 company.endTag();
 
-        /*get attachments*/
+        */
+/*get attachments*//*
+
         List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
 
-        /*send the message*/
+        */
+/*send the message*//*
+
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), attachments);
 
-        /*compose and send notification to the raiser*/
+        */
+/*compose and send notification to the raiser*//*
+
         String raiserSubject = "Ticket handling";
         String raiserMessage = "Dear "+ ticket.getRaisedBy().getUsername()+ ",Your ticket " + ticket.getTicketNumber()
                 + " \"" + ticket.getTitle() + "\""+
@@ -90,45 +101,65 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
     public void assignTo(TicketAssignmentDTO assignmentDTO) throws OperationNotSupportedException{
 
 
-        /*check that the user to assign exists*/
+        */
+/*check that the user to assign exists*//*
+
         UserEntity userEntityToAssign = userEntityRepository.findUserByUsername(assignmentDTO.assignTo()).orElseThrow(
                 () -> new OperationNotSupportedException("no such user to assign")
         );
 
-        /*check if the user to assign is an employee*/
+        */
+/*check if the user to assign is an employee*//*
+
         if (!userManagementService.checkUserByUsernameAndAuthority(
                 assignmentDTO.assignTo(), userAuthorityUtility.getFor("employee")))
             throw new OperationNotSupportedException("the user to assign is not an employee.");
 
-        /*check if the ticket exists*/
+        */
+/*check if the ticket exists*//*
+
         Ticket ticket = ticketRepository.findById(assignmentDTO.ticketNumber()).orElseThrow(
                 () -> new OperationNotSupportedException("no such ticket to be assigned.")
         );
 
-        /*check if the ticket is open or assigned*/
+        */
+/*check if the ticket is open or assigned*//*
+
         if (ticket.getStatus().equals(TicketStatus.SUBMITTED) || ticket.getStatus().equals(TicketStatus.CLOSED)) {
-            /*throw*/
+            */
+/*throw*//*
+
             throw new OperationNotSupportedException("the ticket is already submitted or closed");
         }
 
-        /*check that the user does not assign to the same person*/
+        */
+/*check that the user does not assign to the same person*//*
+
         if (userEntityToAssign.equals(ticket.getAssignedTo())) {
-            /*throw*/
+            */
+/*throw*//*
+
             throw new OperationNotSupportedException("you cant assign to the same person");
         }
 
-        /*confirm that the ticket belongs to the same department as the user to assign*/
+        */
+/*confirm that the ticket belongs to the same department as the user to assign*//*
+
         Department ticketDepartment = ticket.getDepartmentAssigned();
         Department userToAssignDept = departmentRepository.findDepartmentByMembersContaining(userEntityToAssign).orElseThrow(
                 () -> new OperationNotSupportedException("user to assign does not belong to a department")
         );
 
         if (!userToAssignDept.equals(ticketDepartment)) {
-            /*throw*/
+            */
+/*throw*//*
+
             throw new OperationNotSupportedException("user to assign does not belong to the same department as the ticket");
         }
 
-        /*get the priority and deadline*/
+        */
+/*get the priority and deadline*//*
+
         TicketPriority priority = TicketPriority.valueOf(assignmentDTO.priority().toUpperCase());
         LocalDate deadline;
         try {
@@ -137,21 +168,30 @@ public class TicketAssignmentServiceImpl implements TicketAssignmentService {
             throw new OperationNotSupportedException("deadline format not supported");
         }
 
-        /*set the ticket*/
+        */
+/*set the ticket*//*
+
         ticket.setAssignedTo(userEntityToAssign);
         ticket.setPriority(priority);
         ticket.setDeadline(deadline);
 
         if (!ticket.getStatus().equals(TicketStatus.ASSIGNED)) {
-            /*set the status*/
+            */
+/*set the status*//*
+
             ticket.setStatus(TicketStatus.ASSIGNED);
         }
 
-        /*assign the ticket*/
+        */
+/*assign the ticket*//*
+
         Ticket updatedTicket = ticketRepository.save(ticket);
 
-        /*send notification*/
+        */
+/*send notification*//*
+
         sendNotification(updatedTicket);
     }
 
 }
+*/

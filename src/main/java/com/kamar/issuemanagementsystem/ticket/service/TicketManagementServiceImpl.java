@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
@@ -22,9 +23,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+*/
 /**
  * implementation of the ticket management.\
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +42,9 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     @Override
     public Ticket updateTicket(Ticket ticket) {
 
-        /*check if exists*/
+        */
+/*check if exists*//*
+
         Ticket savedTicket = ticketRepository.findById(ticket.getTicketNumber()).orElseThrow();
         savedTicket.setAssignedTo(ticket.getAssignedTo());
         savedTicket.setPriority(ticket.getPriority());
@@ -51,35 +56,53 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     @Override
     public Ticket getTicketById(String  id) throws TicketException {
 
-        /*get the ticket by ticketNumber*/
+        */
+/*get the ticket by ticketNumber*//*
+
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new TicketException("no such ticket"));
 
-        /*get authenticated user*/
+        */
+/*get authenticated user*//*
+
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        /*get the user*/
+        */
+/*get the user*//*
+
         UserEntity userEntity = (UserEntity) authenticatedUser;
 
-        /*filter the ticket for user*/
+        */
+/*filter the ticket for user*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "user")) {
-            /*check if user raised the ticket*/
+            */
+/*check if user raised the ticket*//*
+
             if (ticket.getRaisedBy().getUsername().equals(authenticatedUser.getUsername())) {
                 return ticket;
             }else throw new TicketException("not authorized to access the resource");
         }
 
-        /*filter for employee*/
+        */
+/*filter for employee*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "employee")) {
-            /*check if the user is assigned the ticket*/
+            */
+/*check if the user is assigned the ticket*//*
+
             if (ticket.getAssignedTo().getUsername().equals(authenticatedUser.getUsername()) ||
                     ticket.getRaisedBy().getUsername().equals(authenticatedUser.getUsername())) {
                 return ticket;
             }else throw new TicketException("unauthorized to access");
         }
 
-        /*filter for department admin*/
+        */
+/*filter for department admin*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
-            /*check if the ticket belongs to his department*/
+            */
+/*check if the ticket belongs to his department*//*
+
             Department department = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow(
                     () -> new TicketException("user doesn't belong to a department"));
             if (ticket.getDepartmentAssigned().equals(department)) {
@@ -87,20 +110,26 @@ public class TicketManagementServiceImpl implements TicketManagementService {
             }else throw new TicketException("access unauthorized");
         }
 
-        /*filter for admin and owner*/
+        */
+/*filter for admin and owner*//*
+
         return ticket;
     }
 
     @Override
     public List<Ticket> getTicketsByRaisedBy(UserEntity userEntity) {
 
-        /*get tickets*/
+        */
+/*get tickets*//*
+
         return ticketRepository.findTicketsByRaisedByOrderByCreatedOnAsc(userEntity);
     }
 
     public List<Attachment> downloadTicketAttachment(final String ticketId) throws TicketException{
 
-        /*get the ticket*/
+        */
+/*get the ticket*//*
+
         Optional<Ticket> optSavedTicket = ticketRepository.findById(ticketId);
 
         if (optSavedTicket.isEmpty()) {
@@ -109,9 +138,13 @@ public class TicketManagementServiceImpl implements TicketManagementService {
 
         Ticket ticket = optSavedTicket.get();
 
-        /*check if the ticket has attachments*/
+        */
+/*check if the ticket has attachments*//*
+
         if (ticket.getAttachments().isEmpty()) {
-            /*throw*/
+            */
+/*throw*//*
+
             throw new TicketException("ticket has no attachments to download");
         }
 
@@ -123,18 +156,27 @@ public class TicketManagementServiceImpl implements TicketManagementService {
     public List<TicketAdminPresentationDTO> getTicketsByDepartmentAndStatus(Department departmentAssigned, TicketStatus  status) {
 
 
-        /*get the tickets*/
+        */
+/*get the tickets*//*
+
         List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedAndStatusOrderByCreatedOnAsc(departmentAssigned, status);
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         return departmentTickets.stream().map(ticketMapper::entityToDTOAdmin).toList();
     }
 
     @Override
     public List<TicketAdminPresentationDTO> getTicketsByDepartment(Department departmentAssigned) {
 
-        /*get the tickets*/
+        */
+/*get the tickets*//*
+
         List<Ticket> departmentTickets = ticketRepository.findTicketsByDepartmentAssignedOrderByCreatedOnAsc(departmentAssigned);
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         return departmentTickets.stream().map(ticketMapper::entityToDTOAdmin).toList();
     }
 }
+*/

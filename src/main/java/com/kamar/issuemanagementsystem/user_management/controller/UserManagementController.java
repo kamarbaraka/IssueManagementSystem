@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.user_management.controller;
 
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
@@ -27,9 +28,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+*/
 /**
  * user management api.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -53,19 +56,27 @@ public class UserManagementController {
 
         try
         {
-            /*get all users*/
+            */
+/*get all users*//*
+
             allUserEntities = userManagementService.getAllUsers();
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         List<EntityModel<DtoType>> usersDto = convertListToResponse(allUserEntities);
 
-        /*return the response*/
+        */
+/*return the response*//*
+
         return ResponseEntity.ok(usersDto);
 
     }
@@ -79,24 +90,38 @@ public class UserManagementController {
 
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        /*get user by username*/
+        */
+/*get user by username*//*
+
         UserEntity userEntity;
         try {
             userEntity = userManagementService.getUserByUsername(username);
         } catch (Exception e) {
 
-            /*log the exception*/
+            */
+/*log the exception*//*
+
             log.warn(e.getMessage());
-            /*return status*/
+            */
+/*return status*//*
+
             return ResponseEntity.notFound().build();
         }
-        /*map to dto*/
-        DtoType userDto = userMapper.userToPresentationDTO(userEntity);
-        /*construct a response*/
-        EntityModel<DtoType> response = EntityModel.of(userDto);
-        /*add links*/
+        */
+/*map to dto*//*
 
-        /*check authority*/
+        DtoType userDto = userMapper.userToPresentationDTO(userEntity);
+        */
+/*construct a response*//*
+
+        EntityModel<DtoType> response = EntityModel.of(userDto);
+        */
+/*add links*//*
+
+
+        */
+/*check authority*//*
+
         if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("employee")) ||
                 userDetails.getAuthorities().contains(userAuthorityUtility.getFor("user"))) {
 
@@ -107,10 +132,14 @@ public class UserManagementController {
                         )
                 );
 
-            /*return response*/
+            */
+/*return response*//*
+
             return ResponseEntity.ok(response);
         }
-        /*return the response*/
+        */
+/*return the response*//*
+
         return ResponseEntity.ok(response);
     }
 
@@ -125,19 +154,27 @@ public class UserManagementController {
 
         try
         {
-            /*get users by authority*/
+            */
+/*get users by authority*//*
+
             userEntities = userManagementService.getUsersByAuthority(userAuthorityUtility.getFor(authority));
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         List<EntityModel<DtoType>> listOfUsers = convertListToResponse(userEntities);
 
-        /*return the response*/
+        */
+/*return the response*//*
+
         return ResponseEntity.ok(listOfUsers);
     }
 
@@ -145,18 +182,26 @@ public class UserManagementController {
 
         return userEntityList.stream().map(user -> {
 
-            /*map the user to dto*/
+            */
+/*map the user to dto*//*
+
             DtoType userDto = userMapper.userToPresentationDTO(user);
-            /*construct response*/
+            */
+/*construct response*//*
+
             EntityModel<DtoType> response = EntityModel.of(userDto);
-            /*add links*/
+            */
+/*add links*//*
+
             Link userLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                             UserManagementController.class).getUserByUsername(user.getUsername()))
                     .withRel("user");
 
             response.add(userLink);
 
-            /*return the response*/
+            */
+/*return the response*//*
+
             return response;
         }).toList();
     }
@@ -171,20 +216,28 @@ public class UserManagementController {
     public ResponseEntity<EntityModel<DtoType>> elevateUser(@RequestParam("authority") String authority,
                                                             @RequestParam("username") String username){
 
-        /*elevate user*/
+        */
+/*elevate user*//*
+
         try {
             userManagementService.elevate(username,
                     userAuthorityUtility.getFor(authority));
         } catch (IllegalArgumentException | UserException e) {
 
-            /*log the exception*/
+            */
+/*log the exception*//*
+
             log.warn(e.getMessage());
 
-            /*return status*/
+            */
+/*return status*//*
+
             return ResponseEntity.badRequest().build();
         }
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         return ResponseEntity.ok(
                 EntityModel.of(
                         new InfoDTO(username + " successfully elevated")
@@ -201,11 +254,15 @@ public class UserManagementController {
     public ResponseEntity<Void> downgradeUser(@RequestParam("username") @Validated @Email String username,
                                               @RequestParam("role_to_remove") String role){
 
-        /*downgrade the user*/
+        */
+/*downgrade the user*//*
+
         try {
             userManagementService.downgrade(username, role);
         } catch (UserException e) {
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -214,3 +271,4 @@ public class UserManagementController {
     }
 
 }
+*/

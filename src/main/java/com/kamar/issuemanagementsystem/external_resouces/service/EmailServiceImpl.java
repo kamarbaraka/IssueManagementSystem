@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.external_resouces.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
@@ -15,16 +16,20 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+*/
 /**
  * implementation of the email service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class EmailServiceImpl implements EmailService {
 
-    /*inject the dependencies*/
+    */
+/*inject the dependencies*//*
+
     private final JavaMailSender javaMailSender;
     private final CompanyProperties company;
 
@@ -42,38 +47,56 @@ public class EmailServiceImpl implements EmailService {
 
         try
         {
-            /*create the mime message and set the recipient*/
+            */
+/*create the mime message and set the recipient*//*
+
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             mimeMessage.setRecipients(Message.RecipientType.TO, email);
 
-            /*get the session*/
+            */
+/*get the session*//*
+
             Session session = mimeMessage.getSession();
 
-            /*get the transport and connect*/
+            */
+/*get the transport and connect*//*
+
             Transport smtpTransport = session.getTransport("smtp");
 
             smtpTransport.connect(emailHost, emailPort, emailUsername, emailPassword);
 
-            /*verify the email exists*/
+            */
+/*verify the email exists*//*
 
-            /*close the connection*/
+
+            */
+/*close the connection*//*
+
             smtpTransport.close();
 
             return true;
         }catch (NoSuchProviderException e){
 
-            /*log*/
+            */
+/*log*//*
+
             log.error(e.getMessage());
 
         }catch (MessagingException e){
 
-            /*check error if contains a code for email doesn't exist*/
+            */
+/*check error if contains a code for email doesn't exist*//*
+
             if (e.getMessage().contains("550 5.1.1")) {
-                /*log*/
+                */
+/*log*//*
+
                 log.error(e.getMessage());
                 return false;
             }
-            /*log*/
+            */
+/*log*//*
+
             log.error(e.getMessage());
         }
 
@@ -83,7 +106,9 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendEmail(String message, String subject, String email, List<AttachmentResourceDto> attachments) {
 
-        /*configure the email*/
+        */
+/*configure the email*//*
+
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = null;
@@ -91,21 +116,27 @@ public class EmailServiceImpl implements EmailService {
             mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
         } catch (MessagingException e) {
 
-            /*log*/
+            */
+/*log*//*
+
             log.error(e.getMessage());
         }
 
 
         try
         {
-            /*add details*/
+            */
+/*add details*//*
+
             mimeMessageHelper.setFrom(company.email(), company.name());
             mimeMessageHelper.setTo(email);
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setTo(email);
             mimeMessageHelper.setText(message, true);
 
-            /*add attachments*/
+            */
+/*add attachments*//*
+
             if (attachments != null && !attachments.isEmpty()) {
 
                 MimeMessageHelper finalMimeMessageHelper = mimeMessageHelper;
@@ -114,7 +145,9 @@ public class EmailServiceImpl implements EmailService {
                         finalMimeMessageHelper.addAttachment(attachmentResourceDto.filename(), attachmentResourceDto.attachment());
                     } catch (MessagingException e) {
 
-                        /*log */
+                        */
+/*log *//*
+
                         log.error(e.getMessage());
                     }
                 });
@@ -122,12 +155,17 @@ public class EmailServiceImpl implements EmailService {
 
         }catch (MessagingException | UnsupportedEncodingException e){
 
-            /*log the exception*/
+            */
+/*log the exception*//*
+
             log.error(e.getMessage());
         }
 
-        /*send the email*/
+        */
+/*send the email*//*
+
         javaMailSender.send(mimeMessage);
 
     }
 }
+*/

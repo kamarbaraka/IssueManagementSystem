@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.utility.mapper;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
@@ -20,9 +21,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+*/
 /**
  * implementation of the ticket mapper.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -35,19 +38,27 @@ public class TicketMapperImpl implements TicketMapper {
     @Override
     public Ticket dtoToEntity(TicketCreationDTO ticketCreationDTO) {
 
-        /*get the department to assign to ticket*/
+        */
+/*get the department to assign to ticket*//*
+
         Department department = departmentRepository.findDepartmentByDepartmentName(
                 ticketCreationDTO.departmentToAssign()).orElseThrow();
-        /*map the dto*/
+        */
+/*map the dto*//*
+
         Ticket ticket = new Ticket();
         ticket.setTitle(ticketCreationDTO.title());
         ticket.setDescription(ticketCreationDTO.description());
         ticket.setDepartmentAssigned(department);
 
-        /*check for attachments*/
+        */
+/*check for attachments*//*
+
         if (!ticketCreationDTO.attachments().isEmpty()) {
 
-            /*enumerate the attachments*/
+            */
+/*enumerate the attachments*//*
+
             List<Attachment> attachments = ticketCreationDTO.attachments().stream()
                     .map(multipartFile -> {
                         try {
@@ -57,7 +68,9 @@ public class TicketMapperImpl implements TicketMapper {
                         }
                     }).toList();
 
-            /*add attachments to ticket*/
+            */
+/*add attachments to ticket*//*
+
             ticket.getAttachments().addAll(attachments);
         }
 
@@ -67,8 +80,12 @@ public class TicketMapperImpl implements TicketMapper {
     @Override
     public TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket)  {
 
-        /*get attachments*/
-        /*check if ticket has attachments and create a download link if present*/
+        */
+/*get attachments*//*
+
+        */
+/*check if ticket has attachments and create a download link if present*//*
+
         boolean hasAttachments = !ticket.getAttachments().isEmpty();
 
         if (ticket.getDeadline() == null){
@@ -91,7 +108,9 @@ public class TicketMapperImpl implements TicketMapper {
 
         if (optSolution.isEmpty()) {
 
-            /*map the dto*/
+            */
+/*map the dto*//*
+
             return new TicketAdminPresentationDTO(
                     ticket.getTicketNumber(),
                     ticket.getTitle(),
@@ -108,7 +127,9 @@ public class TicketMapperImpl implements TicketMapper {
         }
 
         Solution solution = optSolution.get();
-        /*map the dto*/
+        */
+/*map the dto*//*
+
         return new TicketAdminPresentationDTO(
                 ticket.getTicketNumber(),
                 ticket.getTitle(),
@@ -125,3 +146,4 @@ public class TicketMapperImpl implements TicketMapper {
 
     }
 }
+*/

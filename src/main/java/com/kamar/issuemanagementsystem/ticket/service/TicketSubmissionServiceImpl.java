@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
@@ -16,9 +17,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+*/
 /**
  * implementation of the ticket submission service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +38,9 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
 
     private void submitTicketNotification(final Ticket ticket, final String solution){
 
-        /*compose the email*/
+        */
+/*compose the email*//*
+
         String subject = "Ticket Review";
         String message = "Dear "+ ticket.getRaisedBy().getUsername()+ ", your ticket \""+ ticket.getTicketNumber()+ " "+
                 ticket.getTitle()+ "\", has been resolved. <br>"+
@@ -46,14 +51,20 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
                 " "+ ticket.getTitle()+ "\".<br>"+
                 company.endTag();
 
-        /*send notification to the admins*/
+        */
+/*send notification to the admins*//*
+
         userManagementService.getUsersByAuthority(userAuthorityUtility.getFor("admin")).parallelStream()
                 .forEach(admin -> emailService.sendEmail(messageAdmin, subject, admin.getUsername(), null));
 
-        /*send notification to the department*/
+        */
+/*send notification to the department*//*
+
         emailService.sendEmail(messageAdmin, subject, ticket.getDepartmentAssigned().getDepartmentEmail(), null);
 
-        /*send the email to the user*/
+        */
+/*send the email to the user*//*
+
         emailService.sendEmail(message, subject, ticket.getRaisedBy().getUsername(), null);
 
     }
@@ -64,31 +75,48 @@ public class TicketSubmissionServiceImpl implements TicketSubmissionService {
 
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        /*get the ticket*/
+        */
+/*get the ticket*//*
+
         Ticket ticket = ticketManagementService.getTicketById(ticketNumber);
 
-        /*check if ticket has already been submitted*/
+        */
+/*check if ticket has already been submitted*//*
+
         if (ticket.getStatus().equals(TicketStatus.SUBMITTED)) {
-            /*throw*/
+            */
+/*throw*//*
+
             throw new TicketSubmissionException("ticket has already been submitted");
         }
 
-        /*check who is submitting*/
+        */
+/*check who is submitting*//*
+
         if (!authenticatedUser.getUsername().equals(ticket.getAssignedTo().getUsername()))
             throw new TicketSubmissionException("you are not permitted to submit this ticket");
 
-        /*create a new solution*/
+        */
+/*create a new solution*//*
+
         Solution ticketSolution = new Solution();
         ticketSolution.setTicketNumber(ticketNumber);
         ticketSolution.setSolutionTo(ticket);
         ticketSolution.setTheSolution(solution);
 
-        /*update the status*/
+        */
+/*update the status*//*
+
         ticket.setStatus(TicketStatus.SUBMITTED);
 
-        /*persist the solution and update teh ticket */
+        */
+/*persist the solution and update teh ticket *//*
+
         solutionRepository.save(ticketSolution);
-        /*notify*/
+        */
+/*notify*//*
+
         this.submitTicketNotification(ticket, solution);
     }
 }
+*/

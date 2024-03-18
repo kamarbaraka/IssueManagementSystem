@@ -3,13 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
+    <link rel="stylesheet" type="text/css" th:href="@{css/user_registration_page.css}">
 </head>
 <body>
-    <form action="/users/register/" th:action="@{/api/v1/users/register}" th:object="${userEntityDto}" method="post">
-        <input type="text" th:field="*{username}" id="username" placeholder="Username"/>
-        <input type="password" th:field="*{password}" id="password" placeholder="Password"/>
-        <input type="text" th:field="*{email}" id="email" placeholder="Email"/>
-        <input type="submit" value="Register"/>
-    </form>
+<form action="/users/register/" th:action="@{/api/v1/users/register}" th:object="${userEntityDto}" method="post" class="register-form">
+    <input type="text" th:field="*{username}" id="username" placeholder="Username" required/>
+    <input type="password" th:field="*{password}" id="password" placeholder="Password" required pattern=".{8,}" title="Password must be at least 8 characters"/>
+    <input type="email" th:field="*{email}" id="email" placeholder="Email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please provide a valid email address"/>
+
+    <!-- Existing input field for roles replaced with a datalist -->
+    <input list="roles" th:field="*{role}"  id="role" placeholder="Role" required/>
+    <datalist id="roles">
+        <th:block th:each="role : ${roleList}">
+            <option th:value="${role.getRole()}" th:text="${role.getRole()}"></option>
+        </th:block>
+    </datalist>
+
+    <input type="submit" value="Register" class="register-button"/>
+</form>
 </body>
 </html>

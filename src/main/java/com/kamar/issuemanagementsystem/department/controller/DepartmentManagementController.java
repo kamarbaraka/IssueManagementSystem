@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.department.controller;
 
 import com.kamar.issuemanagementsystem.department.data.AddUserToDepartmentDTO;
@@ -27,9 +28,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+*/
 /**
  * the department management controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -57,19 +60,27 @@ public class DepartmentManagementController {
                                                                  @Validated @RequestParam("email") @Email String email,
                                                                  @Validated @RequestParam("head_of_department") @Email String headOfDepartment){
 
-        /*create a dto*/
+        */
+/*create a dto*//*
+
         DepartmentCreationDto departmentCreationDto = new DepartmentCreationDto(departmentName, email, headOfDepartment);
-        /*create the department*/
+        */
+/*create the department*//*
+
         try {
             departmentManagementService.createDepartment(departmentCreationDto);
         } catch (DepartmentException e) {
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 
-        /*construct the response*/
+        */
+/*construct the response*//*
+
         return ResponseEntity.ok(
                 EntityModel.of(
                         new InfoDTO("department created successfully"),
@@ -100,14 +111,18 @@ public class DepartmentManagementController {
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getDepartmentByName(@RequestParam("department_name") String departmentName){
 
-        /*get the department*/
+        */
+/*get the department*//*
+
         DepartmentDtoType department;
 
         try {
             department = departmentManagementService.getDepartmentByName(departmentName);
         } catch (DepartmentException e) {
 
-            /*construct response*/
+            */
+/*construct response*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -136,15 +151,21 @@ public class DepartmentManagementController {
     public ResponseEntity<Void> addUsersToDepartment(@Validated @RequestParam("users") List<@Email String > users,
                                                        @Validated @RequestParam("department_name") String departmentName){
 
-        /*create the dto*/
+        */
+/*create the dto*//*
+
         AddUserToDepartmentDTO addUserToDepartmentDTO = new AddUserToDepartmentDTO(users, departmentName);
 
-        /*add users to department*/
+        */
+/*add users to department*//*
+
         try {
             departmentManagementService.addUsersToDepartment(addUserToDepartmentDTO);
         } catch (DepartmentException e) {
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -159,10 +180,15 @@ public class DepartmentManagementController {
     @CrossOrigin
     public ResponseEntity<List<DepartmentDto>> getAllDepartments(){
 
-        /*get all departments*/
+        */
+/*get all departments*//*
+
         List<DepartmentDto> allDepartments = departmentManagementService.getAllDepartments();
 
-        /*return response*/
+        */
+/*return response*//*
+
         return ResponseEntity.ok(allDepartments);
     }
 }
+*/

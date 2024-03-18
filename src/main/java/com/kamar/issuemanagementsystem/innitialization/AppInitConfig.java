@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.innitialization;
 
 import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
@@ -15,9 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+*/
 /**
  * code to initialize the application.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Component
 @Transactional
@@ -35,18 +38,24 @@ public class AppInitConfig {
 
         return () -> {
 
-            /*check if innit user exists*/
+            */
+/*check if innit user exists*//*
+
             String username = innitUserProperties.username();
             if (userEntityRepository.existsByUsername(username)) {
                 return ;
             }
 
 
-            /*create ticket id generator*/
+            */
+/*create ticket id generator*//*
+
             Sequences sequences = new Sequences();
             sequenceRepository.save(sequences);
 
-            /*create  roles*/
+            */
+/*create  roles*//*
+
             UserAuthority ownerAuthority = userAuthorityManagementService.createAuthority("owner");
             userAuthorityManagementService.createAuthority("user");
             userAuthorityManagementService.createAuthority("admin");
@@ -54,25 +63,34 @@ public class AppInitConfig {
             userAuthorityManagementService.createAuthority("department_admin");
 
 
-            /*create a user*/
+            */
+/*create a user*//*
+
             UserEntity userEntity = new UserEntity();
             userEntity.setUsername(username);
             userEntity.setPassword(passwordEncoder.encode(innitUserProperties.password()));
             userEntity.getAuthorities().add(ownerAuthority);
             userEntity.setEnabled(true);
 
-            /*persist the rating and user*/
+            */
+/*persist the rating and user*//*
+
             userEntityRepository.save(userEntity);
 
-            /*create a department*/
+            */
+/*create a department*//*
+
             Department department = new Department();
             department.setDepartmentName(innitUserProperties.departmentName());
             department.setDepartmentEmail(innitUserProperties.departmentEmail());
             department.setHeadOfDepartment(userEntity);
             department.getMembers().add(userEntity);
 
-            /*persist the rating and department*/
+            */
+/*persist the rating and department*//*
+
             departmentRepository.save(department);
         };
     }
 }
+*/

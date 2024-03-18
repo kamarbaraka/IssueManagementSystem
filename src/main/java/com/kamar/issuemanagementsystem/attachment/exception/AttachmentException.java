@@ -1,10 +1,13 @@
+/*
 package com.kamar.issuemanagementsystem.attachment.exception;
 
 import java.io.IOException;
 
+*/
 /**
  * attachment exception class.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public class AttachmentException extends IOException {
 
@@ -12,3 +15,4 @@ public class AttachmentException extends IOException {
         super(message);
     }
 }
+*/

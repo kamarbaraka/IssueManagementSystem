@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.authentication;
 
 import jakarta.servlet.ServletException;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+*/
 /**
  * a custom authorization entry point.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -20,8 +23,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
 
-        /*configure the response*/
+        */
+/*configure the response*//*
+
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
 
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.authority.service;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
@@ -8,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+*/
 /**
  * implementation of the authority management service contract.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +24,16 @@ public class UserAuthorityManagementServiceServiceImpl implements UserAuthorityM
     @Override
     public UserAuthority createAuthority(String authority) throws AuthorityException {
 
-        /*check if authority exists*/
+        */
+/*check if authority exists*//*
+
         if (userAuthorityRepository.findById(authority.toUpperCase()).isPresent()) {
             throw new AuthorityException("role exists");
         }
 
-        /*create the authority*/
+        */
+/*create the authority*//*
+
         UserAuthority userAuthority = new UserAuthority();
         userAuthority.setAuthority(authority.toUpperCase());
 
@@ -36,17 +43,23 @@ public class UserAuthorityManagementServiceServiceImpl implements UserAuthorityM
     @Override
     public void deleteAuthority(String authority) throws AuthorityException {
 
-        /*check if it exists*/
+        */
+/*check if it exists*//*
+
         UserAuthority userAuthority = userAuthorityRepository.findById(authority).orElseThrow(
                 () -> new AuthorityException("no such authority"));
-        /*delete the authority*/
+        */
+/*delete the authority*//*
+
         userAuthorityRepository.delete(userAuthority);
     }
 
     @Override
     public UserAuthority getAuthority(String authority) throws AuthorityException {
 
-        /*get the authority*/
+        */
+/*get the authority*//*
+
         return userAuthorityRepository.findById(authority.toUpperCase()).orElseThrow(
                 () -> new AuthorityException("no such authority"));
 
@@ -55,7 +68,9 @@ public class UserAuthorityManagementServiceServiceImpl implements UserAuthorityM
     @Override
     public List<UserAuthority> getAllAuthorities() {
 
-        /*get all authorities*/
+        */
+/*get all authorities*//*
+
         try {
             return userAuthorityRepository.findAll();
         } catch (Exception e) {
@@ -63,3 +78,4 @@ public class UserAuthorityManagementServiceServiceImpl implements UserAuthorityM
         }
     }
 }
+*/

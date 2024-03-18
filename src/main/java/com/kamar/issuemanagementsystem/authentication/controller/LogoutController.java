@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.authentication.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+*/
 /**
  * controller to perform logout functions.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequestMapping(value = {"logout"})
@@ -28,7 +31,9 @@ public class LogoutController {
     public void logout(HttpServletRequest request, HttpServletResponse response,
                                           Authentication authentication){
 
-        /*check if the user is logged in*/
+        */
+/*check if the user is logged in*//*
+
         if (authentication.isAuthenticated()) {
 
             new SecurityContextLogoutHandler().logout(request, response, authentication);
@@ -36,3 +41,4 @@ public class LogoutController {
 
     }
 }
+*/

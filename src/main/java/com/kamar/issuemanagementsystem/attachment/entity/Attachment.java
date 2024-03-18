@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.attachment.entity;
 
 import jakarta.persistence.*;
@@ -6,9 +7,11 @@ import lombok.Data;
 import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
 
+*/
 /**
  * the attachments entity.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Entity(name = "attachments")
 @Data
@@ -26,3 +29,4 @@ public class Attachment {
     @Lob
     private Blob content;
 }
+*/

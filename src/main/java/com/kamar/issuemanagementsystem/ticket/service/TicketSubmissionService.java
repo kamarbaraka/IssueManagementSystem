@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
@@ -5,12 +6,15 @@ import com.kamar.issuemanagementsystem.ticket.exceptions.TicketSubmissionExcepti
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 
+*/
 /**
  * the ticket submission service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public interface TicketSubmissionService {
 
     void submitTicket(final String ticketId, String solution)
             throws TicketSubmissionException, TicketException;
 }
+*/

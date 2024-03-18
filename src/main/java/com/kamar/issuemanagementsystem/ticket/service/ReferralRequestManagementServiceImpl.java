@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
@@ -32,9 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+*/
 /**
  * implementation of the referral management service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +58,9 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     private void sendReferralRequest(final ReferralRequest referralRequest){
 
 
-        /*add links*/
+        */
+/*add links*//*
+
         Link acceptRequest = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 ReferralRequestController.class).respondToReferralRequest(
                         true, referralRequest.getRequestId())).withRel("accept");
@@ -65,7 +70,9 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                         .respondToReferralRequest(false, referralRequest.getRequestId()))
                 .withRel("reject");
 
-        /*compose the email*/
+        */
+/*compose the email*//*
+
         String subject = "Referral Request";
         String message = referralRequest.getFrom().getUsername()+ " has requested you to handle the ticket #" +
                 referralRequest.getRefferedTicket().getTicketNumber()+ " \""+ referralRequest.getRefferedTicket().getTitle()
@@ -74,13 +81,17 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 "<h4 style=\"color: red;\"><a href=\""+ rejectRequest.getHref()+ "\">Reject</a></h4> <br>"+
                 company.endTag();
 
-        /*send the email*/
+        */
+/*send the email*//*
+
         emailService.sendEmail(message, subject, referralRequest.getTo().getUsername(), null);
     }
 
     private void receiveAcceptedRequestNotification(Ticket ticket){
 
-        /*set the message and subject*/
+        */
+/*set the message and subject*//*
+
         String subject = "Reassigned";
 
         Link ticketLink = WebMvcLinkBuilder.linkTo(
@@ -93,10 +104,14 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 "<h4><a href=\""+ ticketLink.getHref()+ "\">Ticket</a></h4> <br>"+
                 company.endTag();
 
-        /*get attachments*/
+        */
+/*get attachments*//*
+
         List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
 
-        /*send the message*/
+        */
+/*send the message*//*
+
         emailService.sendEmail(message, subject, ticket.getAssignedTo().getUsername(), attachments);
 
 
@@ -104,7 +119,9 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
 
     private void sendAcceptedRequestNotification(ReferralRequest referralRequest){
 
-        /*set the email*/
+        */
+/*set the email*//*
+
         String subject = "Request Accepted";
 
         String message = referralRequest.getTo().getUsername() + " accepted your referral request for ticket \"#"
@@ -112,37 +129,51 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
                 + referralRequest.getRefferedTicket().getTitle() + "\". <br>"+
                 company.endTag();
 
-        /*send message*/
+        */
+/*send message*//*
+
         emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername(), null);
     }
 
     private void sendRejectedRequestNotification(ReferralRequest referralRequest){
 
-        /*set the email*/
+        */
+/*set the email*//*
+
         String subject = "Request Rejected";
         String message = referralRequest.getTo().getUsername() + " rejected your referral request for ticket \"#"
                 + referralRequest.getRefferedTicket().getTicketNumber() + " "
                 + referralRequest.getRefferedTicket().getTitle()+ "\". <br>"+
                 company.endTag();
 
-        /*send notification*/
+        */
+/*send notification*//*
+
         emailService.sendEmail(message, subject, referralRequest.getFrom().getUsername(), null);
     }
 
     private ReferralRequest createAReferralRequest(ReferralRequest referralRequest){
 
-        /*create a referral request*/
+        */
+/*create a referral request*//*
+
         ReferralRequest savedRequest = referralRequestRepository.save(referralRequest);
-        /*notify*/
+        */
+/*notify*//*
+
         this.sendReferralRequest(referralRequest);
-        /*return the referral*/
+        */
+/*return the referral*//*
+
         return savedRequest;
     }
 
     @Override
     public ReferralRequest getReferralRequestById(long id) throws ReferralRequestException {
 
-        /*get referral request*/
+        */
+/*get referral request*//*
+
         return referralRequestRepository.findById(id).orElseThrow(
                 () -> new ReferralRequestException("referral request not found")
         );
@@ -152,10 +183,14 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     public ReferralRequestDTO referTicketTo(TicketReferralDTO requestDTO)
             throws ReferralRequestException {
 
-        /*get the authenticated user*/
+        */
+/*get the authenticated user*//*
+
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        /*get data*/
+        */
+/*get data*//*
+
         Ticket ticket = ticketRepository.findById(requestDTO.ticketToRefer()).orElseThrow(
                 () -> new ReferralRequestException("no such ticket to refer.")
         );
@@ -166,23 +201,33 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         Department toUserDepartment = departmentRepository.findDepartmentByMembersContaining(toUserEntity).orElseThrow(
                 () -> new ReferralRequestException("user doesn't belong to a department."));
 
-        /*filter for employee */
+        */
+/*filter for employee *//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "employee")) {
 
-            /*check if he owns the ticket*/
+            */
+/*check if he owns the ticket*//*
+
             if (!ticket.getAssignedTo().getUsername().equals(authenticatedUser.getUsername())) {
                 throw new ReferralRequestException("you dont own the resource");
             }
-            /*check if user to refer to belongs to the department*/
+            */
+/*check if user to refer to belongs to the department*//*
+
             if (!ticket.getDepartmentAssigned().equals(toUserDepartment)) {
                 throw new ReferralRequestException("can't refer to a different department");
             }
         }
 
-        /*filter for department admin*/
+        */
+/*filter for department admin*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
 
-            /*check if the ticket belongs to his department*/
+            */
+/*check if the ticket belongs to his department*//*
+
             UserEntity userEntity = (UserEntity) authenticatedUser;
             Department authenticatedUserDept = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow(
                     () -> new ReferralRequestException("you dont belong to a department."));
@@ -191,33 +236,49 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
             }
         }
 
-        /*check if the ticket is assigned to be eligible for referral*/
+        */
+/*check if the ticket is assigned to be eligible for referral*//*
+
         if (!ticket.getStatus().equals(TicketStatus.ASSIGNED)) {
-            /*throw*/
+            */
+/*throw*//*
+
             throw new ReferralRequestException("ticket is not assigned for it to be referred.");
         }
 
-        /*check if the ticket is linked to a referral request*/
+        */
+/*check if the ticket is linked to a referral request*//*
+
         referralRequestRepository.findReferralRequestsByRefferedTicket(ticket).ifPresent(
                 referralRequest -> referralRequestRepository.deleteById(referralRequest.getRequestId())
         );
 
-        /*check that the employee is not referring to himself*/
+        */
+/*check that the employee is not referring to himself*//*
+
         if (authenticatedUser.getUsername().equals(requestDTO.to())) {
-            /*throw*/
+            */
+/*throw*//*
+
             throw new ReferralRequestException("you can't refer the ticket to yourself");
         }
 
-        /*construct a referral request*/
+        */
+/*construct a referral request*//*
+
         ReferralRequest referralRequest = new ReferralRequest();
         referralRequest.setRefferedTicket(ticket);
         referralRequest.setFrom(fromUserEntity);
         referralRequest.setTo(toUserEntity);
         referralRequest.setReason(requestDTO.reason());
 
-        /*send a referral request*/
+        */
+/*send a referral request*//*
+
         ReferralRequest aReferralRequest = createAReferralRequest(referralRequest);
-        /*map the request and return*/
+        */
+/*map the request and return*//*
+
         return referralRequestMapper.entityToDTO(aReferralRequest);
 
 
@@ -226,44 +287,60 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     @Override
     public void respondToReferralRequest(long referralRequestId, boolean response) throws ReferralRequestException {
 
-        /*get the employee*/
+        */
+/*get the employee*//*
+
         String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity loggedInUserEntity = userEntityRepository.findUserByUsername(loggedInUsername).orElseThrow(
                 () -> new ReferralRequestException("oops! user dont exist")
         );
 
-        /*get the referral request*/
+        */
+/*get the referral request*//*
+
         ReferralRequest referralRequest = referralRequestRepository.findById(referralRequestId).orElseThrow(
                 () -> new ReferralRequestException("referral req not found")
         );
 
-        /*check if the referral request belongs to the user*/
+        */
+/*check if the referral request belongs to the user*//*
+
         if (!referralRequest.getTo().equals(loggedInUserEntity)) {
 
-            /*throw*/
+            */
+/*throw*//*
+
             throw new ReferralRequestException("you don't own the req");
         }
 
 
         if (response){
 
-            /*get the referred ticket and update the assignment*/
+            */
+/*get the referred ticket and update the assignment*//*
+
             Ticket refferedTicket = referralRequest.getRefferedTicket();
             refferedTicket.setAssignedTo(referralRequest.getTo());
 
             ticketRepository.save(refferedTicket);
 
-            /*delete the referral request*/
+            */
+/*delete the referral request*//*
+
             referralRequestRepository.deleteById(referralRequest.getRequestId());
 
-            /*notify the referrer*/
+            */
+/*notify the referrer*//*
+
             sendAcceptedRequestNotification(referralRequest);
             receiveAcceptedRequestNotification(refferedTicket);
 
             return;
         }
 
-        /*notify the referrer*/
+        */
+/*notify the referrer*//*
+
         referralRequestRepository.deleteById(referralRequest.getRequestId());
         sendRejectedRequestNotification(referralRequest);
 
@@ -272,11 +349,15 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
     @Override
     public MembersDto refer() throws ReferralRequestException {
 
-        /*get authenticated user*/
+        */
+/*get authenticated user*//*
+
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userEntity = (UserEntity) userDetails;
 
-        /*get department*/
+        */
+/*get department*//*
+
         Department department = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow(
                 () -> new ReferralRequestException("user doesn't belong to a department"));
 
@@ -285,3 +366,4 @@ public class ReferralRequestManagementServiceImpl implements ReferralRequestMana
         return new MembersDto(department.getDepartmentName(), members);
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.utility.util;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
@@ -11,9 +12,11 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+*/
 /**
  * implementation of the ticket utilities contract.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 public record TicketUtilitiesImpl() implements TicketUtilities{
@@ -24,11 +27,15 @@ public record TicketUtilitiesImpl() implements TicketUtilities{
         List<AttachmentResourceDto> attachments;
         if (!existingAttachments.isEmpty()) {
 
-            /*convert all attachments to bytes[] the to byte array resource */
+            */
+/*convert all attachments to bytes[] the to byte array resource *//*
+
             attachments = existingAttachments.stream()
                     .map(attachment -> {
 
-                        /*convert to attachments resource dto*/
+                        */
+/*convert to attachments resource dto*//*
+
                         return new AttachmentResourceDto(attachment.getFilename(), new ByteArrayResource(
                                 convertBlobToBytes(attachment.getContent())
                         ));
@@ -44,7 +51,9 @@ public record TicketUtilitiesImpl() implements TicketUtilities{
     @Override
     public byte[] convertBlobToBytes(Blob blob) {
 
-        /*convert blob to bytes*/
+        */
+/*convert blob to bytes*//*
+
         try {
             return blob.getBytes(1, ((int) blob.length()));
         } catch (SQLException e) {
@@ -52,3 +61,4 @@ public record TicketUtilitiesImpl() implements TicketUtilities{
         }
     }
 }
+*/

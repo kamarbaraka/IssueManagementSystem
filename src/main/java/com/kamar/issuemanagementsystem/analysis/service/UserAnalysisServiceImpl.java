@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.analysis.service;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
@@ -13,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+*/
 /**
  * implementation of the user analysis service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -30,20 +33,28 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public UserPresentationDTO bestPerformantEmployee() throws AnalysisException{
 
-        /*get users by authority */
+        */
+/*get users by authority *//*
+
         List<UserEntity> usersByAuthority = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
 
-        /*check if the list is empty*/
+        */
+/*check if the list is empty*//*
+
         if (usersByAuthority.isEmpty()) {
             return null;
         }
 
-        /*get the most performant*/
+        */
+/*get the most performant*//*
+
         UserEntity mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
                         (user, user2) -> user2.getUserRating().getRate() > user.getUserRating().getRate() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("error occurred"));
 
-        /*map to dto and return*/
+        */
+/*map to dto and return*//*
+
         return userMapper.userToPresentationDTO(mostPerformantEmployee);
     }
 
@@ -51,14 +62,20 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public UserPresentationDTO mostPerformantEmployee() throws AnalysisException {
 
-        /*get the most performant employee*/
+        */
+/*get the most performant employee*//*
+
         List<UserEntity> usersByAuthority = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
-        /*get the most performant*/
+        */
+/*get the most performant*//*
+
         UserEntity mostPerformantEmployee = usersByAuthority.parallelStream().reduce(
                 (user, user2) -> user2.getUserRating().getTotalRates() > user.getUserRating().getTotalRates() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("error occurred!, try again"));
 
-        /*map to dto and return*/
+        */
+/*map to dto and return*//*
+
         return userMapper.userToPresentationDTO(mostPerformantEmployee);
     }
 
@@ -66,18 +83,27 @@ public class UserAnalysisServiceImpl implements UserAnalysisService {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public UserPresentationDTO leastPerformantEmployee() throws AnalysisException{
 
-        /*get the least performant*/
+        */
+/*get the least performant*//*
+
         List<UserEntity> usersBAuthorities = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("employee"));
 
-        /*assert the list is not empty*/
+        */
+/*assert the list is not empty*//*
+
         assert !usersBAuthorities.isEmpty();
 
-        /*get the list performant*/
+        */
+/*get the list performant*//*
+
         UserEntity leastPerformantEmployee = usersBAuthorities.parallelStream().reduce(
                         (user, user2) -> user2.getUserRating().getRate() < user.getUserRating().getRate() ? user2 : user)
                 .orElseThrow(() -> new AnalysisException("an error occurred"));
 
-        /*map and return*/
+        */
+/*map and return*//*
+
         return userMapper.userToPresentationDTO(leastPerformantEmployee);
     }
 }
+*/

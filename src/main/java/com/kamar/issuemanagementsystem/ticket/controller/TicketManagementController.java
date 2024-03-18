@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
@@ -36,9 +37,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+*/
 /**
  * the ticket management controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -63,20 +66,30 @@ public class TicketManagementController {
         Ticket ticket;
         try
         {
-            /*get the ticket*/
+            */
+/*get the ticket*//*
+
             ticket = ticketManagementService.getTicketById(ticketNumber);
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*map the ticket*/
+        */
+/*map the ticket*//*
+
         TicketAdminPresentationDTO adminDto = ticketMapper.entityToDTOAdmin(ticket);
-        /*construct the response*/
+        */
+/*construct the response*//*
+
         EntityModel<DtoType> response = EntityModel.of(adminDto);
-        /*add links*/
+        */
+/*add links*//*
+
         Link attachmentLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(TicketManagementController.class)
                 .downloadTicketAttachments(adminDto.ticketNumber())).withRel("attachments");
 
@@ -86,7 +99,9 @@ public class TicketManagementController {
         response.add(referLink);
         response.add(attachmentLink);
 
-        /*return response*/
+        */
+/*return response*//*
+
         return ResponseEntity.ok().body(response);
     }
 
@@ -99,11 +114,15 @@ public class TicketManagementController {
 
         List<Attachment> attachments;
         try {
-            /*get the attachments*/
+            */
+/*get the attachments*//*
+
             attachments = ticketManagementService.downloadTicketAttachment(ticketNumber);
         } catch (TicketException e) {
 
-            /*log*/
+            */
+/*log*//*
+
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -116,58 +135,80 @@ public class TicketManagementController {
 
             Attachment attachment = attachments.get(0);
 
-            /*convert the attachments to file*/
+            */
+/*convert the attachments to file*//*
+
             File attachmentFile = null;
             try {
                 attachmentFile = attachmentUtilityService.convertAttachmentToFile(attachment);
             } catch (IOException e) {
-                /*log*/
+                */
+/*log*//*
+
                 log.error(e.getMessage());
                 return ResponseEntity.internalServerError().build();
             }
             FileSystemResource attachmentResource = new FileSystemResource(attachmentFile);
 
-            /*construct the headers*/
+            */
+/*construct the headers*//*
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setContentLength(attachmentFile.length());
             headers.setContentDisposition(ContentDisposition.attachment().filename(attachment.getFilename()).build());
 
-            /*compose and return the response*/
+            */
+/*compose and return the response*//*
+
             return ResponseEntity.ok().headers(headers).body(attachmentResource);
         }
 
-        /*get files from the attachments*/
+        */
+/*get files from the attachments*//*
+
         List<File> attachmentFiles = attachments.stream().map(attachment -> {
             try {
                 return attachmentUtilityService.convertAttachmentToFile(attachment);
             } catch (IOException e) {
-                /*log*/
+                */
+/*log*//*
+
                 log.error(e.getMessage());
                 return null;
             }
         }).toList();
 
-        /*compress the files to zip*/
+        */
+/*compress the files to zip*//*
+
         File zipFile;
         try {
             zipFile = attachmentUtilityService.compressFilesToZip(attachmentFiles, "attachments");
         } catch (Exception e) {
-            /*log*/
+            */
+/*log*//*
+
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
 
-        /*create a resource from the zip*/
+        */
+/*create a resource from the zip*//*
+
         FileSystemResource attachmentResource = new FileSystemResource(zipFile);
 
-        /*construct the headers*/
+        */
+/*construct the headers*//*
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         try {
             headers.setContentLength(attachmentResource.contentLength());
         } catch (IOException e) {
-            /*log*/
+            */
+/*log*//*
+
             log.error(e.getMessage());
         }
         headers.setContentDisposition(ContentDisposition.attachment().filename("attachments.zip").build());
@@ -187,34 +228,54 @@ public class TicketManagementController {
     public ResponseEntity<List<? extends DtoType>> getTicketsByDepartmentAndStatus(
                                                                    @RequestParam("department") String department,
                                                                    @RequestParam("status") String status){
-        /*get the authenticated user*/
+        */
+/*get the authenticated user*//*
+
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try
         {
-            /*get the authorities and status*/
+            */
+/*get the authorities and status*//*
+
             TicketStatus ticketStatus = TicketStatus.valueOf(status.toUpperCase());
-            /*check the authority if admin or department admin*/
+            */
+/*check the authority if admin or department admin*//*
+
             if (userUtilityService.hasAuthority(authenticatedUser, "admin")) {
 
-                /*get parsed department*/
+                */
+/*get parsed department*//*
+
                 Department passedDept = departmentRepository.findDepartmentByDepartmentName(department).orElseThrow();
-                /*get the tickets by status*/
+                */
+/*get the tickets by status*//*
+
                 List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartmentAndStatus(
                         passedDept, ticketStatus);
-                /*compose the response*/
+                */
+/*compose the response*//*
+
                 return ResponseEntity.ok().body(ticketsByStatus);
             }
 
-            /*get the department*/
+            */
+/*get the department*//*
+
             UserEntity userEntity = (UserEntity) authenticatedUser;
             Department dept = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
-            /*get the tickets*/
+            */
+/*get the tickets*//*
+
             List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartmentAndStatus(
                     dept, ticketStatus);
-            /*respond*/
+            */
+/*respond*//*
+
             return ResponseEntity.ok(ticketsByStatus);
         }catch (Exception e){
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
         }
         return ResponseEntity.badRequest().build();
@@ -232,35 +293,54 @@ public class TicketManagementController {
     public ResponseEntity<List<? extends DtoType>> getTicketsByDepartment(
             @RequestParam("department") String department
     ){
-        /*get authenticated user*/
+        */
+/*get authenticated user*//*
+
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         try
         {
-            /*check the authority if admin or department admin*/
+            */
+/*check the authority if admin or department admin*//*
+
             if (userUtilityService.hasAuthority(authenticatedUser, "admin")) {
 
-                /*get parsed department*/
+                */
+/*get parsed department*//*
+
                 Department passedDept = departmentRepository.findDepartmentByDepartmentName(department).orElseThrow();
-                /*get the tickets by status*/
+                */
+/*get the tickets by status*//*
+
                 List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartment(
                         passedDept);
-                /*compose the response*/
+                */
+/*compose the response*//*
+
                 return ResponseEntity.ok().body(ticketsByStatus);
             }
 
-            /*get the department*/
+            */
+/*get the department*//*
+
             UserEntity userEntity = (UserEntity) authenticatedUser;
             Department dept = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
-            /*get the tickets*/
+            */
+/*get the tickets*//*
+
             List<TicketAdminPresentationDTO> ticketsByStatus = ticketManagementService.getTicketsByDepartment(
                     dept);
-            /*respond*/
+            */
+/*respond*//*
+
             return ResponseEntity.ok(ticketsByStatus);
         }catch (Exception e){
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
         }
         return ResponseEntity.badRequest().build();
     }
 }
+*/

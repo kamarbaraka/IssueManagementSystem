@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.department.service;
 
 import com.kamar.issuemanagementsystem.department.data.AddUserToDepartmentDTO;
@@ -21,9 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+*/
 /**
  * implementation of the department management service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -39,9 +42,13 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public void createDepartment(DepartmentCreationDto departmentCreationDto)throws DepartmentException {
 
-        /*create the department*/
+        */
+/*create the department*//*
+
         Department department = departmentMapper.mapToDepartment(departmentCreationDto);
-        /*persist the department*/
+        */
+/*persist the department*//*
+
         departmentRepository.save(department);
 
     }
@@ -53,12 +60,16 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userEntity = userEntityRepository.findUserByUsername(authenticatedUser.getUsername()).orElseThrow();
 
-        /*get the department by name*/
+        */
+/*get the department by name*//*
+
         Department department = departmentRepository.findDepartmentByDepartmentName(name).orElseThrow(
                 () -> new DepartmentException("no such department")
         );
 
-        /*filter for department admin*/
+        */
+/*filter for department admin*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
             Department userDepartment = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
             return department.equals(userDepartment)? departmentMapper.mapToDto(department) : null;
@@ -71,7 +82,9 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OWNER')")
     public void addUsersToDepartment(AddUserToDepartmentDTO addUserToDepartmentDTO) throws DepartmentException {
 
-        /*get and add the users to the department*/
+        */
+/*get and add the users to the department*//*
+
         Department department = departmentRepository.findById(
                 addUserToDepartmentDTO.department()
         ).orElseThrow(
@@ -87,10 +100,15 @@ public class DepartmentManagementServiceImpl implements DepartmentManagementServ
     @Override
     public List<DepartmentDto> getAllDepartments(){
 
-        /*get all departments*/
+        */
+/*get all departments*//*
+
         List<Department> departments = departmentRepository.findAll();
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         return departments.stream().map(departmentMapper::mapToDto).toList();
     }
 
 }
+*/

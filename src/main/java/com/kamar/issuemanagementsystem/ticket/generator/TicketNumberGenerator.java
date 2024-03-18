@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.generator;
 
 import org.hibernate.HibernateException;
@@ -13,9 +14,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+*/
 /**
  * ticket number generator.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public class TicketNumberGenerator extends SequenceStyleGenerator {
 
@@ -23,7 +26,9 @@ public class TicketNumberGenerator extends SequenceStyleGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
-        /*generate*/
+        */
+/*generate*//*
+
 //        return "T"+ super.generate(session, object)+ random.nextLong(100, 100000)+ "ims";
         final String[] result = new String[1];
 
@@ -57,3 +62,4 @@ public class TicketNumberGenerator extends SequenceStyleGenerator {
     }
 
 }
+*/

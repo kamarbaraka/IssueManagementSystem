@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.reporting.service;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
@@ -11,9 +12,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+*/
 /**
  * implementation of the user reporting service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +30,13 @@ public class UserReportingServiceImpl implements UserReportingService {
     @Override
     public List<UserEntity> getEmployeesNotInDept() {
 
-        /*get all employees*/
+        */
+/*get all employees*//*
+
         UserAuthority employeeAuthority = userAuthorityUtility.getFor("employee");
         List<UserEntity> employees = userEntityRepository.findUserByAuthoritiesContaining(employeeAuthority);
         return employees.stream().filter(user -> departmentRepository.findDepartmentByMembersContaining(user)
                 .isEmpty()).toList();
     }
 }
+*/

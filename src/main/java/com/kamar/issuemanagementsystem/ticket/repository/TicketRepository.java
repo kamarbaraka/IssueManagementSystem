@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.repository;
 
 import com.kamar.issuemanagementsystem.department.entity.Department;
@@ -23,3 +24,4 @@ public interface TicketRepository extends JpaRepository<Ticket, String> {
     List<Ticket> findTicketsByAssignedToAndStatusOrderByCreatedOnAsc(UserEntity assignedTo, TicketStatus status);
     List<Ticket> findTicketsByPriorityAndStatus(TicketPriority priority, TicketStatus status);
 }
+*/

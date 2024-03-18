@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
@@ -26,9 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * the ticket feedback controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequestMapping(value = {"api/v1/tickets/feedback"})
@@ -59,12 +62,16 @@ public class TicketFeedbackController {
                                                                      @Nullable
                                                              List<MultipartFile> attachments){
 
-        /*check if attachments is null*/
+        */
+/*check if attachments is null*//*
+
         if (attachments == null) {
             attachments = new ArrayList<>();
         }
 
-        /*create a dto*/
+        */
+/*create a dto*//*
+
         TicketUserFeedbackDTO userFeedbackDTO = new TicketUserFeedbackDTO(
                 ticketNumber,
                 feedback,
@@ -73,17 +80,23 @@ public class TicketFeedbackController {
                 attachments
         );
 
-        /*send the feedback*/
+        */
+/*send the feedback*//*
+
         try {
             ticketFeedbackService.sendFeedback(userFeedbackDTO);
         } catch (TicketFeedbackException | TicketException e) {
 
-            /*log and return response*/
+            */
+/*log and return response*//*
+
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 
-        /*compose the response*/
+        */
+/*compose the response*//*
+
         return ResponseEntity.ok(
                 EntityModel.of(
                         new InfoDTO("feedback successfully sent")
@@ -91,3 +104,4 @@ public class TicketFeedbackController {
         );
     }
 }
+*/

@@ -1,11 +1,14 @@
+/*
 package com.kamar.issuemanagementsystem.analysis.service;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
 import com.kamar.issuemanagementsystem.user_management.data.dto.UserPresentationDTO;
 
+*/
 /**
  * the user analysis service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public interface UserAnalysisService {
 
@@ -14,3 +17,4 @@ public interface UserAnalysisService {
 
     UserPresentationDTO leastPerformantEmployee() throws AnalysisException;
 }
+*/

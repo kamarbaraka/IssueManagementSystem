@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.department.repository;
 
 import com.kamar.issuemanagementsystem.department.entity.Department;
@@ -7,9 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+*/
 /**
  * the department repository.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, String > {
@@ -17,3 +20,4 @@ public interface DepartmentRepository extends JpaRepository<Department, String >
     Optional<Department> findDepartmentByDepartmentName(String departmentName);
     Optional<Department> findDepartmentByMembersContaining(UserEntity userEntity);
 }
+*/

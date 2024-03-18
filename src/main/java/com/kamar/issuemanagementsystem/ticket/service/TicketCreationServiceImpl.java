@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
@@ -17,9 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+*/
 /**
  * the implementation of the ticket creation service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 
 @Service
@@ -36,13 +39,19 @@ public class TicketCreationServiceImpl implements TicketCreationService {
 
     private void sendCreationNotification(Ticket ticket){
 
-        /*the get ticket link*/
+        */
+/*the get ticket link*//*
+
         String linkToTicket = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 TicketManagementController.class).getTicketById(
                         ticket.getTicketNumber())).withRel("ticket").getHref();
-        /*the subject*/
+        */
+/*the subject*//*
+
         String subject = "Ticket Raised";
-        /*construct the message for the admin*/
+        */
+/*construct the message for the admin*//*
+
         String message = "<div >"+ ticket.getRaisedBy().getUsername()+
                 " raised a ticket \"" + ticket.getTicketNumber()+
                 " "+ ticket.getTitle()+ "\" to <h3 style='color: blue;' >"+ ticket.getDepartmentAssigned().getDepartmentName()+
@@ -52,10 +61,14 @@ public class TicketCreationServiceImpl implements TicketCreationService {
                 "Thank you, <br>"+
                 company.endTag();
 
-        /*get attachments*/
+        */
+/*get attachments*//*
+
         List<AttachmentResourceDto> attachments = ticketUtilities.getTicketAttachments(ticket);
 
-        /*get all admins and send the admin notification email*/
+        */
+/*get all admins and send the admin notification email*//*
+
         List<UserEntity> admins = userEntityRepository.findUserByAuthoritiesContaining(userAuthorityUtility.getFor("admin"));
 
         if (!admins.isEmpty()) {
@@ -65,10 +78,14 @@ public class TicketCreationServiceImpl implements TicketCreationService {
             ));
         }
 
-        /*notify the department*/
+        */
+/*notify the department*//*
+
         emailService.sendEmail(message, subject, ticket.getDepartmentAssigned().getDepartmentEmail(), attachments);
 
-        /*send notification to the raiser*/
+        */
+/*send notification to the raiser*//*
+
         String raiserSubject = "Ticket Success";
         String raiserMessage = "<div > Dear "+ ticket.getRaisedBy().getUsername()+
                 ", thank you for raising your issue. <br>"+
@@ -81,11 +98,16 @@ public class TicketCreationServiceImpl implements TicketCreationService {
     @Override
     public Ticket createTicket(Ticket ticket) {
 
-        /*persist the ticket*/
+        */
+/*persist the ticket*//*
+
         Ticket savedTicket = ticketRepository.save(ticket);
-        /*send notification*/
+        */
+/*send notification*//*
+
         sendCreationNotification(savedTicket);
 
         return savedTicket;
     }
 }
+*/

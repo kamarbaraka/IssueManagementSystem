@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.utility.mapper;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.TicketAdminPresentationDTO;
@@ -5,9 +6,11 @@ import com.kamar.issuemanagementsystem.ticket.data.dto.TicketCreationDTO;
 import com.kamar.issuemanagementsystem.ticket.entity.Ticket;
 import com.kamar.issuemanagementsystem.ticket.exceptions.TicketException;
 
+*/
 /**
  * the ticket mapper.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public interface TicketMapper {
 
@@ -15,3 +18,4 @@ public interface TicketMapper {
     TicketAdminPresentationDTO entityToDTOAdmin(Ticket ticket) ;
 
 }
+*/

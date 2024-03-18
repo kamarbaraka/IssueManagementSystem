@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.authentication.controller;
 
 import com.kamar.issuemanagementsystem.user_management.data.dto.UserPresentationDTO;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+*/
 /**
  * the login controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 
 @RestController
@@ -35,12 +38,19 @@ public class LoginController {
     @CrossOrigin
     public ResponseEntity<UserPresentationDTO> login(@AuthenticationPrincipal UserDetails userDetails){
 
-        /*get the user*/
+        */
+/*get the user*//*
+
         UserEntity userEntity = (UserEntity) userDetails;
-        /*convert to dto*/
+        */
+/*convert to dto*//*
+
         UserPresentationDTO userPresentationDTO = userMapper.userToPresentationDTO(userEntity);
 
-        /*return details of user*/
+        */
+/*return details of user*//*
+
         return ResponseEntity.ok(userPresentationDTO);
     }
 }
+*/

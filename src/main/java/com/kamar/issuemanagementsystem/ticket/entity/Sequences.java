@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.entity;
 
 import jakarta.persistence.*;
@@ -5,9 +6,11 @@ import lombok.Data;
 
 import java.security.SecureRandom;
 
+*/
 /**
  * sequences for ticket id.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Entity(name = "sequences")
 @Data
@@ -23,3 +26,4 @@ public class Sequences {
     @Column(name = "sequence")
     private long sequence;
 }
+*/

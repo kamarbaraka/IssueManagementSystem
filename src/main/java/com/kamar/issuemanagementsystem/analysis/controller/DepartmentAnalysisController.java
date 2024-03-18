@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.analysis.controller;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
@@ -20,9 +21,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+*/
 /**
  * the department analysis controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -51,18 +54,24 @@ public class DepartmentAnalysisController {
 
         DepartmentDto mostPerformantDept;
 
-        /*get the most performant department*/
+        */
+/*get the most performant department*//*
+
         try {
             mostPerformantDept = departmentAnalysisService.getMostPerformantDepartment();
 
         } catch (AnalysisException e) {
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*compose the response*/
+        */
+/*compose the response*//*
+
         Link departmentLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 DepartmentManagementController.class).getDepartmentByName(mostPerformantDept.departmentName()))
                 .withRel("department");
@@ -96,18 +105,24 @@ public class DepartmentAnalysisController {
 
         DepartmentDto bestPerformantDept;
 
-        /*get the most performant department*/
+        */
+/*get the most performant department*//*
+
         try {
             bestPerformantDept = departmentAnalysisService.getBestPerformantDepartment();
 
         } catch (AnalysisException e) {
 
-            /*compose a response*/
+            */
+/*compose a response*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*compose the response*/
+        */
+/*compose the response*//*
+
         Link departmentLink = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                 DepartmentManagementController.class).getDepartmentByName(bestPerformantDept.departmentName()))
                 .withRel("department");
@@ -138,18 +153,24 @@ public class DepartmentAnalysisController {
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> bestEmployeeInDepartment(@PathVariable("department_name") String departmentName){
 
-        /*get department by the department name*/
+        */
+/*get department by the department name*//*
+
         UserPresentationDTO bestEmployee;
         try {
             bestEmployee = departmentAnalysisService.getBestEmployeeInDepartment(departmentName);
         } catch (AnalysisException e) {
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*compose*/
+        */
+/*compose*//*
+
         Link userLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(UserManagementController.class)
                         .getUserByUsername(bestEmployee.username())).withRel("user");
@@ -181,18 +202,24 @@ public class DepartmentAnalysisController {
     public ResponseEntity<EntityModel<DtoType>> mostPerformantEmployeeInDepartment(@PathVariable("department_name")
                                                                                        String departmentName){
 
-        /*get department by the department name*/
+        */
+/*get department by the department name*//*
+
         UserPresentationDTO mostPerformantEmpl;
         try {
             mostPerformantEmpl = departmentAnalysisService.getMostPerformantEmployeeInDepartment(departmentName);
         } catch (AnalysisException e) {
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*compose*/
+        */
+/*compose*//*
+
         Link userLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(UserManagementController.class)
                         .getUserByUsername(mostPerformantEmpl.username())).withRel("user");
@@ -205,3 +232,4 @@ public class DepartmentAnalysisController {
         );
     }
 }
+*/

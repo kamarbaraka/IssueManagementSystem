@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.repository;
 
 import com.kamar.issuemanagementsystem.ticket.entity.Comment;
@@ -7,9 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+*/
 /**
  * the comment repository.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -18,3 +21,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findCommentByCommentedTo(Ticket commentedTo);
 
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.reporting.service;
 
 import com.kamar.issuemanagementsystem.department.entity.Department;
@@ -16,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+*/
 /**
  * implementation of the ticket reporting service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -34,13 +37,19 @@ public class TicketReportingServiceImpl implements TicketReportingService {
     public List<Ticket> ticketsByStatus(TicketStatus status) {
 
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        /*get tickets by status*/
+        */
+/*get tickets by status*//*
+
         List<Ticket> ticketsByStatus = ticketRepository.findTicketsByStatusOrderByCreatedOnAsc(status);
 
-        /*filter for employee*/
+        */
+/*filter for employee*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "employee")) {
 
-            /*filter the result*/
+            */
+/*filter the result*//*
+
             return ticketsByStatus.stream().filter(
                     ticket -> ticket.getAssignedTo().getUsername().equals(authenticatedUser.getUsername())
             ).toList();
@@ -52,7 +61,9 @@ public class TicketReportingServiceImpl implements TicketReportingService {
     @Override
     public List<Ticket> userTicketsByStatus(UserEntity userEntity, TicketStatus ticketStatus) {
 
-        /*get tickets*/
+        */
+/*get tickets*//*
+
         return ticketRepository.findTicketsByAssignedToAndStatusOrderByCreatedOnAsc(userEntity, ticketStatus);
     }
 
@@ -61,32 +72,46 @@ public class TicketReportingServiceImpl implements TicketReportingService {
 
         UserDetails authenticatedUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        /*get all tickets*/
+        */
+/*get all tickets*//*
+
         List<Ticket> allTickets = ticketRepository.findAll();
 
-        /*filter for department admin*/
+        */
+/*filter for department admin*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "department_admin")) {
-            /*get the user and department*/
+            */
+/*get the user and department*//*
+
             UserEntity userEntity = userEntityRepository.findUserByUsername(authenticatedUser.getUsername()).orElseThrow();
             Department department = departmentRepository.findDepartmentByMembersContaining(userEntity).orElseThrow();
 
             return allTickets.stream().filter(ticket -> ticket.getDepartmentAssigned().equals(department)).toList();
         }
 
-        /*filter for employee*/
+        */
+/*filter for employee*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "employee")) {
 
-            /*filter the tickets*/
+            */
+/*filter the tickets*//*
+
             return allTickets.stream().filter(
                     ticket -> ticket.getAssignedTo().getUsername().equals(authenticatedUser.getUsername()) ||
                             ticket.getRaisedBy().getUsername().equals(authenticatedUser.getUsername())
             ).toList();
         }
 
-        /*filter for users*/
+        */
+/*filter for users*//*
+
         if (userUtilityService.hasAuthority(authenticatedUser, "user")) {
 
-            /*filter*/
+            */
+/*filter*//*
+
             return allTickets.stream().filter(
                     ticket -> ticket.getRaisedBy().getUsername().equals(authenticatedUser.getUsername())
             ).toList();
@@ -97,3 +122,4 @@ public class TicketReportingServiceImpl implements TicketReportingService {
 
     }
 }
+*/

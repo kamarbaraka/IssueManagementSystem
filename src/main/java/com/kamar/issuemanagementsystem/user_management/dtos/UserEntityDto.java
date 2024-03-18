@@ -1,6 +1,5 @@
 package com.kamar.issuemanagementsystem.user_management.dtos;
 
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,11 +24,11 @@ public record UserEntityDto(
         @NotEmpty(message = "email cannot be empty.")
         @NotBlank(message = "email cannot be blank.")
         String email,
+        String role,
         @NotNull(message = "password cannot be null.")
-        @NotEmpty(message = "password vannot be empty.")
+        @NotEmpty(message = "password cannot be empty.")
         @NotBlank(message = "password cannot be blank.")
         String password,
-        Set<ExtraPropertyDto> extraProperties,
-        Set<UserAuthority> authorities
+        Set<ExtraPropertyDto> extraProperties
 ) implements Serializable {
 }

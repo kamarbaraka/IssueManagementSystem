@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.reporting.controller;
 
 import com.kamar.issuemanagementsystem.reporting.service.UserReportingService;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+*/
 /**
  * controller to handle user reporting.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -26,14 +29,16 @@ public class UserReportingController {
     private final UserReportingService userReportingService;
 
 
-    /**
+    */
+/**
      * Returns an array of usernames for employees who are not assigned to a department.
      *
      * This method retrieves the employees who are not assigned to a department from the UserReportingService.
      * It then maps the usernames of these employees to an array of strings. The array of usernames is returned in a ResponseEntity object.
      *
      * @return a ResponseEntity object containing an array of Strings representing the usernames of employees not in a department
-     */
+     *//*
+
     @GetMapping(value = {"api/v1/users/report/nonDeptEmps"})
     @Operation(
             tags = {"User Reporting"},
@@ -44,12 +49,19 @@ public class UserReportingController {
     @CrossOrigin
     public ResponseEntity<String[]> getEmployeesNotInDept(){
 
-        /*get the employees not in department*/
+        */
+/*get the employees not in department*//*
+
         List<UserEntity> employeesNotInDept = userReportingService.getEmployeesNotInDept();
-        /*get the usernames*/
+        */
+/*get the usernames*//*
+
         String[] arrayOfEmployees = employeesNotInDept.stream().map(UserEntity::getUsername).toList().toArray(new String[0]);
-        /*return*/
+        */
+/*return*//*
+
         return ResponseEntity.ok(arrayOfEmployees);
 
     }
 }
+*/

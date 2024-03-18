@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.user_management.controller;
 
 import com.kamar.issuemanagementsystem.user_management.data.dto.ActivationSuccessDTO;
@@ -21,9 +22,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+*/
 /**
  * the user controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -33,8 +36,10 @@ public class UserRegistrationController {
 
     private final UserRegistrationService userRegistrationService;
 
-    /**
-     * register a user*/
+    */
+/**
+     * register a user*//*
+
     @PostMapping(value = {"register"}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(tags = {"User Registration"}, summary = "register a user. {'ADMIN', 'OWNER'}",
@@ -49,30 +54,46 @@ public class UserRegistrationController {
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> registerUser(@Validated @RequestBody UserRegistrationDTO registrationDTO){
 
-        /*register the user*/
+        */
+/*register the user*//*
+
         try {
             userRegistrationService.registerUser(registrationDTO);
         } catch (Exception e) {
 
-            /*log the exception*/
+            */
+/*log the exception*//*
+
             log.warn(e.getMessage());
 
-            /*return status*/
+            */
+/*return status*//*
+
             return ResponseEntity.badRequest().build();
         }
-        /*create a response*/
+        */
+/*create a response*//*
+
         DtoType message = new ActivationSuccessDTO("registration successful, follow the link to activate.");
         EntityModel<DtoType> response = EntityModel.of(message);
-        /*create link*/
+        */
+/*create link*//*
+
         Link activationLink = WebMvcLinkBuilder.linkTo(UserRegistrationController.class).withRel("activate");
-        /*add link*/
+        */
+/*add link*//*
+
         response.add(activationLink);
-        /*return response*/
+        */
+/*return response*//*
+
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * activate a user*/
+    */
+/**
+     * activate a user*//*
+
     @PostMapping(value = {"activate"}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE,
     MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(tags = {"User Activation"}, summary = "activate a user. {'ADMIN', 'OWNER'}", description = "api to activate a",
@@ -88,28 +109,45 @@ public class UserRegistrationController {
                                                              @RequestParam("activation_token") String activationToken){
 
         UserActivationDTO activationReq = new UserActivationDTO(username, activationToken);
-        /*activate the user*/
+        */
+/*activate the user*//*
+
         try {
             userRegistrationService.activateUser(activationReq);
         } catch (UserException e) {
 
-            /*log*/
+            */
+/*log*//*
+
             log.warn(e.getMessage());
-            /*construct message*/
+            */
+/*construct message*//*
+
             DtoType message = new ActivationSuccessDTO("invalid token");
-            /*construct response*/
+            */
+/*construct response*//*
+
             EntityModel<DtoType> response = EntityModel.of(message);
-            /*return*/
+            */
+/*return*//*
+
             return ResponseEntity.badRequest().body(response);
         }
 
-        /*create message*/
+        */
+/*create message*//*
+
         DtoType message = new ActivationSuccessDTO("activation successful");
-        /*construct response*/
+        */
+/*construct response*//*
+
         EntityModel<DtoType> response = EntityModel.of(message);
 
-        /*return response*/
+        */
+/*return response*//*
+
         return ResponseEntity.ok(response);
     }
 
 }
+*/

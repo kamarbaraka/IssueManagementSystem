@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.naming.OperationNotSupportedException;
 
+*/
 /**
  * the ticket assignment controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -38,9 +41,11 @@ public class TicketAssignmentController {
     private final TicketManagementService ticketManagementService;
     private final UserManagementService userManagementService;
 
-    /**
+    */
+/**
      * assign a ticket to user
-     */
+     *//*
+
     @PostMapping(consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(tags = {"Ticket Assignment"}, summary = "assign a ticket. {'ADMIN', 'DEPARTMENT_ADMIN'}",
             description = "assign a ticket to a user.",
@@ -57,34 +62,47 @@ public class TicketAssignmentController {
         if (priority == null) {
             priority = "medium";
         }
-        /*create a dto*/
+        */
+/*create a dto*//*
+
         TicketAssignmentDTO ticketAssignmentDTO = new TicketAssignmentDTO(ticketNumber, username,
                 priority.toUpperCase(), deadline);
 
-        /*assign ticket*/
+        */
+/*assign ticket*//*
+
         try {
             ticketAssignmentService.assignTo(ticketAssignmentDTO);
         } catch (OperationNotSupportedException e) {
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         DtoType infoDTO = new InfoDTO("ticket successfully assigned to " + username);
 
         EntityModel<DtoType> response = EntityModel.of(infoDTO);
 
-        /*create links*/
+        */
+/*create links*//*
+
         Link ticketLink = WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(TicketManagementController.class)
                         .getTicketById(ticketNumber)).withRel("ticket");
 
         response.add(ticketLink);
 
-        /*return response*/
+        */
+/*return response*//*
+
         return ResponseEntity.ok(response);
     }
 
 }
+*/

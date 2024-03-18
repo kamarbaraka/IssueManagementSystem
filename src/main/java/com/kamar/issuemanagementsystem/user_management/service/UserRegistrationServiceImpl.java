@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.user_management.service;
 
 import com.kamar.issuemanagementsystem.app_properties.CompanyProperties;
@@ -19,9 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+*/
 /**
  * the user registration service implementation.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -40,13 +43,17 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private void sendActivationEmail(String email, String token){
 
-        /*set the email and message*/
+        */
+/*set the email and message*//*
+
         String subject = "TMS account activation";
         String message = "Use the token to activate your account  "+
                 "<h3 style='color: blue;'>"+ token+ "<h3> <br>"+
                 companyProperties.endTag();
 
-        /*send the activation message*/
+        */
+/*send the activation message*//*
+
         emailService.sendEmail(message, subject, email, null);
 
     }
@@ -56,27 +63,43 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     public void registerUser(UserRegistrationDTO registrationDTO) throws UserException {
 
 
-        /*check if user exists*/
+        */
+/*check if user exists*//*
+
         if ( userEntityRepository.existsById(registrationDTO.username())) {
 
-            /*throw an exception*/
+            */
+/*throw an exception*//*
+
             throw new UserException("user exists or the email is not valid");
         }
-        /*convert the dto to user*/
+        */
+/*convert the dto to user*//*
+
         UserEntity userEntity = userMapper.dtoToEntity(registrationDTO);
-        /*encode password*/
+        */
+/*encode password*//*
+
         userEntity.setPassword(passwordEncoder.encode(registrationDTO.password()));
-        /*get and set the rating*/
+        */
+/*get and set the rating*//*
+
         UserRating userRating = userEntity.getUserRating();
-        /*set the roles/authorities*/
+        */
+/*set the roles/authorities*//*
+
         UserAuthority userAuthority = userAuthorityRepository.findById(registrationDTO.role().toUpperCase()).orElseThrow(
                 () -> new UserException("role doesn't exist."));
         userEntity.getAuthorities().add(userAuthority);
 
-        /*persist the rating and user*/
+        */
+/*persist the rating and user*//*
+
         userRatingRepository.save(userRating);
         userEntityRepository.save(userEntity);
-        /*send the activation message*/
+        */
+/*send the activation message*//*
+
         sendActivationEmail(userEntity.getUsername(), userEntity.getActivationToken());
 
     }
@@ -85,20 +108,28 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Override
     public void activateUser(UserActivationDTO activationDTO) throws UserException {
 
-        /*check if user exists*/
+        */
+/*check if user exists*//*
+
         UserEntity userEntity = userEntityRepository.findById(activationDTO.username())
                 .orElseThrow(userExceptionService::userNotFound);
 
-        /*check the activation token*/
+        */
+/*check the activation token*//*
+
         if (!userEntity.getActivationToken().equals(activationDTO.token())) {
             throw userExceptionService.invalidToken();
         }
 
-        /*activate the user*/
+        */
+/*activate the user*//*
+
         userEntity.setEnabled(true);
         userEntityRepository.save(userEntity);
 
-        /*send email*/
+        */
+/*send email*//*
+
         String subject = "activation successful";
         String message = "account activation successful. Your username is <h3 style='color: blue;'>"+
                 userEntity.getUsername()+ ".<h3> <br>"+
@@ -108,3 +139,4 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     }
 }
+*/

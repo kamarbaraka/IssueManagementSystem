@@ -5,9 +5,11 @@ import com.kamar.issuemanagementsystem.user_management.dtos.ExtraPropertyDto;
 import com.kamar.issuemanagementsystem.user_management.dtos.UserEntityDto;
 import com.kamar.issuemanagementsystem.user_management.entity.ExtraProperty;
 import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
+import com.kamar.issuemanagementsystem.user_management.entity.UserEntityRole;
 import com.kamar.issuemanagementsystem.user_management.exceptions.UserActivationException;
 import com.kamar.issuemanagementsystem.user_management.exceptions.UserRegistrationException;
 import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRepository;
+import com.kamar.issuemanagementsystem.user_management.repository.UserEntityRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,6 +35,8 @@ public class JpaUserEntityManagementService implements UserEntityManagementServi
      * The repository for the UserEntity entity.
      */
     private final UserEntityRepository repository;
+
+    private final UserEntityRoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -124,6 +128,10 @@ public class JpaUserEntityManagementService implements UserEntityManagementServi
     public void registerUser(UserEntityDto dto) {
         try
         {
+            /*get the granted authorities*/
+            UserEntityRole userEntityRole = roleRepository.findUserEntityRoleByRoleIgnoreCase(dto.role())
+                    .orElseThrow();
+
             /*register the new user*/
             UserEntity userEntity = UserEntity.builder()
                     .username(dto.username())
@@ -131,7 +139,7 @@ public class JpaUserEntityManagementService implements UserEntityManagementServi
                     .password(passwordEncoder.encode(dto.password()))
                     .extraProperties(dto.extraProperties().stream()
                             .map(ExtraProperty::dtoToEntity).collect(Collectors.toSet()))
-                    .authorities(dto.authorities())
+                    .authorities(userEntityRole.getGrantedAuthorities())
                     .build();
             /*encode the activation token*/
             userEntity.setActivationToken(passwordEncoder.encode(userEntity.getActivationToken()));

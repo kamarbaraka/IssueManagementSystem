@@ -1,13 +1,17 @@
+/*
 package com.kamar.issuemanagementsystem.attachment.repository;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+*/
 /**
  * the attachment repository.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Repository
 public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
 }
+*/

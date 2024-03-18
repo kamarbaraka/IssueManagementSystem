@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.entity;
 
 import jakarta.persistence.*;
@@ -5,9 +6,11 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+*/
 /**
  * the solution to a ticket.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Entity(name = "solutions")
 @Data
@@ -26,3 +29,4 @@ public class Solution {
     @Column(name = "solved_on")
     private final LocalDateTime dateTimeSolved = LocalDateTime.now();
 }
+*/

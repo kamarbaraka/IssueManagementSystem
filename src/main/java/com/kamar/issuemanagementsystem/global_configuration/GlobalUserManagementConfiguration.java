@@ -2,11 +2,10 @@ package com.kamar.issuemanagementsystem.global_configuration;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.lang.NonNullApi;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,8 +35,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GlobalUserManagementConfiguration {
 
+    /**
+     * Configures the security filter chain for the HttpSecurity object.
+     *
+     * @param httpSecurity the HttpSecurity object to configure
+     * @return the configured SecurityFilterChain object
+     * @throws Exception if an error occurs during the configuration
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    @Order(2)
+    public SecurityFilterChain userManagementFilterChain(@NotNull HttpSecurity httpSecurity) throws Exception{
 
         /*configure form login*/
         httpSecurity.formLogin(Customizer.withDefaults())

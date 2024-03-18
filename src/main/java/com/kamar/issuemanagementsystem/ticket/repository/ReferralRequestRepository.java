@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.repository;
 
 import com.kamar.issuemanagementsystem.ticket.entity.ReferralRequest;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+*/
 /**
  * the referral request repository.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Repository
 public interface ReferralRequestRepository extends JpaRepository<ReferralRequest, Long> {
@@ -25,3 +28,4 @@ public interface ReferralRequestRepository extends JpaRepository<ReferralRequest
 
     Optional<ReferralRequest> findReferralRequestsByRefferedTicket(Ticket referredTicket);
 }
+*/

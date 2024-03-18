@@ -1,12 +1,15 @@
+/*
 package com.kamar.issuemanagementsystem.attachment.data;
 
 import com.kamar.issuemanagementsystem.user_management.data.dto.DtoType;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.Size;
 
+*/
 /**
  * the attachments DTO.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 
 public record AttachmentDTO(
@@ -18,3 +21,4 @@ public record AttachmentDTO(
         byte[] content
 ) implements DtoType {
 }
+*/

@@ -1,13 +1,13 @@
 package com.kamar.issuemanagementsystem.user_management.entity;
 
 
-import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
@@ -48,10 +48,11 @@ public class UserEntity implements UserDetails {
     private  String email;
 
     @NotBlank(message = "password cannot be blank.")
-    @NotEmpty(message = "password vannot be empty.")
+    @NotEmpty(message = "password cannot be empty.")
     @NotNull(message = "password cannot be null.")
     @Column(nullable = false)
     private String password;
+
 
     @OneToMany(mappedBy = "userEntity", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
             CascadeType.DETACH}, orphanRemoval = true)
@@ -60,10 +61,10 @@ public class UserEntity implements UserDetails {
     @Builder.Default
     private String activationToken = Integer.toString(random.nextInt(1000, 9999));
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_authorities",joinColumns = {@JoinColumn(name = "user")},
-            inverseJoinColumns = {@JoinColumn(name = "authority")})
-    private Set<UserAuthority> authorities = new LinkedHashSet<>();
+    @ElementCollection
+    @Column(name = "granted_authority")
+    @CollectionTable(name = "users_grantedAuthorities", joinColumns = @JoinColumn(name = "owner_id"))
+    private Set<GrantedAuthority> authorities = new LinkedHashSet<>();
 
     @Column(nullable = false, updatable = false)
     private final Instant createdOn = Instant.now();

@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.authority.controller;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+*/
 /**
  * the user authority controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequestMapping(value = {"api/v1/authority"})
@@ -38,11 +41,15 @@ public class UserAuthorityController {
     @CrossOrigin
     public ResponseEntity<Void> createRole(@RequestParam("role_name") String authority){
 
-        /*create a role*/
+        */
+/*create a role*//*
+
         try {
             userAuthorityManagementService.createAuthority(authority);
         } catch (Exception e) {
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -60,12 +67,16 @@ public class UserAuthorityController {
     @CrossOrigin
     public ResponseEntity<UserAuthority> getRoleByName(@RequestParam("role") String authority){
 
-        /*get the role*/
+        */
+/*get the role*//*
+
         UserAuthority userAuthority;
         try {
            userAuthority  = userAuthorityManagementService.getAuthority(authority);
         } catch (AuthorityException e) {
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.warn(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -81,9 +92,12 @@ public class UserAuthorityController {
     @CrossOrigin
     public ResponseEntity<List<UserAuthority>> getAllAuthorities(){
 
-        /*get all roles*/
+        */
+/*get all roles*//*
+
         List<UserAuthority> allAuthorities = userAuthorityManagementService.getAllAuthorities();
 
         return ResponseEntity.ok(allAuthorities);
     }
 }
+*/

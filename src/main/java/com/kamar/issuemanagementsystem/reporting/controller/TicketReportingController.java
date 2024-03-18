@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.reporting.controller;
 
 import com.kamar.issuemanagementsystem.authority.utility.UserAuthorityUtility;
@@ -27,9 +28,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+*/
 /**
  * ticket reporting controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -45,13 +48,21 @@ public class TicketReportingController {
 
     private List<EntityModel<DtoType>> convertToDto(List<Ticket> ticketList){
 
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         return ticketList.stream().map(ticket -> {
-            /*map the ticket to dto*/
+            */
+/*map the ticket to dto*//*
+
             DtoType ticketDto = ticketMapper.entityToDTOAdmin(ticket);
-            /*convert to entity model*/
+            */
+/*convert to entity model*//*
+
             EntityModel<DtoType> response = EntityModel.of(ticketDto);
-            /*add Links*/
+            */
+/*add Links*//*
+
             Link ticketLink = WebMvcLinkBuilder.linkTo(
                     WebMvcLinkBuilder.methodOn(TicketManagementController.class)
                             .getTicketById(ticket.getTicketNumber())
@@ -77,19 +88,27 @@ public class TicketReportingController {
 
         try
         {
-            /*get tickets by status*/
+            */
+/*get tickets by status*//*
+
             tickets = ticketReportingService.ticketsByStatus(TicketStatus.valueOf(status.toUpperCase()));
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error( e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 
-        /*map the tickets to DTO*/
+        */
+/*map the tickets to DTO*//*
+
         List<EntityModel<DtoType>> response = convertToDto(tickets);
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         return ResponseEntity.ok(response);
     }
 
@@ -105,18 +124,26 @@ public class TicketReportingController {
 
         try
         {
-            /*get all tickets*/
+            */
+/*get all tickets*//*
+
             allTickets = ticketReportingService.getAllTickets();
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*map to dto*/
+        */
+/*map to dto*//*
+
         List<EntityModel<DtoType>> response = convertToDto(allTickets);
-        /*return the response*/
+        */
+/*return the response*//*
+
         return ResponseEntity.ok(response);
     }
 
@@ -137,9 +164,13 @@ public class TicketReportingController {
 
         try
         {
-            /*get user*/
+            */
+/*get user*//*
+
             currentUserEntity = userManagementService.getUserByUsername(userDetails.getUsername());
-            /*get the tickets*/
+            */
+/*get the tickets*//*
+
             if (userDetails.getAuthorities().contains(userAuthorityUtility.getFor("admin"))) {
                 UserEntity userEntity = userManagementService.getUserByUsername(username);
                 tickets = ticketReportingService.userTicketsByStatus(userEntity, TicketStatus.valueOf(status.toUpperCase()));
@@ -148,16 +179,23 @@ public class TicketReportingController {
                 tickets = ticketReportingService.userTicketsByStatus(currentUserEntity, TicketStatus.valueOf(status.toUpperCase()));
         }catch (Exception e){
 
-            /*log and respond*/
+            */
+/*log and respond*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
 
-        /*map the tickets*/
+        */
+/*map the tickets*//*
+
         List<EntityModel<DtoType>> response = convertToDto(tickets);
-        /*return the response*/
+        */
+/*return the response*//*
+
         return ResponseEntity.ok(response);
 
     }
 }
+*/

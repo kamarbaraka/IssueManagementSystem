@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.MembersDto;
@@ -11,9 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
+*/
 /**
  * the referral management service.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public interface ReferralRequestManagementService {
 
@@ -27,3 +30,4 @@ public interface ReferralRequestManagementService {
     MembersDto refer() throws ReferralRequestException;
 
 }
+*/

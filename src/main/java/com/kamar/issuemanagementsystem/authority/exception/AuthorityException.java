@@ -1,11 +1,14 @@
+/*
 package com.kamar.issuemanagementsystem.authority.exception;
 
 
 import java.io.IOException;
 
+*/
 /**
  * the authority exception.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public class AuthorityException extends IOException {
 
@@ -13,3 +16,4 @@ public class AuthorityException extends IOException {
         super(message);
     }
 }
+*/

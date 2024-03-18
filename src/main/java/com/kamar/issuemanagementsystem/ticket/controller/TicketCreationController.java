@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.app_properties.InnitUserProperties;
@@ -25,9 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * the controller for ticket creation.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -40,8 +43,10 @@ public class TicketCreationController {
     private final TicketCreationService ticketCreationService;
     private final InnitUserProperties innitUserProperties;
 
-    /**
-     * create a {@link }*/
+    */
+/**
+     * create a {@link }*//*
+
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @Operation(tags = {"Ticket Creation"}, summary = "create a ticket. {'USER', 'EMPLOYEE'}",
             description = "use this api to raise a ticket",
@@ -59,7 +64,9 @@ public class TicketCreationController {
                                                              @RequestParam("description") String description,
                                                              @RequestBody(required = false) List<MultipartFile> attachments){
 
-        /*get authenticated user*/
+        */
+/*get authenticated user*//*
+
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         TicketCreationDTO ticketCreationDTO;
@@ -71,31 +78,46 @@ public class TicketCreationController {
 
         try
         {
-            /*map the dto to entity*/
+            */
+/*map the dto to entity*//*
+
             Ticket raisedTicket = ticketMapper.dtoToEntity(ticketCreationDTO);
 
-            /*set the necessary properties*/
+            */
+/*set the necessary properties*//*
+
             raisedTicket.setRaisedBy(userManagementService.getUserByUsername(userDetails.getUsername()));
             raisedTicket.setAssignedTo(userManagementService.getUserByUsername(innitUserProperties.username()));
-            /*create the ticket*/
+            */
+/*create the ticket*//*
+
             savedTicket = ticketCreationService.createTicket(raisedTicket);
         }catch (Exception e){
 
-            /*log the exception*/
+            */
+/*log the exception*//*
+
             log.error(e.getMessage());
-            /*respond*/
+            */
+/*respond*//*
+
             return ResponseEntity.badRequest().build();
         }
 
 
-        /*construct a response*/
+        */
+/*construct a response*//*
+
         DtoType info = new InfoDTO(savedTicket.getTicketNumber());
         EntityModel<DtoType> response = EntityModel.of(info);
 
-        /*return the response*/
+        */
+/*return the response*//*
+
         return ResponseEntity.ok(response);
 
     }
 
 
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.entity;
 
 import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
@@ -7,9 +8,11 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+*/
 /**
  * the comment entity.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Entity(name = "comments")
 @Data
@@ -36,3 +39,4 @@ public class Comment implements Serializable {
     @Column(nullable = false, updatable = false)
     private final LocalDate commentedOn = LocalDate.now();
 }
+*/

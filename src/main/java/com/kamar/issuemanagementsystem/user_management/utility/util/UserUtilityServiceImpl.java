@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.user_management.utility.util;
 
 import com.kamar.issuemanagementsystem.authority.entity.UserAuthority;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+*/
 /**
  * implementation of the user utility contract.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,17 +26,23 @@ public class UserUtilityServiceImpl implements UserUtilityService {
     @Override
     public boolean hasAuthority(UserDetails user, String authority) {
 
-        /*get user authorities*/
+        */
+/*get user authorities*//*
+
         String pAuth = authority.toUpperCase();
         Collection<? extends GrantedAuthority> userAuthorities = user.getAuthorities();
-        /*get the authorities*/
+        */
+/*get the authorities*//*
+
         UserAuthority userAuth = userAuthorityUtility.getFor("user");
         UserAuthority adminAuth = userAuthorityUtility.getFor("admin");
         UserAuthority employeeAuth = userAuthorityUtility.getFor("employee");
         UserAuthority deptAdminAuth = userAuthorityUtility.getFor("department_admin");
         UserAuthority ownerAuth = userAuthorityUtility.getFor("owner");
 
-        /*filter*/
+        */
+/*filter*//*
+
         switch (pAuth){
 
             case "USER" -> {
@@ -69,3 +78,4 @@ public class UserUtilityServiceImpl implements UserUtilityService {
         }
     }
 }
+*/

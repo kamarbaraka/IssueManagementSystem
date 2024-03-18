@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.analysis.controller;
 
 import com.kamar.issuemanagementsystem.analysis.exception.AnalysisException;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+*/
 /**
  * user analysis controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequiredArgsConstructor
@@ -38,22 +41,33 @@ public class UserAnalysisController {
     @CrossOrigin
     public ResponseEntity<EntityModel<DtoType>> getMostPerformantEmployee(){
 
-        /*get the most performant employee*/
+        */
+/*get the most performant employee*//*
+
         UserPresentationDTO mostPerformantEmployee;
         try {
             mostPerformantEmployee = userAnalysisService.bestPerformantEmployee();
         } catch (AnalysisException e) {
 
-            /*notify*/
+            */
+/*notify*//*
+
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
 
-        /*construct a response*/
-        EntityModel<DtoType> response = EntityModel.of(mostPerformantEmployee);
-        /*add links*/
+        */
+/*construct a response*//*
 
-        /*return response*/
+        EntityModel<DtoType> response = EntityModel.of(mostPerformantEmployee);
+        */
+/*add links*//*
+
+
+        */
+/*return response*//*
+
         return ResponseEntity.ok(response);
     }
 }
+*/

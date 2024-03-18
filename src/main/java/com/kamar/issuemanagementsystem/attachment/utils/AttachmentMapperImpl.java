@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.attachment.utils;
 
 import com.kamar.issuemanagementsystem.attachment.data.AttachmentDTO;
@@ -13,9 +14,11 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 
+*/
 /**
  * implementation of the attachment mapper contract.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @Service
 @Log4j2
@@ -23,16 +26,24 @@ public record AttachmentMapperImpl() implements AttachmentMapper{
     @Override
     public Attachment multipartToAttachment(MultipartFile multipartFile) throws AttachmentException {
 
-        /*get the filename*/
+        */
+/*get the filename*//*
+
         String filename = multipartFile.getOriginalFilename();
-        /*get content-type*/
+        */
+/*get content-type*//*
+
         String contentType = multipartFile.getContentType();
-        /*get the content*/
+        */
+/*get the content*//*
+
         byte[] content = new byte[0];
         try {
             content = multipartFile.getBytes();
         } catch (IOException e) {
-            /*log and throw*/
+            */
+/*log and throw*//*
+
             log.error(e.getMessage());
             throw new AttachmentException(e.getMessage());
         }
@@ -41,12 +52,16 @@ public record AttachmentMapperImpl() implements AttachmentMapper{
         try {
             blobContent = new SerialBlob(content);
         } catch (SQLException e) {
-            /*log and throw*/
+            */
+/*log and throw*//*
+
             log.error(e.getMessage());
             throw new AttachmentException(e.getMessage());
         }
 
-        /*set the attachments*/
+        */
+/*set the attachments*//*
+
         Attachment attachment = new Attachment();
         attachment.setFilename(filename);
         attachment.setContentType(contentType);
@@ -56,3 +71,4 @@ public record AttachmentMapperImpl() implements AttachmentMapper{
     }
 
 }
+*/

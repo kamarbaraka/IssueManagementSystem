@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.controller;
 
 import com.kamar.issuemanagementsystem.ticket.data.dto.InfoDTO;
@@ -19,9 +20,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+*/
 /**
  * the ticket submission controller.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 @RestController
 @RequestMapping(value = {"api/v1/tickets/submit"})
@@ -42,12 +45,16 @@ public class TicketSubmissionController {
     public ResponseEntity<EntityModel<DtoType>> submitATicket(@Validated @RequestParam("ticket_number") @Nonnull String ticketNumber,
                                                               @Validated @RequestParam("solution") @Nonnull String solution){
 
-        /*submit the ticket*/
+        */
+/*submit the ticket*//*
+
         try {
             ticketSubmissionService.submitTicket(ticketNumber, solution);
         } catch (TicketSubmissionException | TicketException e) {
 
-            /*log and compose a response*/
+            */
+/*log and compose a response*//*
+
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
@@ -59,3 +66,4 @@ public class TicketSubmissionController {
         );
     }
 }
+*/

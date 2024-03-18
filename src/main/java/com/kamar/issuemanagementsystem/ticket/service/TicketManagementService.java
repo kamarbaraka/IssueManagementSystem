@@ -1,3 +1,4 @@
+/*
 package com.kamar.issuemanagementsystem.ticket.service;
 
 import com.kamar.issuemanagementsystem.attachment.entity.Attachment;
@@ -10,9 +11,11 @@ import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 
 import java.util.List;
 
+*/
 /**
  * the ticket management contract.
- * @author kamar baraka.*/
+ * @author kamar baraka.*//*
+
 
 public interface TicketManagementService {
 
@@ -23,3 +26,4 @@ public interface TicketManagementService {
     List<TicketAdminPresentationDTO> getTicketsByDepartmentAndStatus(Department departmentAssigned, TicketStatus status);
     List<TicketAdminPresentationDTO> getTicketsByDepartment(Department departmentAssigned);
 }
+*/

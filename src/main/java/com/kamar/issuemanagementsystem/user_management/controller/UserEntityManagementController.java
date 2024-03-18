@@ -7,6 +7,7 @@ import com.kamar.issuemanagementsystem.user_management.entity.UserEntity;
 import com.kamar.issuemanagementsystem.user_management.models.UserEntityModel;
 import com.kamar.issuemanagementsystem.user_management.service.UserEntityManagementService;
 import com.kamar.issuemanagementsystem.user_management.service.UserEntityModelAssembler;
+import com.kamar.issuemanagementsystem.user_management.service.UserEntityRoleManagerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -212,28 +213,30 @@ public class UserEntityManagementController implements UserEntityManagementApi {
  * @author <a href="https://github.com/kamarbaraka">samson baraka</a>.
  */
 @Controller
-@RequestMapping(value = { "users"})
+@RequestMapping(value = { "user"})
 @RequiredArgsConstructor
 class UserEntityRegistrationActivationController implements UserEntityRegistrationAndActivationApi{
 
     private final UserEntityManagementService userService;
+    private final UserEntityRoleManagerService roleManagerService;
 
     /**
      * Registers a new user with the given user entity DTO.
      *
-     * @param dto   The UserEntityDto object containing information of the user to be registered.
+     * @param userEntityDto   The UserEntityDto object containing information of the user to be registered.
      * @param model The model to populate with registration status information.
      * @return A String indicating the view to display after the registration process.
      */
     @PostMapping(value = {"register"})
     @Override
-    public String registerUser(@RequestBody UserEntityDto dto, Model model) {
+    public String registerUser(@ModelAttribute("userEntityDto") UserEntityDto userEntityDto, Model model) {
 
         try {
             /*register the user*/
-            userService.registerUser(dto);
+            userService.registerUser(userEntityDto);
             /*add the username as an attribute to pass to the next view*/
-            model.addAttribute("candidate", dto.username());
+            model.addAttribute("roleList", roleManagerService.getAllUserEntityRoles());
+            model.addAttribute("candidate", userEntityDto.username());
 
         } catch (Exception e) {
 
